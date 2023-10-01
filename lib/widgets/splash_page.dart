@@ -5,14 +5,10 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Material(
-      color: Colors.white,
-      child: Directionality(
-        textDirection: TextDirection.ltr,
-        child: CircularProgressIndicator(
-          color: Colors.blue,
-        ),
-      ),
+    return Container(
+      width: 150,
+      height: 150,
+      color: Colors.amber,
     );
   }
 }

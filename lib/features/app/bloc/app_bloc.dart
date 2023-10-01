@@ -10,7 +10,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'app_event.dart';
+
 part 'app_state.dart';
+
 part 'app_bloc.freezed.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
@@ -29,10 +31,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   late final AppService _appService;
   late final LogService _logService;
 
-  FutureOr<void> _onLoaded(
+  Future<FutureOr<void>> _onLoaded(
     _Loaded event,
     Emitter<AppState> emit,
-  ) {
+  ) async {
     try {
       emit(
         state.copyWith(

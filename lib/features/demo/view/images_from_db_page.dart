@@ -115,7 +115,7 @@ class _Body extends StatelessWidget {
                     );
               },
             ),
-          )
+          ),
         ],
       ),
       separatorBuilder: (context, index) => AppSpacing.verticalSpacing6,
