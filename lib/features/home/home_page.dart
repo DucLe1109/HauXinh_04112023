@@ -10,6 +10,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ValueNotifier<bool> isHover = ValueNotifier(false);
     return Scaffold(
       key: const Key(WidgetKeys.homeScaffoldKey),
       appBar: AppBar(
@@ -18,6 +19,32 @@ class HomePage extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  MouseRegion(
+                      onEnter: (event) => isHover.value = true,
+                      onExit: (event) => isHover.value = false,
+                      child: ValueListenableBuilder(
+                        builder: (context, value, child) => Text(
+                          'Title 1',
+                          style: TextStyle(
+                              color: value ? Colors.amber : Colors.blue,),
+                        ),
+                        valueListenable: isHover,
+                      ),),
+                  const Text('Title 1'),
+                  const Text('Title 1'),
+                  const Text('Title 1'),
+                ],
+              ),
+            ),
+
+            const SizedBox(
+              height: 50,
+            ),
             ElevatedButton(
               child: Text(S.of(context).dog_image_random),
               onPressed: () {
