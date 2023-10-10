@@ -86,25 +86,25 @@ class _$UIStatusCopyWithImpl<$Res, $Val extends UIStatus>
 }
 
 /// @nodoc
-abstract class _$$UIInitialCopyWith<$Res> {
-  factory _$$UIInitialCopyWith(
-          _$UIInitial value, $Res Function(_$UIInitial) then) =
-      __$$UIInitialCopyWithImpl<$Res>;
+abstract class _$$UIInitialImplCopyWith<$Res> {
+  factory _$$UIInitialImplCopyWith(
+          _$UIInitialImpl value, $Res Function(_$UIInitialImpl) then) =
+      __$$UIInitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$UIInitialCopyWithImpl<$Res>
-    extends _$UIStatusCopyWithImpl<$Res, _$UIInitial>
-    implements _$$UIInitialCopyWith<$Res> {
-  __$$UIInitialCopyWithImpl(
-      _$UIInitial _value, $Res Function(_$UIInitial) _then)
+class __$$UIInitialImplCopyWithImpl<$Res>
+    extends _$UIStatusCopyWithImpl<$Res, _$UIInitialImpl>
+    implements _$$UIInitialImplCopyWith<$Res> {
+  __$$UIInitialImplCopyWithImpl(
+      _$UIInitialImpl _value, $Res Function(_$UIInitialImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$UIInitial implements UIInitial {
-  const _$UIInitial();
+class _$UIInitialImpl implements UIInitial {
+  const _$UIInitialImpl();
 
   @override
   String toString() {
@@ -114,7 +114,7 @@ class _$UIInitial implements UIInitial {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$UIInitial);
+        (other.runtimeType == runtimeType && other is _$UIInitialImpl);
   }
 
   @override
@@ -196,29 +196,29 @@ class _$UIInitial implements UIInitial {
 }
 
 abstract class UIInitial implements UIStatus {
-  const factory UIInitial() = _$UIInitial;
+  const factory UIInitial() = _$UIInitialImpl;
 }
 
 /// @nodoc
-abstract class _$$UILoadingCopyWith<$Res> {
-  factory _$$UILoadingCopyWith(
-          _$UILoading value, $Res Function(_$UILoading) then) =
-      __$$UILoadingCopyWithImpl<$Res>;
+abstract class _$$UILoadingImplCopyWith<$Res> {
+  factory _$$UILoadingImplCopyWith(
+          _$UILoadingImpl value, $Res Function(_$UILoadingImpl) then) =
+      __$$UILoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$UILoadingCopyWithImpl<$Res>
-    extends _$UIStatusCopyWithImpl<$Res, _$UILoading>
-    implements _$$UILoadingCopyWith<$Res> {
-  __$$UILoadingCopyWithImpl(
-      _$UILoading _value, $Res Function(_$UILoading) _then)
+class __$$UILoadingImplCopyWithImpl<$Res>
+    extends _$UIStatusCopyWithImpl<$Res, _$UILoadingImpl>
+    implements _$$UILoadingImplCopyWith<$Res> {
+  __$$UILoadingImplCopyWithImpl(
+      _$UILoadingImpl _value, $Res Function(_$UILoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$UILoading implements UILoading {
-  const _$UILoading();
+class _$UILoadingImpl implements UILoading {
+  const _$UILoadingImpl();
 
   @override
   String toString() {
@@ -228,7 +228,7 @@ class _$UILoading implements UILoading {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$UILoading);
+        (other.runtimeType == runtimeType && other is _$UILoadingImpl);
   }
 
   @override
@@ -310,24 +310,24 @@ class _$UILoading implements UILoading {
 }
 
 abstract class UILoading implements UIStatus {
-  const factory UILoading() = _$UILoading;
+  const factory UILoading() = _$UILoadingImpl;
 }
 
 /// @nodoc
-abstract class _$$UILoadFailedCopyWith<$Res> {
-  factory _$$UILoadFailedCopyWith(
-          _$UILoadFailed value, $Res Function(_$UILoadFailed) then) =
-      __$$UILoadFailedCopyWithImpl<$Res>;
+abstract class _$$UILoadFailedImplCopyWith<$Res> {
+  factory _$$UILoadFailedImplCopyWith(
+          _$UILoadFailedImpl value, $Res Function(_$UILoadFailedImpl) then) =
+      __$$UILoadFailedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String message});
 }
 
 /// @nodoc
-class __$$UILoadFailedCopyWithImpl<$Res>
-    extends _$UIStatusCopyWithImpl<$Res, _$UILoadFailed>
-    implements _$$UILoadFailedCopyWith<$Res> {
-  __$$UILoadFailedCopyWithImpl(
-      _$UILoadFailed _value, $Res Function(_$UILoadFailed) _then)
+class __$$UILoadFailedImplCopyWithImpl<$Res>
+    extends _$UIStatusCopyWithImpl<$Res, _$UILoadFailedImpl>
+    implements _$$UILoadFailedImplCopyWith<$Res> {
+  __$$UILoadFailedImplCopyWithImpl(
+      _$UILoadFailedImpl _value, $Res Function(_$UILoadFailedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -335,7 +335,7 @@ class __$$UILoadFailedCopyWithImpl<$Res>
   $Res call({
     Object? message = null,
   }) {
-    return _then(_$UILoadFailed(
+    return _then(_$UILoadFailedImpl(
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -346,8 +346,8 @@ class __$$UILoadFailedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$UILoadFailed implements UILoadFailed {
-  const _$UILoadFailed({required this.message});
+class _$UILoadFailedImpl implements UILoadFailed {
+  const _$UILoadFailedImpl({required this.message});
 
   @override
   final String message;
@@ -361,7 +361,7 @@ class _$UILoadFailed implements UILoadFailed {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$UILoadFailed &&
+            other is _$UILoadFailedImpl &&
             (identical(other.message, message) || other.message == message));
   }
 
@@ -371,8 +371,8 @@ class _$UILoadFailed implements UILoadFailed {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$UILoadFailedCopyWith<_$UILoadFailed> get copyWith =>
-      __$$UILoadFailedCopyWithImpl<_$UILoadFailed>(this, _$identity);
+  _$$UILoadFailedImplCopyWith<_$UILoadFailedImpl> get copyWith =>
+      __$$UILoadFailedImplCopyWithImpl<_$UILoadFailedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -450,29 +450,30 @@ class _$UILoadFailed implements UILoadFailed {
 }
 
 abstract class UILoadFailed implements UIStatus {
-  const factory UILoadFailed({required final String message}) = _$UILoadFailed;
+  const factory UILoadFailed({required final String message}) =
+      _$UILoadFailedImpl;
 
   String get message;
   @JsonKey(ignore: true)
-  _$$UILoadFailedCopyWith<_$UILoadFailed> get copyWith =>
+  _$$UILoadFailedImplCopyWith<_$UILoadFailedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$UILoadSuccessCopyWith<$Res> {
-  factory _$$UILoadSuccessCopyWith(
-          _$UILoadSuccess value, $Res Function(_$UILoadSuccess) then) =
-      __$$UILoadSuccessCopyWithImpl<$Res>;
+abstract class _$$UILoadSuccessImplCopyWith<$Res> {
+  factory _$$UILoadSuccessImplCopyWith(
+          _$UILoadSuccessImpl value, $Res Function(_$UILoadSuccessImpl) then) =
+      __$$UILoadSuccessImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String? message});
 }
 
 /// @nodoc
-class __$$UILoadSuccessCopyWithImpl<$Res>
-    extends _$UIStatusCopyWithImpl<$Res, _$UILoadSuccess>
-    implements _$$UILoadSuccessCopyWith<$Res> {
-  __$$UILoadSuccessCopyWithImpl(
-      _$UILoadSuccess _value, $Res Function(_$UILoadSuccess) _then)
+class __$$UILoadSuccessImplCopyWithImpl<$Res>
+    extends _$UIStatusCopyWithImpl<$Res, _$UILoadSuccessImpl>
+    implements _$$UILoadSuccessImplCopyWith<$Res> {
+  __$$UILoadSuccessImplCopyWithImpl(
+      _$UILoadSuccessImpl _value, $Res Function(_$UILoadSuccessImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -480,7 +481,7 @@ class __$$UILoadSuccessCopyWithImpl<$Res>
   $Res call({
     Object? message = freezed,
   }) {
-    return _then(_$UILoadSuccess(
+    return _then(_$UILoadSuccessImpl(
       message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -491,8 +492,8 @@ class __$$UILoadSuccessCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$UILoadSuccess implements UILoadSuccess {
-  const _$UILoadSuccess({this.message});
+class _$UILoadSuccessImpl implements UILoadSuccess {
+  const _$UILoadSuccessImpl({this.message});
 
   @override
   final String? message;
@@ -506,7 +507,7 @@ class _$UILoadSuccess implements UILoadSuccess {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$UILoadSuccess &&
+            other is _$UILoadSuccessImpl &&
             (identical(other.message, message) || other.message == message));
   }
 
@@ -516,8 +517,8 @@ class _$UILoadSuccess implements UILoadSuccess {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$UILoadSuccessCopyWith<_$UILoadSuccess> get copyWith =>
-      __$$UILoadSuccessCopyWithImpl<_$UILoadSuccess>(this, _$identity);
+  _$$UILoadSuccessImplCopyWith<_$UILoadSuccessImpl> get copyWith =>
+      __$$UILoadSuccessImplCopyWithImpl<_$UILoadSuccessImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -595,10 +596,10 @@ class _$UILoadSuccess implements UILoadSuccess {
 }
 
 abstract class UILoadSuccess implements UIStatus {
-  const factory UILoadSuccess({final String? message}) = _$UILoadSuccess;
+  const factory UILoadSuccess({final String? message}) = _$UILoadSuccessImpl;
 
   String? get message;
   @JsonKey(ignore: true)
-  _$$UILoadSuccessCopyWith<_$UILoadSuccess> get copyWith =>
+  _$$UILoadSuccessImplCopyWith<_$UILoadSuccessImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

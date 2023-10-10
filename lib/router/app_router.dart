@@ -1,9 +1,12 @@
 import 'package:boilerplate/features/app/view/app_director.dart';
+import 'package:boilerplate/features/authentication/login_screen.dart';
 import 'package:boilerplate/features/demo/view/assets_page.dart';
 import 'package:boilerplate/features/demo/view/images_from_db_page.dart';
 import 'package:boilerplate/features/dog_image_random/view/dog_image_random_page.dart';
 import 'package:boilerplate/features/home/home_page.dart';
+import 'package:boilerplate/features/intro/intro_page.dart';
 import 'package:boilerplate/features/setting/setting_page.dart';
+import 'package:boilerplate/features/vacation/vacation.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/widgets/error_page.dart';
 import 'package:flutter/foundation.dart';
@@ -14,6 +17,15 @@ class AppRouter {
 
   static const String appDirector = 'appDirector';
   static const String appDirectorPath = '/';
+
+  static const String introNamed = 'intro';
+  static const String introPath = '/intro';
+
+  static const String loginNamed = 'login';
+  static const String loginPath = '/login';
+
+  static const String vacationName = 'vacation';
+  static const String vacationPath = '/vacationPath';
 
   static const String homeNamed = 'home';
   static const String homePath = '/';
@@ -34,11 +46,30 @@ class AppRouter {
   static final _router = GoRouter(
     routes: <GoRoute>[
       GoRoute(
+        name: loginNamed,
+        path: loginPath,
+        builder: (context, state) {
+          return const LoginScreen();
+        },
+      ),
+      GoRoute(
+        name: introNamed,
+        path: introPath,
+        builder: (context, state) {
+          return const IntroPage();
+        },
+      ),
+      GoRoute(
         name: appDirector,
         path: appDirectorPath,
         builder: (context, state) {
           return const AppDirector();
         },
+      ),
+      GoRoute(
+        name: vacationName,
+        path: vacationPath,
+        builder: (context, state) => const Vacation(),
       ),
       GoRoute(
         name: homeNamed,

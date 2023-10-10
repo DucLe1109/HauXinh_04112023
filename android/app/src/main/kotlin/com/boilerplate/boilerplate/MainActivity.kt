@@ -1,4 +1,4 @@
-package com.boilerplate.boilerplate
+package com.duclh11.hauxinh
 
 import io.flutter.embedding.android.FlutterActivity
 

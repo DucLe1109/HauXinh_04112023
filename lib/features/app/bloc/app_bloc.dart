@@ -100,11 +100,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   ) async {
     if (state.isFirstUse) {
       await _appService.setIsFirstUse(isFirstUse: false);
-      emit(
-        state.copyWith(
-          isFirstUse: false,
-        ),
-      );
+      // emit(
+      //   state.copyWith(
+      //     isFirstUse: false,
+      //   ),
+      // );
     }
   }
 }

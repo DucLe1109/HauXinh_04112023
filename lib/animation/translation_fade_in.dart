@@ -31,7 +31,7 @@ class _TranslationFadeInState extends State<TranslationFadeIn>
     _animation = AnimationController(
       vsync: this,
       duration: const Duration(
-        milliseconds: 500,
+        milliseconds: 400,
       ),
     );
     _opacityTween = Tween(begin: 0, end: 1);

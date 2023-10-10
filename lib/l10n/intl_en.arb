@@ -13,5 +13,22 @@
   "image_from_db": "Image from DB",
   "delete_success": "Delete success",
   "delete_failed": "Delete failed",
-  "didnt_supported": "Floor didnt support"
+  "didnt_supported": "Floor didnt support",
+  "intro_title": "Connect easily with your family and friends over countries",
+  "terms": "Terms & Privacy Policy",
+  "start_messaging": "Start Messaging",
+  "login": "Login",
+  "login_des": "Please enter your gmail and password",
+  "phone_number": "Phone Number",
+  "_continue": "Continue",
+  "email": "Email",
+  "password": "Password",
+  "forget_password": "Forgot password",
+  "remember_account": "Remember account",
+  "email_and_password": "email and password",
+  "please_enter": "Please enter",
+  "login_fail": "Login fail",
+  "email_format_is_not_correct": "Your email format is not correct. Please use gmail",
+  "has_some_error": "Has some error. Please try after",
+  "email_or_password_is_not_correct" : "Email or password is not correct"
 }

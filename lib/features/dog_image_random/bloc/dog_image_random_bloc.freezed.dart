@@ -75,23 +75,25 @@ class _$DogImageRandomEventCopyWithImpl<$Res, $Val extends DogImageRandomEvent>
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$DogImageRandomEventCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$DogImageRandomEventCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loaded with DiagnosticableTreeMixin implements _Loaded {
-  const _$_Loaded();
+class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
+  const _$LoadedImpl();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -107,7 +109,7 @@ class _$_Loaded with DiagnosticableTreeMixin implements _Loaded {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loaded);
+        (other.runtimeType == runtimeType && other is _$LoadedImpl);
   }
 
   @override
@@ -177,24 +179,24 @@ class _$_Loaded with DiagnosticableTreeMixin implements _Loaded {
 }
 
 abstract class _Loaded implements DogImageRandomEvent {
-  const factory _Loaded() = _$_Loaded;
+  const factory _Loaded() = _$LoadedImpl;
 }
 
 /// @nodoc
-abstract class _$$_RandomRequestedCopyWith<$Res> {
-  factory _$$_RandomRequestedCopyWith(
-          _$_RandomRequested value, $Res Function(_$_RandomRequested) then) =
-      __$$_RandomRequestedCopyWithImpl<$Res>;
+abstract class _$$RandomRequestedImplCopyWith<$Res> {
+  factory _$$RandomRequestedImplCopyWith(_$RandomRequestedImpl value,
+          $Res Function(_$RandomRequestedImpl) then) =
+      __$$RandomRequestedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({bool insertDb});
 }
 
 /// @nodoc
-class __$$_RandomRequestedCopyWithImpl<$Res>
-    extends _$DogImageRandomEventCopyWithImpl<$Res, _$_RandomRequested>
-    implements _$$_RandomRequestedCopyWith<$Res> {
-  __$$_RandomRequestedCopyWithImpl(
-      _$_RandomRequested _value, $Res Function(_$_RandomRequested) _then)
+class __$$RandomRequestedImplCopyWithImpl<$Res>
+    extends _$DogImageRandomEventCopyWithImpl<$Res, _$RandomRequestedImpl>
+    implements _$$RandomRequestedImplCopyWith<$Res> {
+  __$$RandomRequestedImplCopyWithImpl(
+      _$RandomRequestedImpl _value, $Res Function(_$RandomRequestedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -202,7 +204,7 @@ class __$$_RandomRequestedCopyWithImpl<$Res>
   $Res call({
     Object? insertDb = null,
   }) {
-    return _then(_$_RandomRequested(
+    return _then(_$RandomRequestedImpl(
       insertDb: null == insertDb
           ? _value.insertDb
           : insertDb // ignore: cast_nullable_to_non_nullable
@@ -213,10 +215,10 @@ class __$$_RandomRequestedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_RandomRequested
+class _$RandomRequestedImpl
     with DiagnosticableTreeMixin
     implements _RandomRequested {
-  const _$_RandomRequested({this.insertDb = false});
+  const _$RandomRequestedImpl({this.insertDb = false});
 
   @override
   @JsonKey()
@@ -239,7 +241,7 @@ class _$_RandomRequested
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_RandomRequested &&
+            other is _$RandomRequestedImpl &&
             (identical(other.insertDb, insertDb) ||
                 other.insertDb == insertDb));
   }
@@ -250,8 +252,9 @@ class _$_RandomRequested
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_RandomRequestedCopyWith<_$_RandomRequested> get copyWith =>
-      __$$_RandomRequestedCopyWithImpl<_$_RandomRequested>(this, _$identity);
+  _$$RandomRequestedImplCopyWith<_$RandomRequestedImpl> get copyWith =>
+      __$$RandomRequestedImplCopyWithImpl<_$RandomRequestedImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -317,11 +320,11 @@ class _$_RandomRequested
 }
 
 abstract class _RandomRequested implements DogImageRandomEvent {
-  const factory _RandomRequested({final bool insertDb}) = _$_RandomRequested;
+  const factory _RandomRequested({final bool insertDb}) = _$RandomRequestedImpl;
 
   bool get insertDb;
   @JsonKey(ignore: true)
-  _$$_RandomRequestedCopyWith<_$_RandomRequested> get copyWith =>
+  _$$RandomRequestedImplCopyWith<_$RandomRequestedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -424,11 +427,11 @@ class _$DogImageRandomStateCopyWithImpl<$Res, $Val extends DogImageRandomState>
 }
 
 /// @nodoc
-abstract class _$$_DogImageRandomStateCopyWith<$Res>
+abstract class _$$DogImageRandomStateImplCopyWith<$Res>
     implements $DogImageRandomStateCopyWith<$Res> {
-  factory _$$_DogImageRandomStateCopyWith(_$_DogImageRandomState value,
-          $Res Function(_$_DogImageRandomState) then) =
-      __$$_DogImageRandomStateCopyWithImpl<$Res>;
+  factory _$$DogImageRandomStateImplCopyWith(_$DogImageRandomStateImpl value,
+          $Res Function(_$DogImageRandomStateImpl) then) =
+      __$$DogImageRandomStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -446,11 +449,11 @@ abstract class _$$_DogImageRandomStateCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_DogImageRandomStateCopyWithImpl<$Res>
-    extends _$DogImageRandomStateCopyWithImpl<$Res, _$_DogImageRandomState>
-    implements _$$_DogImageRandomStateCopyWith<$Res> {
-  __$$_DogImageRandomStateCopyWithImpl(_$_DogImageRandomState _value,
-      $Res Function(_$_DogImageRandomState) _then)
+class __$$DogImageRandomStateImplCopyWithImpl<$Res>
+    extends _$DogImageRandomStateCopyWithImpl<$Res, _$DogImageRandomStateImpl>
+    implements _$$DogImageRandomStateImplCopyWith<$Res> {
+  __$$DogImageRandomStateImplCopyWithImpl(_$DogImageRandomStateImpl _value,
+      $Res Function(_$DogImageRandomStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -461,7 +464,7 @@ class __$$_DogImageRandomStateCopyWithImpl<$Res>
     Object? dogImage = null,
     Object? isBusy = null,
   }) {
-    return _then(_$_DogImageRandomState(
+    return _then(_$DogImageRandomStateImpl(
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -484,10 +487,10 @@ class __$$_DogImageRandomStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_DogImageRandomState
+class _$DogImageRandomStateImpl
     with DiagnosticableTreeMixin
     implements _DogImageRandomState {
-  const _$_DogImageRandomState(
+  const _$DogImageRandomStateImpl(
       {this.status = const UIInitial(),
       this.notification,
       this.dogImage = const DogImage(message: '', status: ''),
@@ -525,7 +528,7 @@ class _$_DogImageRandomState
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_DogImageRandomState &&
+            other is _$DogImageRandomStateImpl &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.notification, notification) ||
                 other.notification == notification) &&
@@ -541,8 +544,8 @@ class _$_DogImageRandomState
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_DogImageRandomStateCopyWith<_$_DogImageRandomState> get copyWith =>
-      __$$_DogImageRandomStateCopyWithImpl<_$_DogImageRandomState>(
+  _$$DogImageRandomStateImplCopyWith<_$DogImageRandomStateImpl> get copyWith =>
+      __$$DogImageRandomStateImplCopyWithImpl<_$DogImageRandomStateImpl>(
           this, _$identity);
 }
 
@@ -551,7 +554,7 @@ abstract class _DogImageRandomState implements DogImageRandomState {
       {final UIStatus status,
       final DogImageRandomNotification? notification,
       final DogImage dogImage,
-      final bool isBusy}) = _$_DogImageRandomState;
+      final bool isBusy}) = _$DogImageRandomStateImpl;
 
   @override
   UIStatus get status;
@@ -563,7 +566,7 @@ abstract class _DogImageRandomState implements DogImageRandomState {
   bool get isBusy;
   @override
   @JsonKey(ignore: true)
-  _$$_DogImageRandomStateCopyWith<_$_DogImageRandomState> get copyWith =>
+  _$$DogImageRandomStateImplCopyWith<_$DogImageRandomStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -650,25 +653,25 @@ class _$DogImageRandomNotificationCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_NotificationNotifySuccessCopyWith<$Res>
+abstract class _$$NotificationNotifySuccessImplCopyWith<$Res>
     implements $DogImageRandomNotificationCopyWith<$Res> {
-  factory _$$_NotificationNotifySuccessCopyWith(
-          _$_NotificationNotifySuccess value,
-          $Res Function(_$_NotificationNotifySuccess) then) =
-      __$$_NotificationNotifySuccessCopyWithImpl<$Res>;
+  factory _$$NotificationNotifySuccessImplCopyWith(
+          _$NotificationNotifySuccessImpl value,
+          $Res Function(_$NotificationNotifySuccessImpl) then) =
+      __$$NotificationNotifySuccessImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String message});
 }
 
 /// @nodoc
-class __$$_NotificationNotifySuccessCopyWithImpl<$Res>
+class __$$NotificationNotifySuccessImplCopyWithImpl<$Res>
     extends _$DogImageRandomNotificationCopyWithImpl<$Res,
-        _$_NotificationNotifySuccess>
-    implements _$$_NotificationNotifySuccessCopyWith<$Res> {
-  __$$_NotificationNotifySuccessCopyWithImpl(
-      _$_NotificationNotifySuccess _value,
-      $Res Function(_$_NotificationNotifySuccess) _then)
+        _$NotificationNotifySuccessImpl>
+    implements _$$NotificationNotifySuccessImplCopyWith<$Res> {
+  __$$NotificationNotifySuccessImplCopyWithImpl(
+      _$NotificationNotifySuccessImpl _value,
+      $Res Function(_$NotificationNotifySuccessImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -676,7 +679,7 @@ class __$$_NotificationNotifySuccessCopyWithImpl<$Res>
   $Res call({
     Object? message = null,
   }) {
-    return _then(_$_NotificationNotifySuccess(
+    return _then(_$NotificationNotifySuccessImpl(
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -687,10 +690,10 @@ class __$$_NotificationNotifySuccessCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_NotificationNotifySuccess
+class _$NotificationNotifySuccessImpl
     with DiagnosticableTreeMixin
     implements _NotificationNotifySuccess {
-  _$_NotificationNotifySuccess({required this.message});
+  _$NotificationNotifySuccessImpl({required this.message});
 
   @override
   final String message;
@@ -712,9 +715,9 @@ class _$_NotificationNotifySuccess
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_NotificationNotifySuccessCopyWith<_$_NotificationNotifySuccess>
-      get copyWith => __$$_NotificationNotifySuccessCopyWithImpl<
-          _$_NotificationNotifySuccess>(this, _$identity);
+  _$$NotificationNotifySuccessImplCopyWith<_$NotificationNotifySuccessImpl>
+      get copyWith => __$$NotificationNotifySuccessImplCopyWithImpl<
+          _$NotificationNotifySuccessImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -782,35 +785,36 @@ class _$_NotificationNotifySuccess
 abstract class _NotificationNotifySuccess
     implements DogImageRandomNotification {
   factory _NotificationNotifySuccess({required final String message}) =
-      _$_NotificationNotifySuccess;
+      _$NotificationNotifySuccessImpl;
 
   @override
   String get message;
   @override
   @JsonKey(ignore: true)
-  _$$_NotificationNotifySuccessCopyWith<_$_NotificationNotifySuccess>
+  _$$NotificationNotifySuccessImplCopyWith<_$NotificationNotifySuccessImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_NotificationNotifyFailedCopyWith<$Res>
+abstract class _$$NotificationNotifyFailedImplCopyWith<$Res>
     implements $DogImageRandomNotificationCopyWith<$Res> {
-  factory _$$_NotificationNotifyFailedCopyWith(
-          _$_NotificationNotifyFailed value,
-          $Res Function(_$_NotificationNotifyFailed) then) =
-      __$$_NotificationNotifyFailedCopyWithImpl<$Res>;
+  factory _$$NotificationNotifyFailedImplCopyWith(
+          _$NotificationNotifyFailedImpl value,
+          $Res Function(_$NotificationNotifyFailedImpl) then) =
+      __$$NotificationNotifyFailedImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String message});
 }
 
 /// @nodoc
-class __$$_NotificationNotifyFailedCopyWithImpl<$Res>
+class __$$NotificationNotifyFailedImplCopyWithImpl<$Res>
     extends _$DogImageRandomNotificationCopyWithImpl<$Res,
-        _$_NotificationNotifyFailed>
-    implements _$$_NotificationNotifyFailedCopyWith<$Res> {
-  __$$_NotificationNotifyFailedCopyWithImpl(_$_NotificationNotifyFailed _value,
-      $Res Function(_$_NotificationNotifyFailed) _then)
+        _$NotificationNotifyFailedImpl>
+    implements _$$NotificationNotifyFailedImplCopyWith<$Res> {
+  __$$NotificationNotifyFailedImplCopyWithImpl(
+      _$NotificationNotifyFailedImpl _value,
+      $Res Function(_$NotificationNotifyFailedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -818,7 +822,7 @@ class __$$_NotificationNotifyFailedCopyWithImpl<$Res>
   $Res call({
     Object? message = null,
   }) {
-    return _then(_$_NotificationNotifyFailed(
+    return _then(_$NotificationNotifyFailedImpl(
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -829,10 +833,10 @@ class __$$_NotificationNotifyFailedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_NotificationNotifyFailed
+class _$NotificationNotifyFailedImpl
     with DiagnosticableTreeMixin
     implements _NotificationNotifyFailed {
-  _$_NotificationNotifyFailed({required this.message});
+  _$NotificationNotifyFailedImpl({required this.message});
 
   @override
   final String message;
@@ -854,9 +858,9 @@ class _$_NotificationNotifyFailed
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_NotificationNotifyFailedCopyWith<_$_NotificationNotifyFailed>
-      get copyWith => __$$_NotificationNotifyFailedCopyWithImpl<
-          _$_NotificationNotifyFailed>(this, _$identity);
+  _$$NotificationNotifyFailedImplCopyWith<_$NotificationNotifyFailedImpl>
+      get copyWith => __$$NotificationNotifyFailedImplCopyWithImpl<
+          _$NotificationNotifyFailedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -923,12 +927,12 @@ class _$_NotificationNotifyFailed
 
 abstract class _NotificationNotifyFailed implements DogImageRandomNotification {
   factory _NotificationNotifyFailed({required final String message}) =
-      _$_NotificationNotifyFailed;
+      _$NotificationNotifyFailedImpl;
 
   @override
   String get message;
   @override
   @JsonKey(ignore: true)
-  _$$_NotificationNotifyFailedCopyWith<_$_NotificationNotifyFailed>
+  _$$NotificationNotifyFailedImplCopyWith<_$NotificationNotifyFailedImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

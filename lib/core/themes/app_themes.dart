@@ -5,7 +5,7 @@ class AppThemes {
 
   //Primary
   static const Color _lightPrimaryColor = Color(0xffffffff);
-  static const Color _darkPrimaryColor = Color(0xFF1a222d);
+  static const Color _darkPrimaryColor = Color(0xFF1F161E);
 
   //Background
   static const Color _lightBackgroundColor = Color(0xffffffff);
@@ -76,8 +76,20 @@ class AppThemes {
     labelSmall: TextStyle(fontSize: 14, color: _darkTextColor),
   );
 
+  //Button themes
+
+  static const ButtonThemeData _lightButtonTheme = ButtonThemeData(
+    buttonColor: Color(0xff002DE3),
+    height: 48,
+  );
+  static const ButtonThemeData _darkButtonTheme = ButtonThemeData(
+    buttonColor: Color(0xff375FFF),
+    height: 48,
+  );
+
   ///Light theme
   static final ThemeData lightTheme = ThemeData(
+    unselectedWidgetColor: const Color.fromRGBO(143, 148, 251, 1),
     brightness: Brightness.light,
     primaryColor: _lightPrimaryColor,
     scaffoldBackgroundColor: _lightBackgroundColor,
@@ -94,10 +106,12 @@ class AppThemes {
     dividerTheme: const DividerThemeData(
       color: Colors.grey,
     ),
+    buttonTheme: _lightButtonTheme,
   );
 
   ///Dark theme
   static final ThemeData darkTheme = ThemeData(
+    unselectedWidgetColor: const Color.fromRGBO(143, 148, 251, 1),
     brightness: Brightness.dark,
     primaryColor: _darkPrimaryColor,
     scaffoldBackgroundColor: _darkBackgroundColor,
@@ -114,5 +128,6 @@ class AppThemes {
     dividerTheme: const DividerThemeData(
       color: Colors.grey,
     ),
+    buttonTheme: _darkButtonTheme,
   );
 }

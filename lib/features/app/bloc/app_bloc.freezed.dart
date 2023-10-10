@@ -86,23 +86,25 @@ class _$AppEventCopyWithImpl<$Res, $Val extends AppEvent>
 }
 
 /// @nodoc
-abstract class _$$_LoadedCopyWith<$Res> {
-  factory _$$_LoadedCopyWith(_$_Loaded value, $Res Function(_$_Loaded) then) =
-      __$$_LoadedCopyWithImpl<$Res>;
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadedCopyWithImpl<$Res>
-    extends _$AppEventCopyWithImpl<$Res, _$_Loaded>
-    implements _$$_LoadedCopyWith<$Res> {
-  __$$_LoadedCopyWithImpl(_$_Loaded _value, $Res Function(_$_Loaded) _then)
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$AppEventCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_Loaded implements _Loaded {
-  const _$_Loaded();
+class _$LoadedImpl implements _Loaded {
+  const _$LoadedImpl();
 
   @override
   String toString() {
@@ -112,7 +114,7 @@ class _$_Loaded implements _Loaded {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loaded);
+        (other.runtimeType == runtimeType && other is _$LoadedImpl);
   }
 
   @override
@@ -194,24 +196,24 @@ class _$_Loaded implements _Loaded {
 }
 
 abstract class _Loaded implements AppEvent {
-  const factory _Loaded() = _$_Loaded;
+  const factory _Loaded() = _$LoadedImpl;
 }
 
 /// @nodoc
-abstract class _$$_LocaleChangedCopyWith<$Res> {
-  factory _$$_LocaleChangedCopyWith(
-          _$_LocaleChanged value, $Res Function(_$_LocaleChanged) then) =
-      __$$_LocaleChangedCopyWithImpl<$Res>;
+abstract class _$$LocaleChangedImplCopyWith<$Res> {
+  factory _$$LocaleChangedImplCopyWith(
+          _$LocaleChangedImpl value, $Res Function(_$LocaleChangedImpl) then) =
+      __$$LocaleChangedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String locale});
 }
 
 /// @nodoc
-class __$$_LocaleChangedCopyWithImpl<$Res>
-    extends _$AppEventCopyWithImpl<$Res, _$_LocaleChanged>
-    implements _$$_LocaleChangedCopyWith<$Res> {
-  __$$_LocaleChangedCopyWithImpl(
-      _$_LocaleChanged _value, $Res Function(_$_LocaleChanged) _then)
+class __$$LocaleChangedImplCopyWithImpl<$Res>
+    extends _$AppEventCopyWithImpl<$Res, _$LocaleChangedImpl>
+    implements _$$LocaleChangedImplCopyWith<$Res> {
+  __$$LocaleChangedImplCopyWithImpl(
+      _$LocaleChangedImpl _value, $Res Function(_$LocaleChangedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -219,7 +221,7 @@ class __$$_LocaleChangedCopyWithImpl<$Res>
   $Res call({
     Object? locale = null,
   }) {
-    return _then(_$_LocaleChanged(
+    return _then(_$LocaleChangedImpl(
       locale: null == locale
           ? _value.locale
           : locale // ignore: cast_nullable_to_non_nullable
@@ -230,8 +232,8 @@ class __$$_LocaleChangedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_LocaleChanged implements _LocaleChanged {
-  const _$_LocaleChanged({required this.locale});
+class _$LocaleChangedImpl implements _LocaleChanged {
+  const _$LocaleChangedImpl({required this.locale});
 
   @override
   final String locale;
@@ -245,7 +247,7 @@ class _$_LocaleChanged implements _LocaleChanged {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_LocaleChanged &&
+            other is _$LocaleChangedImpl &&
             (identical(other.locale, locale) || other.locale == locale));
   }
 
@@ -255,8 +257,8 @@ class _$_LocaleChanged implements _LocaleChanged {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LocaleChangedCopyWith<_$_LocaleChanged> get copyWith =>
-      __$$_LocaleChangedCopyWithImpl<_$_LocaleChanged>(this, _$identity);
+  _$$LocaleChangedImplCopyWith<_$LocaleChangedImpl> get copyWith =>
+      __$$LocaleChangedImplCopyWithImpl<_$LocaleChangedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -335,34 +337,34 @@ class _$_LocaleChanged implements _LocaleChanged {
 
 abstract class _LocaleChanged implements AppEvent {
   const factory _LocaleChanged({required final String locale}) =
-      _$_LocaleChanged;
+      _$LocaleChangedImpl;
 
   String get locale;
   @JsonKey(ignore: true)
-  _$$_LocaleChangedCopyWith<_$_LocaleChanged> get copyWith =>
+  _$$LocaleChangedImplCopyWith<_$LocaleChangedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_DisableFirstUseCopyWith<$Res> {
-  factory _$$_DisableFirstUseCopyWith(
-          _$_DisableFirstUse value, $Res Function(_$_DisableFirstUse) then) =
-      __$$_DisableFirstUseCopyWithImpl<$Res>;
+abstract class _$$DisableFirstUseImplCopyWith<$Res> {
+  factory _$$DisableFirstUseImplCopyWith(_$DisableFirstUseImpl value,
+          $Res Function(_$DisableFirstUseImpl) then) =
+      __$$DisableFirstUseImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_DisableFirstUseCopyWithImpl<$Res>
-    extends _$AppEventCopyWithImpl<$Res, _$_DisableFirstUse>
-    implements _$$_DisableFirstUseCopyWith<$Res> {
-  __$$_DisableFirstUseCopyWithImpl(
-      _$_DisableFirstUse _value, $Res Function(_$_DisableFirstUse) _then)
+class __$$DisableFirstUseImplCopyWithImpl<$Res>
+    extends _$AppEventCopyWithImpl<$Res, _$DisableFirstUseImpl>
+    implements _$$DisableFirstUseImplCopyWith<$Res> {
+  __$$DisableFirstUseImplCopyWithImpl(
+      _$DisableFirstUseImpl _value, $Res Function(_$DisableFirstUseImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_DisableFirstUse implements _DisableFirstUse {
-  const _$_DisableFirstUse();
+class _$DisableFirstUseImpl implements _DisableFirstUse {
+  const _$DisableFirstUseImpl();
 
   @override
   String toString() {
@@ -372,7 +374,7 @@ class _$_DisableFirstUse implements _DisableFirstUse {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_DisableFirstUse);
+        (other.runtimeType == runtimeType && other is _$DisableFirstUseImpl);
   }
 
   @override
@@ -454,29 +456,29 @@ class _$_DisableFirstUse implements _DisableFirstUse {
 }
 
 abstract class _DisableFirstUse implements AppEvent {
-  const factory _DisableFirstUse() = _$_DisableFirstUse;
+  const factory _DisableFirstUse() = _$DisableFirstUseImpl;
 }
 
 /// @nodoc
-abstract class _$$_DarkModeChangedCopyWith<$Res> {
-  factory _$$_DarkModeChangedCopyWith(
-          _$_DarkModeChanged value, $Res Function(_$_DarkModeChanged) then) =
-      __$$_DarkModeChangedCopyWithImpl<$Res>;
+abstract class _$$DarkModeChangedImplCopyWith<$Res> {
+  factory _$$DarkModeChangedImplCopyWith(_$DarkModeChangedImpl value,
+          $Res Function(_$DarkModeChangedImpl) then) =
+      __$$DarkModeChangedImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_DarkModeChangedCopyWithImpl<$Res>
-    extends _$AppEventCopyWithImpl<$Res, _$_DarkModeChanged>
-    implements _$$_DarkModeChangedCopyWith<$Res> {
-  __$$_DarkModeChangedCopyWithImpl(
-      _$_DarkModeChanged _value, $Res Function(_$_DarkModeChanged) _then)
+class __$$DarkModeChangedImplCopyWithImpl<$Res>
+    extends _$AppEventCopyWithImpl<$Res, _$DarkModeChangedImpl>
+    implements _$$DarkModeChangedImplCopyWith<$Res> {
+  __$$DarkModeChangedImplCopyWithImpl(
+      _$DarkModeChangedImpl _value, $Res Function(_$DarkModeChangedImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_DarkModeChanged implements _DarkModeChanged {
-  const _$_DarkModeChanged();
+class _$DarkModeChangedImpl implements _DarkModeChanged {
+  const _$DarkModeChangedImpl();
 
   @override
   String toString() {
@@ -486,7 +488,7 @@ class _$_DarkModeChanged implements _DarkModeChanged {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_DarkModeChanged);
+        (other.runtimeType == runtimeType && other is _$DarkModeChangedImpl);
   }
 
   @override
@@ -568,7 +570,7 @@ class _$_DarkModeChanged implements _DarkModeChanged {
 }
 
 abstract class _DarkModeChanged implements AppEvent {
-  const factory _DarkModeChanged() = _$_DarkModeChanged;
+  const factory _DarkModeChanged() = _$DarkModeChangedImpl;
 }
 
 /// @nodoc
@@ -641,10 +643,11 @@ class _$AppStateCopyWithImpl<$Res, $Val extends AppState>
 }
 
 /// @nodoc
-abstract class _$$_AppStateCopyWith<$Res> implements $AppStateCopyWith<$Res> {
-  factory _$$_AppStateCopyWith(
-          _$_AppState value, $Res Function(_$_AppState) then) =
-      __$$_AppStateCopyWithImpl<$Res>;
+abstract class _$$AppStateImplCopyWith<$Res>
+    implements $AppStateCopyWith<$Res> {
+  factory _$$AppStateImplCopyWith(
+          _$AppStateImpl value, $Res Function(_$AppStateImpl) then) =
+      __$$AppStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({UIStatus status, String locale, bool isDarkMode, bool isFirstUse});
@@ -654,11 +657,11 @@ abstract class _$$_AppStateCopyWith<$Res> implements $AppStateCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$_AppStateCopyWithImpl<$Res>
-    extends _$AppStateCopyWithImpl<$Res, _$_AppState>
-    implements _$$_AppStateCopyWith<$Res> {
-  __$$_AppStateCopyWithImpl(
-      _$_AppState _value, $Res Function(_$_AppState) _then)
+class __$$AppStateImplCopyWithImpl<$Res>
+    extends _$AppStateCopyWithImpl<$Res, _$AppStateImpl>
+    implements _$$AppStateImplCopyWith<$Res> {
+  __$$AppStateImplCopyWithImpl(
+      _$AppStateImpl _value, $Res Function(_$AppStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -669,7 +672,7 @@ class __$$_AppStateCopyWithImpl<$Res>
     Object? isDarkMode = null,
     Object? isFirstUse = null,
   }) {
-    return _then(_$_AppState(
+    return _then(_$AppStateImpl(
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -692,8 +695,8 @@ class __$$_AppStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_AppState implements _AppState {
-  const _$_AppState(
+class _$AppStateImpl implements _AppState {
+  const _$AppStateImpl(
       {this.status = const UIInitial(),
       this.locale = AppConfig.defaultLocale,
       this.isDarkMode = false,
@@ -721,7 +724,7 @@ class _$_AppState implements _AppState {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AppState &&
+            other is _$AppStateImpl &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.locale, locale) || other.locale == locale) &&
             (identical(other.isDarkMode, isDarkMode) ||
@@ -737,8 +740,8 @@ class _$_AppState implements _AppState {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AppStateCopyWith<_$_AppState> get copyWith =>
-      __$$_AppStateCopyWithImpl<_$_AppState>(this, _$identity);
+  _$$AppStateImplCopyWith<_$AppStateImpl> get copyWith =>
+      __$$AppStateImplCopyWithImpl<_$AppStateImpl>(this, _$identity);
 }
 
 abstract class _AppState implements AppState {
@@ -746,7 +749,7 @@ abstract class _AppState implements AppState {
       {final UIStatus status,
       final String locale,
       final bool isDarkMode,
-      final bool isFirstUse}) = _$_AppState;
+      final bool isFirstUse}) = _$AppStateImpl;
 
   @override
   UIStatus get status;
@@ -758,6 +761,6 @@ abstract class _AppState implements AppState {
   bool get isFirstUse;
   @override
   @JsonKey(ignore: true)
-  _$$_AppStateCopyWith<_$_AppState> get copyWith =>
+  _$$AppStateImplCopyWith<_$AppStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

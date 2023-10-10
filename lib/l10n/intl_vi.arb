@@ -13,5 +13,22 @@
   "image_from_db": "Hình ảnh từ DB",
   "delete_success": "Xoá thành công",
   "delete_failed": "Xoá không thành công",
-  "didnt_supported": "Không hỗ trợ"
+  "didnt_supported": "Không hỗ trợ",
+  "intro_title": "Kết nối dễ dàng với gia đình và bạn bè",
+  "terms": "Chính sách và quy định",
+  "start_messaging": "Bắt đầu",
+  "login": "Đăng nhập",
+  "login_des": "Vui lòng nhập gmail và mật khẩu",
+  "phone_number": "Số điện thoại",
+  "_continue": "Tiếp tục",
+  "email": "Email",
+  "password": "Mật khẩu",
+  "forget_password": "Quên mật khẩu",
+  "remember_account": "Ghi nhớ tài khoản",
+  "email_and_password": "email và mật khẩu",
+  "please_enter": "Vui lòng nhập",
+  "login_fail": "Đăng nhập thất bại",
+  "email_format_is_not_correct": "Định dạng mail không chính xác. Vui lòng sử dụng gmail",
+  "has_some_error": "Có lỗi xảy ra. Vui lòng thử lại sau",
+  "email_or_password_is_not_correct": "Email hoặc mật khẩu không chính xác"
 }

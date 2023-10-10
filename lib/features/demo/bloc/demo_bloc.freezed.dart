@@ -74,25 +74,25 @@ class _$DemoEventCopyWithImpl<$Res, $Val extends DemoEvent>
 }
 
 /// @nodoc
-abstract class _$$_LoadImageFromDBCopyWith<$Res> {
-  factory _$$_LoadImageFromDBCopyWith(
-          _$_LoadImageFromDB value, $Res Function(_$_LoadImageFromDB) then) =
-      __$$_LoadImageFromDBCopyWithImpl<$Res>;
+abstract class _$$LoadImageFromDBImplCopyWith<$Res> {
+  factory _$$LoadImageFromDBImplCopyWith(_$LoadImageFromDBImpl value,
+          $Res Function(_$LoadImageFromDBImpl) then) =
+      __$$LoadImageFromDBImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$_LoadImageFromDBCopyWithImpl<$Res>
-    extends _$DemoEventCopyWithImpl<$Res, _$_LoadImageFromDB>
-    implements _$$_LoadImageFromDBCopyWith<$Res> {
-  __$$_LoadImageFromDBCopyWithImpl(
-      _$_LoadImageFromDB _value, $Res Function(_$_LoadImageFromDB) _then)
+class __$$LoadImageFromDBImplCopyWithImpl<$Res>
+    extends _$DemoEventCopyWithImpl<$Res, _$LoadImageFromDBImpl>
+    implements _$$LoadImageFromDBImplCopyWith<$Res> {
+  __$$LoadImageFromDBImplCopyWithImpl(
+      _$LoadImageFromDBImpl _value, $Res Function(_$LoadImageFromDBImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_LoadImageFromDB implements _LoadImageFromDB {
-  const _$_LoadImageFromDB();
+class _$LoadImageFromDBImpl implements _LoadImageFromDB {
+  const _$LoadImageFromDBImpl();
 
   @override
   String toString() {
@@ -102,7 +102,7 @@ class _$_LoadImageFromDB implements _LoadImageFromDB {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_LoadImageFromDB);
+        (other.runtimeType == runtimeType && other is _$LoadImageFromDBImpl);
   }
 
   @override
@@ -172,14 +172,14 @@ class _$_LoadImageFromDB implements _LoadImageFromDB {
 }
 
 abstract class _LoadImageFromDB implements DemoEvent {
-  const factory _LoadImageFromDB() = _$_LoadImageFromDB;
+  const factory _LoadImageFromDB() = _$LoadImageFromDBImpl;
 }
 
 /// @nodoc
-abstract class _$$_DeleteImageFromDBCopyWith<$Res> {
-  factory _$$_DeleteImageFromDBCopyWith(_$_DeleteImageFromDB value,
-          $Res Function(_$_DeleteImageFromDB) then) =
-      __$$_DeleteImageFromDBCopyWithImpl<$Res>;
+abstract class _$$DeleteImageFromDBImplCopyWith<$Res> {
+  factory _$$DeleteImageFromDBImplCopyWith(_$DeleteImageFromDBImpl value,
+          $Res Function(_$DeleteImageFromDBImpl) then) =
+      __$$DeleteImageFromDBImplCopyWithImpl<$Res>;
   @useResult
   $Res call({DogImage dogImage});
 
@@ -187,11 +187,11 @@ abstract class _$$_DeleteImageFromDBCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$_DeleteImageFromDBCopyWithImpl<$Res>
-    extends _$DemoEventCopyWithImpl<$Res, _$_DeleteImageFromDB>
-    implements _$$_DeleteImageFromDBCopyWith<$Res> {
-  __$$_DeleteImageFromDBCopyWithImpl(
-      _$_DeleteImageFromDB _value, $Res Function(_$_DeleteImageFromDB) _then)
+class __$$DeleteImageFromDBImplCopyWithImpl<$Res>
+    extends _$DemoEventCopyWithImpl<$Res, _$DeleteImageFromDBImpl>
+    implements _$$DeleteImageFromDBImplCopyWith<$Res> {
+  __$$DeleteImageFromDBImplCopyWithImpl(_$DeleteImageFromDBImpl _value,
+      $Res Function(_$DeleteImageFromDBImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -199,7 +199,7 @@ class __$$_DeleteImageFromDBCopyWithImpl<$Res>
   $Res call({
     Object? dogImage = null,
   }) {
-    return _then(_$_DeleteImageFromDB(
+    return _then(_$DeleteImageFromDBImpl(
       dogImage: null == dogImage
           ? _value.dogImage
           : dogImage // ignore: cast_nullable_to_non_nullable
@@ -218,8 +218,8 @@ class __$$_DeleteImageFromDBCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_DeleteImageFromDB implements _DeleteImageFromDB {
-  const _$_DeleteImageFromDB({required this.dogImage});
+class _$DeleteImageFromDBImpl implements _DeleteImageFromDB {
+  const _$DeleteImageFromDBImpl({required this.dogImage});
 
   @override
   final DogImage dogImage;
@@ -233,7 +233,7 @@ class _$_DeleteImageFromDB implements _DeleteImageFromDB {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_DeleteImageFromDB &&
+            other is _$DeleteImageFromDBImpl &&
             (identical(other.dogImage, dogImage) ||
                 other.dogImage == dogImage));
   }
@@ -244,8 +244,8 @@ class _$_DeleteImageFromDB implements _DeleteImageFromDB {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_DeleteImageFromDBCopyWith<_$_DeleteImageFromDB> get copyWith =>
-      __$$_DeleteImageFromDBCopyWithImpl<_$_DeleteImageFromDB>(
+  _$$DeleteImageFromDBImplCopyWith<_$DeleteImageFromDBImpl> get copyWith =>
+      __$$DeleteImageFromDBImplCopyWithImpl<_$DeleteImageFromDBImpl>(
           this, _$identity);
 
   @override
@@ -313,11 +313,11 @@ class _$_DeleteImageFromDB implements _DeleteImageFromDB {
 
 abstract class _DeleteImageFromDB implements DemoEvent {
   const factory _DeleteImageFromDB({required final DogImage dogImage}) =
-      _$_DeleteImageFromDB;
+      _$DeleteImageFromDBImpl;
 
   DogImage get dogImage;
   @JsonKey(ignore: true)
-  _$$_DeleteImageFromDBCopyWith<_$_DeleteImageFromDB> get copyWith =>
+  _$$DeleteImageFromDBImplCopyWith<_$DeleteImageFromDBImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -408,10 +408,11 @@ class _$DemoStateCopyWithImpl<$Res, $Val extends DemoState>
 }
 
 /// @nodoc
-abstract class _$$_DemoStateCopyWith<$Res> implements $DemoStateCopyWith<$Res> {
-  factory _$$_DemoStateCopyWith(
-          _$_DemoState value, $Res Function(_$_DemoState) then) =
-      __$$_DemoStateCopyWithImpl<$Res>;
+abstract class _$$DemoStateImplCopyWith<$Res>
+    implements $DemoStateCopyWith<$Res> {
+  factory _$$DemoStateImplCopyWith(
+          _$DemoStateImpl value, $Res Function(_$DemoStateImpl) then) =
+      __$$DemoStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -427,11 +428,11 @@ abstract class _$$_DemoStateCopyWith<$Res> implements $DemoStateCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$_DemoStateCopyWithImpl<$Res>
-    extends _$DemoStateCopyWithImpl<$Res, _$_DemoState>
-    implements _$$_DemoStateCopyWith<$Res> {
-  __$$_DemoStateCopyWithImpl(
-      _$_DemoState _value, $Res Function(_$_DemoState) _then)
+class __$$DemoStateImplCopyWithImpl<$Res>
+    extends _$DemoStateCopyWithImpl<$Res, _$DemoStateImpl>
+    implements _$$DemoStateImplCopyWith<$Res> {
+  __$$DemoStateImplCopyWithImpl(
+      _$DemoStateImpl _value, $Res Function(_$DemoStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -442,7 +443,7 @@ class __$$_DemoStateCopyWithImpl<$Res>
     Object? images = null,
     Object? isBusy = null,
   }) {
-    return _then(_$_DemoState(
+    return _then(_$DemoStateImpl(
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -465,8 +466,8 @@ class __$$_DemoStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_DemoState implements _DemoState {
-  const _$_DemoState(
+class _$DemoStateImpl implements _DemoState {
+  const _$DemoStateImpl(
       {this.status = const UIInitial(),
       this.notification,
       final List<DogImage> images = const [],
@@ -500,7 +501,7 @@ class _$_DemoState implements _DemoState {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_DemoState &&
+            other is _$DemoStateImpl &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.notification, notification) ||
                 other.notification == notification) &&
@@ -515,8 +516,8 @@ class _$_DemoState implements _DemoState {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_DemoStateCopyWith<_$_DemoState> get copyWith =>
-      __$$_DemoStateCopyWithImpl<_$_DemoState>(this, _$identity);
+  _$$DemoStateImplCopyWith<_$DemoStateImpl> get copyWith =>
+      __$$DemoStateImplCopyWithImpl<_$DemoStateImpl>(this, _$identity);
 }
 
 abstract class _DemoState implements DemoState {
@@ -524,7 +525,7 @@ abstract class _DemoState implements DemoState {
       {final UIStatus status,
       final DemoNotification? notification,
       final List<DogImage> images,
-      final bool isBusy}) = _$_DemoState;
+      final bool isBusy}) = _$DemoStateImpl;
 
   @override
   UIStatus get status;
@@ -536,7 +537,7 @@ abstract class _DemoState implements DemoState {
   bool get isBusy;
   @override
   @JsonKey(ignore: true)
-  _$$_DemoStateCopyWith<_$_DemoState> get copyWith =>
+  _$$DemoStateImplCopyWith<_$DemoStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -621,24 +622,25 @@ class _$DemoNotificationCopyWithImpl<$Res, $Val extends DemoNotification>
 }
 
 /// @nodoc
-abstract class _$$_NotificationInsertSuccessCopyWith<$Res>
+abstract class _$$NotificationInsertSuccessImplCopyWith<$Res>
     implements $DemoNotificationCopyWith<$Res> {
-  factory _$$_NotificationInsertSuccessCopyWith(
-          _$_NotificationInsertSuccess value,
-          $Res Function(_$_NotificationInsertSuccess) then) =
-      __$$_NotificationInsertSuccessCopyWithImpl<$Res>;
+  factory _$$NotificationInsertSuccessImplCopyWith(
+          _$NotificationInsertSuccessImpl value,
+          $Res Function(_$NotificationInsertSuccessImpl) then) =
+      __$$NotificationInsertSuccessImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String message});
 }
 
 /// @nodoc
-class __$$_NotificationInsertSuccessCopyWithImpl<$Res>
-    extends _$DemoNotificationCopyWithImpl<$Res, _$_NotificationInsertSuccess>
-    implements _$$_NotificationInsertSuccessCopyWith<$Res> {
-  __$$_NotificationInsertSuccessCopyWithImpl(
-      _$_NotificationInsertSuccess _value,
-      $Res Function(_$_NotificationInsertSuccess) _then)
+class __$$NotificationInsertSuccessImplCopyWithImpl<$Res>
+    extends _$DemoNotificationCopyWithImpl<$Res,
+        _$NotificationInsertSuccessImpl>
+    implements _$$NotificationInsertSuccessImplCopyWith<$Res> {
+  __$$NotificationInsertSuccessImplCopyWithImpl(
+      _$NotificationInsertSuccessImpl _value,
+      $Res Function(_$NotificationInsertSuccessImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -646,7 +648,7 @@ class __$$_NotificationInsertSuccessCopyWithImpl<$Res>
   $Res call({
     Object? message = null,
   }) {
-    return _then(_$_NotificationInsertSuccess(
+    return _then(_$NotificationInsertSuccessImpl(
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -657,8 +659,8 @@ class __$$_NotificationInsertSuccessCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_NotificationInsertSuccess implements _NotificationInsertSuccess {
-  _$_NotificationInsertSuccess({required this.message});
+class _$NotificationInsertSuccessImpl implements _NotificationInsertSuccess {
+  _$NotificationInsertSuccessImpl({required this.message});
 
   @override
   final String message;
@@ -671,9 +673,9 @@ class _$_NotificationInsertSuccess implements _NotificationInsertSuccess {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_NotificationInsertSuccessCopyWith<_$_NotificationInsertSuccess>
-      get copyWith => __$$_NotificationInsertSuccessCopyWithImpl<
-          _$_NotificationInsertSuccess>(this, _$identity);
+  _$$NotificationInsertSuccessImplCopyWith<_$NotificationInsertSuccessImpl>
+      get copyWith => __$$NotificationInsertSuccessImplCopyWithImpl<
+          _$NotificationInsertSuccessImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -740,34 +742,35 @@ class _$_NotificationInsertSuccess implements _NotificationInsertSuccess {
 
 abstract class _NotificationInsertSuccess implements DemoNotification {
   factory _NotificationInsertSuccess({required final String message}) =
-      _$_NotificationInsertSuccess;
+      _$NotificationInsertSuccessImpl;
 
   @override
   String get message;
   @override
   @JsonKey(ignore: true)
-  _$$_NotificationInsertSuccessCopyWith<_$_NotificationInsertSuccess>
+  _$$NotificationInsertSuccessImplCopyWith<_$NotificationInsertSuccessImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_NotificationInsertFailedCopyWith<$Res>
+abstract class _$$NotificationInsertFailedImplCopyWith<$Res>
     implements $DemoNotificationCopyWith<$Res> {
-  factory _$$_NotificationInsertFailedCopyWith(
-          _$_NotificationInsertFailed value,
-          $Res Function(_$_NotificationInsertFailed) then) =
-      __$$_NotificationInsertFailedCopyWithImpl<$Res>;
+  factory _$$NotificationInsertFailedImplCopyWith(
+          _$NotificationInsertFailedImpl value,
+          $Res Function(_$NotificationInsertFailedImpl) then) =
+      __$$NotificationInsertFailedImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String message});
 }
 
 /// @nodoc
-class __$$_NotificationInsertFailedCopyWithImpl<$Res>
-    extends _$DemoNotificationCopyWithImpl<$Res, _$_NotificationInsertFailed>
-    implements _$$_NotificationInsertFailedCopyWith<$Res> {
-  __$$_NotificationInsertFailedCopyWithImpl(_$_NotificationInsertFailed _value,
-      $Res Function(_$_NotificationInsertFailed) _then)
+class __$$NotificationInsertFailedImplCopyWithImpl<$Res>
+    extends _$DemoNotificationCopyWithImpl<$Res, _$NotificationInsertFailedImpl>
+    implements _$$NotificationInsertFailedImplCopyWith<$Res> {
+  __$$NotificationInsertFailedImplCopyWithImpl(
+      _$NotificationInsertFailedImpl _value,
+      $Res Function(_$NotificationInsertFailedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -775,7 +778,7 @@ class __$$_NotificationInsertFailedCopyWithImpl<$Res>
   $Res call({
     Object? message = null,
   }) {
-    return _then(_$_NotificationInsertFailed(
+    return _then(_$NotificationInsertFailedImpl(
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -786,8 +789,8 @@ class __$$_NotificationInsertFailedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_NotificationInsertFailed implements _NotificationInsertFailed {
-  _$_NotificationInsertFailed({required this.message});
+class _$NotificationInsertFailedImpl implements _NotificationInsertFailed {
+  _$NotificationInsertFailedImpl({required this.message});
 
   @override
   final String message;
@@ -800,9 +803,9 @@ class _$_NotificationInsertFailed implements _NotificationInsertFailed {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_NotificationInsertFailedCopyWith<_$_NotificationInsertFailed>
-      get copyWith => __$$_NotificationInsertFailedCopyWithImpl<
-          _$_NotificationInsertFailed>(this, _$identity);
+  _$$NotificationInsertFailedImplCopyWith<_$NotificationInsertFailedImpl>
+      get copyWith => __$$NotificationInsertFailedImplCopyWithImpl<
+          _$NotificationInsertFailedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -869,12 +872,12 @@ class _$_NotificationInsertFailed implements _NotificationInsertFailed {
 
 abstract class _NotificationInsertFailed implements DemoNotification {
   factory _NotificationInsertFailed({required final String message}) =
-      _$_NotificationInsertFailed;
+      _$NotificationInsertFailedImpl;
 
   @override
   String get message;
   @override
   @JsonKey(ignore: true)
-  _$$_NotificationInsertFailedCopyWith<_$_NotificationInsertFailed>
+  _$$NotificationInsertFailedImplCopyWith<_$NotificationInsertFailedImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

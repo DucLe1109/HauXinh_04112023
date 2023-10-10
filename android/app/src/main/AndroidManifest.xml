@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.boilerplate.boilerplate">
+    package="com.duclh11.hauxinh">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="boilerplate"
+        android:label="HauXinh"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

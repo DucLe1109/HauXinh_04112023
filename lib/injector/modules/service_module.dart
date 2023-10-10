@@ -1,6 +1,8 @@
 import 'package:boilerplate/injector/injector.dart';
 import 'package:boilerplate/services/app_service/app_service.dart';
 import 'package:boilerplate/services/app_service/app_service_impl.dart';
+import 'package:boilerplate/services/auth_service/auth_service.dart';
+import 'package:boilerplate/services/auth_service/auth_service_impl.dart';
 import 'package:boilerplate/services/crashlytics_service/crashlytics_service.dart';
 import 'package:boilerplate/services/crashlytics_service/firebase_crashlytics_service.dart';
 import 'package:boilerplate/services/local_storage_service/local_storage_service.dart';
@@ -29,6 +31,9 @@ class ServiceModule {
         AppServiceImpl(
           localStorageService: injector(),
         ),
+      )
+      ..registerSingleton<AuthService>(
+        AuthServiceImpl(localStorageService: injector()),
       );
   }
 }

@@ -13,6 +13,20 @@ class AppKeys {
   static const String lastLoginKey = 'lastLogin';
   static const String lastUsername = 'username';
   static const String lastEmail = 'email';
+  static const String isRememberAccount = 'isRememberAccount';
+  static const String isHasValidUser = 'isHasValidUser';
+  static const String accessToken = 'accessToken';
+  static const String appUserInfo = 'appUserInfo';
+  static const String isSupportBiometry = 'isSupportBiometry';
+  static const String isHasValidBiometry = 'isHasValidBiometry';
+  static const String token = 'token';
+  static const String sysUsers = 'sysUsers';
+  static const String jwtToken = 'jwtToken';
+  static const String refreshToken = 'refreshToken';
+  static const String username = 'username';
+  static const String password = 'password';
+  static const String userAppInfo = 'userAppInfo';
+
 }
 
 class WidgetKeys {
