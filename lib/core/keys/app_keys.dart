@@ -14,11 +14,12 @@ class AppKeys {
   static const String lastUsername = 'username';
   static const String lastEmail = 'email';
   static const String isRememberAccount = 'isRememberAccount';
-  static const String isHasValidUser = 'isHasValidUser';
   static const String accessToken = 'accessToken';
   static const String appUserInfo = 'appUserInfo';
   static const String isSupportBiometry = 'isSupportBiometry';
   static const String isHasValidBiometry = 'isHasValidBiometry';
+  static const String loginStartTime = 'loginStartTime';
+  static const String loginEndTime = 'loginEndTime';
   static const String token = 'token';
   static const String sysUsers = 'sysUsers';
   static const String jwtToken = 'jwtToken';

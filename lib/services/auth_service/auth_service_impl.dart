@@ -1,6 +1,5 @@
 // ignore_for_file: type_annotate_public_apis
 
-
 import 'package:boilerplate/core/keys/app_keys.dart';
 import 'package:boilerplate/services/auth_service/auth_service.dart';
 import 'package:boilerplate/services/local_storage_service/local_storage_service.dart';
@@ -14,10 +13,6 @@ class AuthServiceImpl implements AuthService {
   @override
   bool get isRememberAccount =>
       _localStorageService.getBool(key: AppKeys.isRememberAccount) ?? false;
-
-  @override
-  bool get isHasValidUser =>
-      _localStorageService.getBool(key: AppKeys.isHasValidUser) ?? false;
 
   @override
   String get password =>
@@ -41,4 +36,12 @@ class AuthServiceImpl implements AuthService {
     required value,
   }) async =>
       _localStorageService.setValue(key: property.value, value: value);
+
+  @override
+  String get loginStartTime =>
+      _localStorageService.getString(key: AppKeys.loginStartTime) ?? '';
+
+  @override
+  String get loginEndTime =>
+      _localStorageService.getString(key: AppKeys.loginEndTime) ?? '';
 }

@@ -181,10 +181,10 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
                 )),
           ),
         ),
-        const Positioned(
-          left: 180,
-          top: 100,
-          child: TranslationFadeIn(
+        Container(
+          margin: const EdgeInsets.only(top: 100),
+          alignment: Alignment.topCenter,
+          child: const TranslationFadeIn(
             translateDirection: TranslateDirection.up,
             mChild: Icon(
               Icons.ac_unit_rounded,
@@ -207,32 +207,16 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
             delay: Duration(milliseconds: 500),
           ),
         ),
-        Positioned(
-          top: 12,
-          left: 214,
+        Container(
+          margin: const EdgeInsets.only(top: 20),
+          alignment: Alignment.topCenter,
           child: TranslationFadeIn(
-             delay: const Duration(milliseconds: 300),
+            delay: const Duration(milliseconds: 300),
             translateDirection: TranslateDirection.up,
             mChild: Container(
               width: 2,
               height: 100,
               color: Colors.white,
-            ),
-          ),
-        ),
-        Positioned(
-          child: TranslationFadeIn(
-            translateDirection: TranslateDirection.up,
-            delay: const Duration(milliseconds: 600),
-            mChild: Container(
-              margin: const EdgeInsets.only(top: 180),
-              child: Center(
-                child: Text(
-                  S.current.login,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-              ),
             ),
           ),
         ),

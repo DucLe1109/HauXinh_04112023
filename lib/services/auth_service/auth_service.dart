@@ -7,11 +7,12 @@ enum AuthProperty {
   refreshToken,
   sysUsers,
   isRememberAccount,
-  isHasValidUser,
   accessToken,
   appUserInfo,
   isSupportBiometry,
   isHasValidBiometry,
+  loginStartTime,
+  loginEndTime,
 }
 
 extension AuthPropertyExtension on AuthProperty {
@@ -29,8 +30,6 @@ extension AuthPropertyExtension on AuthProperty {
         return AppKeys.sysUsers;
       case AuthProperty.isRememberAccount:
         return AppKeys.isRememberAccount;
-      case AuthProperty.isHasValidUser:
-        return AppKeys.isHasValidUser;
       case AuthProperty.accessToken:
         return AppKeys.accessToken;
       case AuthProperty.appUserInfo:
@@ -39,15 +38,16 @@ extension AuthPropertyExtension on AuthProperty {
         return AppKeys.isSupportBiometry;
       case AuthProperty.isHasValidBiometry:
         return AppKeys.isHasValidBiometry;
+      case AuthProperty.loginStartTime:
+        return AppKeys.loginStartTime;
+      case AuthProperty.loginEndTime:
+        return AppKeys.loginEndTime;
     }
   }
 }
 
 abstract class AuthService {
-
   bool get isRememberAccount;
-
-  bool get isHasValidUser;
 
   String get username;
 
@@ -57,9 +57,12 @@ abstract class AuthService {
 
   bool get isHasValidBiometry;
 
+  String get loginStartTime;
+
+  String get loginEndTime;
+
   Future<void> setAuthProperty({
     required AuthProperty property,
     required dynamic value,
   });
-
 }

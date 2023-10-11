@@ -4,6 +4,5 @@ part of 'auth_cubit.dart';
 class AuthState with _$AuthState {
   const factory AuthState({
     @Default(UIInitial()) UIStatus status,
-    @Default(false) bool isHasValidUser,
   }) = _AuthState;
 }

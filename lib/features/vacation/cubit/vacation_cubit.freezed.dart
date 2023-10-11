@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'auth_cubit.dart';
+part of 'vacation_cubit.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,28 +15,27 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$AuthState {
+mixin _$VacationState {
   UIStatus get status => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $AuthStateCopyWith<AuthState> get copyWith =>
+  $VacationStateCopyWith<VacationState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $AuthStateCopyWith<$Res> {
-  factory $AuthStateCopyWith(AuthState value, $Res Function(AuthState) then) =
-      _$AuthStateCopyWithImpl<$Res, AuthState>;
+abstract class $VacationStateCopyWith<$Res> {
+  factory $VacationStateCopyWith(
+          VacationState value, $Res Function(VacationState) then) =
+      _$VacationStateCopyWithImpl<$Res, VacationState>;
   @useResult
   $Res call({UIStatus status});
-
-  $UIStatusCopyWith<$Res> get status;
 }
 
 /// @nodoc
-class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
-    implements $AuthStateCopyWith<$Res> {
-  _$AuthStateCopyWithImpl(this._value, this._then);
+class _$VacationStateCopyWithImpl<$Res, $Val extends VacationState>
+    implements $VacationStateCopyWith<$Res> {
+  _$VacationStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -46,54 +45,43 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? status = null,
+    Object? status = freezed,
   }) {
     return _then(_value.copyWith(
-      status: null == status
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as UIStatus,
     ) as $Val);
   }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $UIStatusCopyWith<$Res> get status {
-    return $UIStatusCopyWith<$Res>(_value.status, (value) {
-      return _then(_value.copyWith(status: value) as $Val);
-    });
-  }
 }
 
 /// @nodoc
-abstract class _$$AuthStateImplCopyWith<$Res>
-    implements $AuthStateCopyWith<$Res> {
-  factory _$$AuthStateImplCopyWith(
-          _$AuthStateImpl value, $Res Function(_$AuthStateImpl) then) =
-      __$$AuthStateImplCopyWithImpl<$Res>;
+abstract class _$$VacationStateImplCopyWith<$Res>
+    implements $VacationStateCopyWith<$Res> {
+  factory _$$VacationStateImplCopyWith(
+          _$VacationStateImpl value, $Res Function(_$VacationStateImpl) then) =
+      __$$VacationStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({UIStatus status});
-
-  @override
-  $UIStatusCopyWith<$Res> get status;
 }
 
 /// @nodoc
-class __$$AuthStateImplCopyWithImpl<$Res>
-    extends _$AuthStateCopyWithImpl<$Res, _$AuthStateImpl>
-    implements _$$AuthStateImplCopyWith<$Res> {
-  __$$AuthStateImplCopyWithImpl(
-      _$AuthStateImpl _value, $Res Function(_$AuthStateImpl) _then)
+class __$$VacationStateImplCopyWithImpl<$Res>
+    extends _$VacationStateCopyWithImpl<$Res, _$VacationStateImpl>
+    implements _$$VacationStateImplCopyWith<$Res> {
+  __$$VacationStateImplCopyWithImpl(
+      _$VacationStateImpl _value, $Res Function(_$VacationStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? status = null,
+    Object? status = freezed,
   }) {
-    return _then(_$AuthStateImpl(
-      status: null == status
+    return _then(_$VacationStateImpl(
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as UIStatus,
@@ -103,8 +91,8 @@ class __$$AuthStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$AuthStateImpl implements _AuthState {
-  const _$AuthStateImpl({this.status = const UIInitial()});
+class _$VacationStateImpl implements _VacationState {
+  const _$VacationStateImpl({this.status = const UIInitial()});
 
   @override
   @JsonKey()
@@ -112,34 +100,35 @@ class _$AuthStateImpl implements _AuthState {
 
   @override
   String toString() {
-    return 'AuthState(status: $status)';
+    return 'VacationState(status: $status)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$AuthStateImpl &&
-            (identical(other.status, status) || other.status == status));
+            other is _$VacationStateImpl &&
+            const DeepCollectionEquality().equals(other.status, status));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, status);
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(status));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$AuthStateImplCopyWith<_$AuthStateImpl> get copyWith =>
-      __$$AuthStateImplCopyWithImpl<_$AuthStateImpl>(this, _$identity);
+  _$$VacationStateImplCopyWith<_$VacationStateImpl> get copyWith =>
+      __$$VacationStateImplCopyWithImpl<_$VacationStateImpl>(this, _$identity);
 }
 
-abstract class _AuthState implements AuthState {
-  const factory _AuthState({final UIStatus status}) = _$AuthStateImpl;
+abstract class _VacationState implements VacationState {
+  const factory _VacationState({final UIStatus status}) = _$VacationStateImpl;
 
   @override
   UIStatus get status;
   @override
   @JsonKey(ignore: true)
-  _$$AuthStateImplCopyWith<_$AuthStateImpl> get copyWith =>
+  _$$VacationStateImplCopyWith<_$VacationStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 enum TranslateDirection { left, right, down, up }
@@ -26,6 +28,12 @@ class _TranslationFadeInState extends State<TranslationFadeIn>
   late Tween<double> _translateXTween;
 
   @override
+  void dispose() {
+    _animation.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     _animation = AnimationController(
@@ -50,12 +58,11 @@ class _TranslationFadeInState extends State<TranslationFadeIn>
         _translateYTween = Tween(begin: 120, end: 0);
         break;
     }
-    Future.delayed(
-      widget.delay,
-      () {
+    Timer(widget.delay, () {
+      if (mounted) {
         _animation.forward();
-      },
-    );
+      }
+    });
   }
 
   @override

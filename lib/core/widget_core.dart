@@ -1,5 +1,8 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_dialogs/material_dialogs.dart';
+import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
 import 'package:motion_toast/motion_toast.dart';
 import 'package:motion_toast/resources/arrays.dart';
 
@@ -63,13 +66,19 @@ abstract class BaseStateFulWidgetState<T extends BaseStateFulWidget>
           toastDuration: Duration(milliseconds: toastDuration),
           title: Text(
             title,
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: Theme
+                .of(context)
+                .textTheme
+                .bodyLarge,
           ),
           iconType: IconType.cupertino,
           animationCurve: Curves.easeOut,
           description: Text(
             description,
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme
+                .of(context)
+                .textTheme
+                .bodyMedium,
           ),
         ).show(context);
         break;
@@ -81,13 +90,19 @@ abstract class BaseStateFulWidgetState<T extends BaseStateFulWidget>
           toastDuration: Duration(milliseconds: toastDuration),
           title: Text(
             title,
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: Theme
+                .of(context)
+                .textTheme
+                .bodyLarge,
           ),
           iconType: IconType.cupertino,
           animationCurve: Curves.easeOut,
           description: Text(
             description,
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme
+                .of(context)
+                .textTheme
+                .bodyMedium,
           ),
         ).show(context);
         break;
@@ -99,13 +114,19 @@ abstract class BaseStateFulWidgetState<T extends BaseStateFulWidget>
           toastDuration: Duration(milliseconds: toastDuration),
           title: Text(
             title,
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: Theme
+                .of(context)
+                .textTheme
+                .bodyLarge,
           ),
           iconType: IconType.cupertino,
           animationCurve: Curves.easeOut,
           description: Text(
             description,
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme
+                .of(context)
+                .textTheme
+                .bodyMedium,
           ),
         ).show(context);
         break;
@@ -117,13 +138,19 @@ abstract class BaseStateFulWidgetState<T extends BaseStateFulWidget>
           toastDuration: Duration(milliseconds: toastDuration),
           title: Text(
             title,
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: Theme
+                .of(context)
+                .textTheme
+                .bodyLarge,
           ),
           iconType: IconType.cupertino,
           animationCurve: Curves.easeOut,
           description: Text(
             description,
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme
+                .of(context)
+                .textTheme
+                .bodyMedium,
           ),
         ).show(context);
         break;
@@ -135,18 +162,25 @@ abstract class BaseStateFulWidgetState<T extends BaseStateFulWidget>
           toastDuration: Duration(milliseconds: toastDuration),
           title: Text(
             title,
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: Theme
+                .of(context)
+                .textTheme
+                .bodyLarge,
           ),
           iconType: IconType.cupertino,
           animationCurve: Curves.easeOut,
           description: Text(
             description,
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme
+                .of(context)
+                .textTheme
+                .bodyMedium,
           ),
         ).show(context);
         break;
     }
   }
 }
+
 
 enum ToastType { warning, error, info, success, delete }

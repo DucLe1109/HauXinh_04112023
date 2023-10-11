@@ -6,7 +6,7 @@ import 'package:boilerplate/features/dog_image_random/view/dog_image_random_page
 import 'package:boilerplate/features/home/home_page.dart';
 import 'package:boilerplate/features/intro/intro_page.dart';
 import 'package:boilerplate/features/setting/setting_page.dart';
-import 'package:boilerplate/features/vacation/vacation.dart';
+import 'package:boilerplate/features/vacation/view/vacation.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/widgets/error_page.dart';
 import 'package:flutter/foundation.dart';

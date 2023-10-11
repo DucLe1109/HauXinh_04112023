@@ -2,6 +2,7 @@ import 'package:boilerplate/features/app/bloc/app_bloc.dart';
 import 'package:boilerplate/features/authentication/cubit/auth_cubit.dart';
 import 'package:boilerplate/features/demo/bloc/demo_bloc.dart';
 import 'package:boilerplate/features/dog_image_random/bloc/dog_image_random_bloc.dart';
+import 'package:boilerplate/features/vacation/cubit/vacation_cubit.dart';
 import 'package:boilerplate/injector/injector.dart';
 import 'package:flutter/foundation.dart';
 
@@ -25,6 +26,7 @@ class BlocModule {
           logService: injector(),
         ),
       )
+      // ..registerFactory<VacationCubit>(VacationCubit.new,)
       ..registerLazySingleton(() => AuthCubit(authService: injector()))
       ..registerFactory<DemoBloc>(
         () => DemoBloc(

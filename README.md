@@ -74,6 +74,7 @@ Go to project root and execute the following command in terminal to get the requ
 flutter pub get
 flutter pub run intl_utils:generate
 flutter pub run build_runner build --delete-conflicting-outputs
+open ios/Runner.xcworkspace
 ```
 
 **Step 3:**

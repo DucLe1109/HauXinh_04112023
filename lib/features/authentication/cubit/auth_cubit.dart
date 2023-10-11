@@ -3,11 +3,13 @@
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/services/auth_service/auth_service.dart';
+import 'package:boilerplate/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:intl/intl.dart';
 
 part 'auth_cubit.freezed.dart';
 
@@ -33,13 +35,10 @@ class AuthCubit extends Cubit<AuthState> {
   late final FirebaseApp _app;
   late final FirebaseAuth _auth;
 
-// late AuthRepository authRepository;
-
   Future<void> login(String username, String password) async {
     emit(
       state.copyWith(
         status: const UIStatus.loading(),
-        isHasValidUser: false,
       ),
     );
     try {
@@ -49,23 +48,21 @@ class AuthCubit extends Cubit<AuthState> {
         password: password,
       );
       if (userCredential.user != null) {
+        setLoginSessionDuration();
         setRememberAccount(isRememberAccount);
         isRememberAccount
             ? rememberUser(username, password)
             : rememberUser('', '');
-        setIsHasValidUser(true);
 
         emit(
           state.copyWith(
             status: const UIStatus.loadSuccess(message: ''),
-            isHasValidUser: true,
           ),
         );
       } else {
         emit(
           state.copyWith(
             status: UIStatus.loadFailed(message: S.current.has_some_error),
-            isHasValidUser: false,
           ),
         );
       }
@@ -76,34 +73,30 @@ class AuthCubit extends Cubit<AuthState> {
           status: UIStatus.loadFailed(
             message: S.current.email_or_password_is_not_correct,
           ),
-          isHasValidUser: false,
         ),
       );
     }
   }
 
-// void saveUserData(LoginResponse loginResponse) {
-//   _authService
-//     ..setAuthProperty(
-//       property: AuthProperty.token,
-//       value: loginResponse.token,
-//     )
-//     ..setAuthProperty(
-//       property: AuthProperty.accessToken,
-//       value: loginResponse.jwtToken?.accessToken,
-//     )
-//     ..setAuthProperty(
-//       property: AuthProperty.refreshToken,
-//       value: loginResponse.jwtToken?.refreshToken,
-//     )
-//     ..setSysUsers(loginResponse.sysUsers)
-//     ..setJwtToken(loginResponse.jwtToken);
-// }
-//
   void setRememberAccount(bool value) {
     _authService.setAuthProperty(
       property: AuthProperty.isRememberAccount,
       value: value,
+    );
+  }
+
+  void setLoginSessionDuration() {
+    final String nowString = Utils.getDateTimeNow();
+    _authService.setAuthProperty(
+        property: AuthProperty.loginStartTime, value: nowString,);
+
+    final DateTime nowDatetime = DateTime.now();
+    final DateTime loginEndTime = nowDatetime.add(const Duration(seconds: 5));
+    final String loginEndTimeFormat =
+        DateFormat('dd/MM/yyyy HH:mm:ss').format(loginEndTime);
+    _authService.setAuthProperty(
+      property: AuthProperty.loginEndTime,
+      value: loginEndTimeFormat,
     );
   }
 
@@ -113,37 +106,8 @@ class AuthCubit extends Cubit<AuthState> {
       ..setAuthProperty(property: AuthProperty.password, value: password);
   }
 
-//
-  void setIsHasValidUser(bool isHasValidUser) {
-    _authService.setAuthProperty(
-      property: AuthProperty.isHasValidUser,
-      value: isHasValidUser,
-    );
-  }
-
-//
-// Future<void> onChangeRememberPassword({
-//   required bool isRememberAccount,
-//   required String username,
-//   required String password,
-// }) async {
-//   await _authService.setAuthProperty(
-//     property: AuthProperty.isRememberPassword,
-//     value: isRememberPassword,
-//   );
-//   if (isRememberPassword) {
-//     rememberUser(username, password);
-//   } else {
-//     rememberUser('', '');
-//   }
-// }
-//
   void logout() {
     FirebaseAuth.instance.signOut();
-    _authService.setAuthProperty(
-      property: AuthProperty.isHasValidUser,
-      value: false,
-    );
     isRememberAccount = _authService.isRememberAccount;
     username = _authService.username;
     password = _authService.password;
@@ -157,28 +121,4 @@ class AuthCubit extends Cubit<AuthState> {
   String getPasswordForBiometric() {
     return _authService.password;
   }
-//
-// Future<bool> authenticateWithBiometrics() async {
-//   final LocalAuthentication auth = LocalAuthentication();
-//   try {
-//     return await auth.authenticate(
-//       localizedReason: S.current.use_biometry_to_authentication,
-//       options: const AuthenticationOptions(
-//         stickyAuth: true,
-//       ),
-//       authMessages: <AuthMessages>[
-//         AndroidAuthMessages(
-//           signInTitle: S.current.authentication_required,
-//           biometricHint: '',
-//           cancelButton: S.current.cancel,
-//           goToSettingsButton: S.current.setting,
-//         ),
-//         IOSAuthMessages(cancelButton: S.current.cancel),
-//       ],
-//     );
-//   } on PlatformException catch (e) {
-//     debugPrint('Error - ${e.message}');
-//     return false;
-//   }
-// }
 }
