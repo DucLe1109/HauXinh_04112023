@@ -1,6 +1,3 @@
-import 'package:boilerplate/injector/injector.dart';
-import 'package:boilerplate/services/auth_service/auth_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

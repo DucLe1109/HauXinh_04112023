@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'vacation_cubit.dart';
+part of 'home_cubit.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,19 +15,18 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$VacationState {
+mixin _$HomeState {
   UIStatus get status => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $VacationStateCopyWith<VacationState> get copyWith =>
+  $HomeStateCopyWith<HomeState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $VacationStateCopyWith<$Res> {
-  factory $VacationStateCopyWith(
-          VacationState value, $Res Function(VacationState) then) =
-      _$VacationStateCopyWithImpl<$Res, VacationState>;
+abstract class $HomeStateCopyWith<$Res> {
+  factory $HomeStateCopyWith(HomeState value, $Res Function(HomeState) then) =
+      _$HomeStateCopyWithImpl<$Res, HomeState>;
   @useResult
   $Res call({UIStatus status});
 
@@ -35,9 +34,9 @@ abstract class $VacationStateCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$VacationStateCopyWithImpl<$Res, $Val extends VacationState>
-    implements $VacationStateCopyWith<$Res> {
-  _$VacationStateCopyWithImpl(this._value, this._then);
+class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
+    implements $HomeStateCopyWith<$Res> {
+  _$HomeStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -67,11 +66,11 @@ class _$VacationStateCopyWithImpl<$Res, $Val extends VacationState>
 }
 
 /// @nodoc
-abstract class _$$VacationStateImplCopyWith<$Res>
-    implements $VacationStateCopyWith<$Res> {
-  factory _$$VacationStateImplCopyWith(
-          _$VacationStateImpl value, $Res Function(_$VacationStateImpl) then) =
-      __$$VacationStateImplCopyWithImpl<$Res>;
+abstract class _$$HomeStateImplCopyWith<$Res>
+    implements $HomeStateCopyWith<$Res> {
+  factory _$$HomeStateImplCopyWith(
+          _$HomeStateImpl value, $Res Function(_$HomeStateImpl) then) =
+      __$$HomeStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({UIStatus status});
@@ -81,11 +80,11 @@ abstract class _$$VacationStateImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$VacationStateImplCopyWithImpl<$Res>
-    extends _$VacationStateCopyWithImpl<$Res, _$VacationStateImpl>
-    implements _$$VacationStateImplCopyWith<$Res> {
-  __$$VacationStateImplCopyWithImpl(
-      _$VacationStateImpl _value, $Res Function(_$VacationStateImpl) _then)
+class __$$HomeStateImplCopyWithImpl<$Res>
+    extends _$HomeStateCopyWithImpl<$Res, _$HomeStateImpl>
+    implements _$$HomeStateImplCopyWith<$Res> {
+  __$$HomeStateImplCopyWithImpl(
+      _$HomeStateImpl _value, $Res Function(_$HomeStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -93,7 +92,7 @@ class __$$VacationStateImplCopyWithImpl<$Res>
   $Res call({
     Object? status = null,
   }) {
-    return _then(_$VacationStateImpl(
+    return _then(_$HomeStateImpl(
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -104,8 +103,8 @@ class __$$VacationStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$VacationStateImpl implements _VacationState {
-  const _$VacationStateImpl({this.status = const UIInitial()});
+class _$HomeStateImpl implements _HomeState {
+  const _$HomeStateImpl({this.status = const UIInitial()});
 
   @override
   @JsonKey()
@@ -113,14 +112,14 @@ class _$VacationStateImpl implements _VacationState {
 
   @override
   String toString() {
-    return 'VacationState(status: $status)';
+    return 'HomeState(status: $status)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$VacationStateImpl &&
+            other is _$HomeStateImpl &&
             (identical(other.status, status) || other.status == status));
   }
 
@@ -130,17 +129,17 @@ class _$VacationStateImpl implements _VacationState {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$VacationStateImplCopyWith<_$VacationStateImpl> get copyWith =>
-      __$$VacationStateImplCopyWithImpl<_$VacationStateImpl>(this, _$identity);
+  _$$HomeStateImplCopyWith<_$HomeStateImpl> get copyWith =>
+      __$$HomeStateImplCopyWithImpl<_$HomeStateImpl>(this, _$identity);
 }
 
-abstract class _VacationState implements VacationState {
-  const factory _VacationState({final UIStatus status}) = _$VacationStateImpl;
+abstract class _HomeState implements HomeState {
+  const factory _HomeState({final UIStatus status}) = _$HomeStateImpl;
 
   @override
   UIStatus get status;
   @override
   @JsonKey(ignore: true)
-  _$$VacationStateImplCopyWith<_$VacationStateImpl> get copyWith =>
+  _$$HomeStateImplCopyWith<_$HomeStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

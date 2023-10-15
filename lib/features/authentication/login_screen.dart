@@ -54,7 +54,7 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
           case UILoadSuccess():
             {
               hideLoading(context);
-              context.pushReplacement(AppRouter.vacationPath);
+              context.pushReplacement(AppRouter.appDirectorPath);
               break;
             }
           case UILoadFailed():
@@ -178,7 +178,7 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
                 child: Assets.images.hangLamp.image(
                   scale: 6,
                   color: Colors.white,
-                )),
+                ),),
           ),
         ),
         Container(

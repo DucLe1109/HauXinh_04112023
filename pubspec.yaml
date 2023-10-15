@@ -65,6 +65,7 @@ dependencies:
   motion_toast: ^2.7.9
   material_dialogs: ^1.1.4
   awesome_dialog: ^3.1.0
+  persistent_bottom_nav_bar: ^5.0.2
 
 
 dev_dependencies:

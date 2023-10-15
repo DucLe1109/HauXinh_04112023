@@ -3,7 +3,7 @@ import 'package:boilerplate/features/authentication/login_screen.dart';
 import 'package:boilerplate/features/demo/view/assets_page.dart';
 import 'package:boilerplate/features/demo/view/images_from_db_page.dart';
 import 'package:boilerplate/features/dog_image_random/view/dog_image_random_page.dart';
-import 'package:boilerplate/features/home/home_page.dart';
+import 'package:boilerplate/features/home/view/home_page.dart';
 import 'package:boilerplate/features/intro/intro_page.dart';
 import 'package:boilerplate/features/setting/setting_page.dart';
 import 'package:boilerplate/features/vacation/view/vacation.dart';
