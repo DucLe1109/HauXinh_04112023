@@ -47,6 +47,12 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
   }
 
   @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
@@ -154,16 +160,16 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
     );
   }
 
-  Widget _buildForgotPasswordSection() {
-    return TranslationFadeIn(
-      delay: const Duration(milliseconds: 1100),
-      translateDirection: TranslateDirection.up,
-      mChild: Text(
-        S.current.forget_password,
-        style: const TextStyle(color: Color.fromRGBO(143, 148, 251, 1)),
-      ),
-    );
-  }
+  // Widget _buildForgotPasswordSection() {
+  //   return TranslationFadeIn(
+  //     delay: const Duration(milliseconds: 1100),
+  //     translateDirection: TranslateDirection.up,
+  //     mChild: Text(
+  //       S.current.forget_password,
+  //       style: const TextStyle(color: Color.fromRGBO(143, 148, 251, 1)),
+  //     ),
+  //   );
+  // }
 
   Widget _buildBgSection(BuildContext context) {
     return Stack(
@@ -174,11 +180,12 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
           child: TranslationFadeIn(
             translateDirection: TranslateDirection.up,
             mChild: Transform.rotate(
-                angle: 3 * pi / 2,
-                child: Assets.images.hangLamp.image(
-                  scale: 6,
-                  color: Colors.white,
-                ),),
+              angle: 3 * pi / 2,
+              child: Assets.images.hangLamp.image(
+                scale: 6,
+                color: Colors.white,
+              ),
+            ),
           ),
         ),
         Container(
@@ -382,8 +389,7 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
   }
 
   bool validateLoginInfo() {
-    return _emailController.text.isNotEmpty &&
-        _passwordController.text.isNotEmpty;
+    return _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
   }
 
   bool validateEmailFormat() {

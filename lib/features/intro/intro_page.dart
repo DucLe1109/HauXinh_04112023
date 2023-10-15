@@ -81,7 +81,6 @@ class IntroPage extends StatelessWidget {
                           context
                               .read<AppBloc>()
                               .add(const AppEvent.disableFirstUse());
-                          context.push(AppRouter.loginPath);
                         },
                         style: FilledButton.styleFrom(
                           textStyle: Theme.of(context).textTheme.bodyMedium,

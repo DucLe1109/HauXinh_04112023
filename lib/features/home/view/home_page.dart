@@ -3,6 +3,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
 import 'package:boilerplate/core/widget_core.dart';
+import 'package:boilerplate/features/contact/view/contact_tab.dart';
 import 'package:boilerplate/features/home/cubit/home_cubit.dart';
 import 'package:boilerplate/features/vacation/view/vacation.dart';
 import 'package:boilerplate/generated/l10n.dart';
@@ -76,36 +77,55 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
           // Screen transition animation on change of selected tab.
           animateTabTransition: true,
         ),
-        navBarStyle: NavBarStyle.style15,
+        backgroundColor:
+            Theme.of(context).bottomNavigationBarTheme.backgroundColor!,
       ),
     );
   }
 
   List<Widget> _buildScreens() {
     return [
-      const Vacation(),
-      const Vacation(),
-      const Vacation(),
+      ContactScreen(),
+      Container(),
+      Container(),
     ];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.home),
-        title: 'Home',
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
+          icon: const Icon(CupertinoIcons.phone_circle),
+          title: S.current.contact,
+          inactiveColorPrimary: Theme.of(context)
+              .bottomNavigationBarTheme
+              .unselectedIconTheme!
+              .color,
+          activeColorPrimary: Theme.of(context)
+              .bottomNavigationBarTheme
+              .selectedIconTheme!
+              .color!),
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.settings),
-        title: 'Settings',
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
+          icon: const Icon(CupertinoIcons.chat_bubble_2),
+          title: S.current.chats,
+          inactiveColorPrimary: Theme.of(context)
+              .bottomNavigationBarTheme
+              .unselectedIconTheme!
+              .color,
+          activeColorPrimary: Theme.of(context)
+              .bottomNavigationBarTheme
+              .selectedIconTheme!
+              .color!),
       PersistentBottomNavBarItem(
-        icon: const Icon(CupertinoIcons.settings),
-        title: 'Settings',
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
+          icon: const Icon(CupertinoIcons.settings),
+          title: S.current.setting,
+          inactiveColorPrimary: Theme.of(context)
+              .bottomNavigationBarTheme
+              .unselectedIconTheme!
+              .color,
+          activeColorPrimary: Theme.of(context)
+              .bottomNavigationBarTheme
+              .selectedIconTheme!
+              .color!),
     ];
   }
 }

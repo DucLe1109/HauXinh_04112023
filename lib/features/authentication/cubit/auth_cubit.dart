@@ -91,7 +91,7 @@ class AuthCubit extends Cubit<AuthState> {
         property: AuthProperty.loginStartTime, value: nowString,);
 
     final DateTime nowDatetime = DateTime.now();
-    final DateTime loginEndTime = nowDatetime.add(const Duration(seconds: 5));
+    final DateTime loginEndTime = nowDatetime.add(const Duration(days: 5));
     final String loginEndTimeFormat =
         DateFormat('dd/MM/yyyy HH:mm:ss').format(loginEndTime);
     _authService.setAuthProperty(

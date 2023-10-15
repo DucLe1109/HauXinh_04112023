@@ -4,9 +4,11 @@ import 'package:boilerplate/features/app/bloc/app_bloc.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/injector/injector.dart';
 import 'package:boilerplate/router/app_router.dart';
+import 'package:boilerplate/utils/scroll_behavior.dart';
 import 'package:boilerplate/widgets/splash_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -65,20 +67,27 @@ class _App extends StatelessWidget {
       (AppBloc value) => value.state.isDarkMode,
     );
 
-    return MaterialApp.router(
-      localizationsDelegates: const [
-        AppLocalizationDelegate(),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        DefaultCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const AppLocalizationDelegate().supportedLocales,
-      locale: Locale(locale),
-      theme: AppThemes.lightTheme,
-      darkTheme: AppThemes.darkTheme,
-      routerConfig: AppRouter.router,
-      title: 'BoilerPlate',
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+      ),
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        scrollBehavior: MScrollBehavior(),
+        localizationsDelegates: const [
+          AppLocalizationDelegate(),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          DefaultCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const AppLocalizationDelegate().supportedLocales,
+        locale: Locale(locale),
+        theme: AppThemes.lightTheme,
+        darkTheme: AppThemes.darkTheme,
+        routerConfig: AppRouter.router,
+        title: 'BoilerPlate',
+      ),
     );
   }
 }

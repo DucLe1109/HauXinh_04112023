@@ -32,5 +32,8 @@
   "has_some_error": "Có lỗi xảy ra. Vui lòng thử lại sau",
   "email_or_password_is_not_correct": "Email hoặc mật khẩu không chính xác",
   "authentication" : "Xác thực",
-  "expired_session" : "Phiên đăng nhập của bạn đã hết hạn. Vui lòng đăng nhập lại để tiếp tục"
+  "expired_session" : "Phiên đăng nhập của bạn đã hết hạn. Vui lòng đăng nhập lại để tiếp tục",
+  "contact": "Liên hệ",
+  "search" : "Tìm kiếm"
+
 }

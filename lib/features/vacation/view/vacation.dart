@@ -176,8 +176,7 @@ class _VacationState extends BaseStateFulWidgetState<Vacation> {
                         delay: const Duration(milliseconds: 300),
                         mChild: Text(
                           'Lê Huy Đức',
-                          style:
-                              TextStyle(color: Colors.white.withOpacity(0.7)),
+                          style: TextStyle(color: Colors.white.withOpacity(0.7)),
                         ),
                       ),
                       const SizedBox(
@@ -198,8 +197,7 @@ class _VacationState extends BaseStateFulWidgetState<Vacation> {
                         delay: const Duration(milliseconds: 600),
                         mChild: Text(
                           'Tam Đảo, Mai Châu, Hạ Long',
-                          style:
-                              TextStyle(color: Colors.white.withOpacity(0.7)),
+                          style: TextStyle(color: Colors.white.withOpacity(0.7)),
                         ),
                       ),
                       const SizedBox(

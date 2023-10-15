@@ -26,7 +26,9 @@ class BlocModule {
           logService: injector(),
         ),
       )
-      ..registerFactory<HomeCubit>(HomeCubit.new,)
+      ..registerFactory<HomeCubit>(
+        HomeCubit.new,
+      )
       ..registerLazySingleton(() => AuthCubit(authService: injector()))
       ..registerFactory<DemoBloc>(
         () => DemoBloc(

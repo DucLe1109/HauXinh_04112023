@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AppThemes {
@@ -87,47 +88,75 @@ class AppThemes {
     height: 48,
   );
 
+  static const IconThemeData _lightSelectedIconThemeData = IconThemeData(
+    color: _lightIconColor,
+  );
+  static const IconThemeData _darkSelectedIconThemeData = IconThemeData(
+    color: _darkIconColor,
+  );
+
+  static const IconThemeData _lightUnSelectedIconThemeData = IconThemeData(
+    color: CupertinoColors.systemGrey,
+  );
+  static const IconThemeData _darkUnSelectedIconThemeData = IconThemeData(
+    color: CupertinoColors.systemGrey,
+  );
+
+  static const BottomNavigationBarThemeData _darkBottomNavigationBarThemeData = BottomNavigationBarThemeData(
+      backgroundColor: _darkPrimaryColor,
+      selectedIconTheme: _darkSelectedIconThemeData,
+      unselectedIconTheme: _darkUnSelectedIconThemeData);
+  static const BottomNavigationBarThemeData _lightBottomNavigationBarThemeData = BottomNavigationBarThemeData(
+      backgroundColor: _lightPrimaryColor,
+      selectedIconTheme: _lightSelectedIconThemeData,
+      unselectedIconTheme: _lightUnSelectedIconThemeData);
+
+  static final SearchBarThemeData _lightSearchBarThemeData = SearchBarThemeData(
+    backgroundColor: MaterialStateProperty.all(const Color(0xFFF7F7FC)),
+  );
+  static final SearchBarThemeData _darkSearchBarThemeData = SearchBarThemeData(
+    backgroundColor: MaterialStateProperty.all(const Color(0xFF1B2B48)),
+  );
+
   ///Light theme
   static final ThemeData lightTheme = ThemeData(
-    unselectedWidgetColor: const Color.fromRGBO(143, 148, 251, 1),
-    brightness: Brightness.light,
-    primaryColor: _lightPrimaryColor,
-    scaffoldBackgroundColor: _lightBackgroundColor,
-    appBarTheme: AppBarTheme(
-      color: _lightBackgroundColor,
-      iconTheme: const IconThemeData(color: _lightIconColor),
-      toolbarTextStyle: _lightTextTheme.bodyMedium,
-      titleTextStyle: _lightTextTheme.titleLarge,
-    ),
-    iconTheme: const IconThemeData(
-      color: _lightIconColor,
-    ),
-    textTheme: _lightTextTheme,
-    dividerTheme: const DividerThemeData(
-      color: Colors.grey,
-    ),
-    buttonTheme: _lightButtonTheme,
-  );
+      unselectedWidgetColor: const Color.fromRGBO(143, 148, 251, 1),
+      brightness: Brightness.light,
+      primaryColor: _lightPrimaryColor,
+      scaffoldBackgroundColor: _lightBackgroundColor,
+      appBarTheme: AppBarTheme(
+        color: _lightBackgroundColor,
+        iconTheme: const IconThemeData(color: _lightIconColor),
+        toolbarTextStyle: _lightTextTheme.bodyMedium,
+        titleTextStyle: _lightTextTheme.titleLarge,
+      ),
+      iconTheme: _lightSelectedIconThemeData,
+      textTheme: _lightTextTheme,
+      dividerTheme: const DividerThemeData(
+        color: Colors.grey,
+      ),
+      searchBarTheme: _lightSearchBarThemeData,
+      buttonTheme: _lightButtonTheme,
+      bottomNavigationBarTheme: _lightBottomNavigationBarThemeData);
 
   ///Dark theme
   static final ThemeData darkTheme = ThemeData(
-    unselectedWidgetColor: const Color.fromRGBO(143, 148, 251, 1),
-    brightness: Brightness.dark,
-    primaryColor: _darkPrimaryColor,
-    scaffoldBackgroundColor: _darkBackgroundColor,
-    appBarTheme: AppBarTheme(
-      color: _darkBackgroundColor,
-      iconTheme: const IconThemeData(color: _darkIconColor),
-      toolbarTextStyle: _darkTextTheme.bodyMedium,
-      titleTextStyle: _darkTextTheme.titleLarge,
-    ),
-    iconTheme: const IconThemeData(
-      color: _darkIconColor,
-    ),
-    textTheme: _darkTextTheme,
-    dividerTheme: const DividerThemeData(
-      color: Colors.grey,
-    ),
-    buttonTheme: _darkButtonTheme,
-  );
+      unselectedWidgetColor: const Color.fromRGBO(143, 148, 251, 1),
+      brightness: Brightness.dark,
+      primaryColor: _darkPrimaryColor,
+      scaffoldBackgroundColor: _darkBackgroundColor,
+      appBarTheme: AppBarTheme(
+        color: _darkBackgroundColor,
+        iconTheme: const IconThemeData(color: _darkIconColor),
+        toolbarTextStyle: _darkTextTheme.bodyMedium,
+        titleTextStyle: _darkTextTheme.titleLarge,
+      ),
+      iconTheme: _darkSelectedIconThemeData,
+      textTheme: _darkTextTheme,
+      dividerTheme: const DividerThemeData(
+        color: Colors.grey,
+      ),
+      searchBarTheme: _darkSearchBarThemeData,
+      buttonTheme: _darkButtonTheme,
+      bottomNavigationBarTheme: _darkBottomNavigationBarThemeData);
 }

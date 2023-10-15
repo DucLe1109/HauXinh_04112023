@@ -13,8 +13,7 @@ part 'home_state.dart';
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(const HomeState()) {
     _authService = Injector.instance<AuthService>();
-    loginEndTime =
-        DateFormat('dd/MM/yyyy HH:mm:ss').parse(_authService.loginEndTime);
+    loginEndTime = DateFormat('dd/MM/yyyy HH:mm:ss').parse(_authService.loginEndTime);
     final DateTime now = DateTime.now();
     isExpiredSession = now.isAfter(loginEndTime);
   }
