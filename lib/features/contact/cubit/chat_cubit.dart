@@ -6,10 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:intl/intl.dart';
 
-part 'contact_cubit.freezed.dart';
+part 'chat_cubit.freezed.dart';
 
-part 'contact_state.dart';
+part 'chat_state.dart';
 
-class ContactCubit extends Cubit<ContactState> {
-  ContactCubit() : super(const ContactState()) {}
+class ChatCubit extends Cubit<ChatState> {
+  ChatCubit() : super(const ChatState()) {}
 }

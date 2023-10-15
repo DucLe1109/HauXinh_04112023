@@ -4,14 +4,14 @@ import 'package:boilerplate/generated/l10n.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ContactScreen extends StatefulWidget {
-  const ContactScreen({super.key});
+class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key});
 
   @override
-  State<ContactScreen> createState() => _ContactScreenState();
+  State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ContactScreenState extends State<ContactScreen> {
+class _ChatScreenState extends State<ChatScreen> {
   late TextEditingController _searchController;
 
   @override

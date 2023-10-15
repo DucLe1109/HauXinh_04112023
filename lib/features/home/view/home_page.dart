@@ -3,7 +3,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
 import 'package:boilerplate/core/widget_core.dart';
-import 'package:boilerplate/features/contact/view/contact_tab.dart';
+import 'package:boilerplate/features/contact/view/chats_tab.dart';
 import 'package:boilerplate/features/home/cubit/home_cubit.dart';
 import 'package:boilerplate/features/vacation/view/vacation.dart';
 import 'package:boilerplate/generated/l10n.dart';
@@ -85,8 +85,8 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
 
   List<Widget> _buildScreens() {
     return [
-      ContactScreen(),
       Container(),
+      ChatScreen(),
       Container(),
     ];
   }

@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'contact_cubit.dart';
+part of 'chat_cubit.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,19 +15,18 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$ContactState {
+mixin _$ChatState {
   UIStatus get status => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $ContactStateCopyWith<ContactState> get copyWith =>
+  $ChatStateCopyWith<ChatState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ContactStateCopyWith<$Res> {
-  factory $ContactStateCopyWith(
-          ContactState value, $Res Function(ContactState) then) =
-      _$ContactStateCopyWithImpl<$Res, ContactState>;
+abstract class $ChatStateCopyWith<$Res> {
+  factory $ChatStateCopyWith(ChatState value, $Res Function(ChatState) then) =
+      _$ChatStateCopyWithImpl<$Res, ChatState>;
   @useResult
   $Res call({UIStatus status});
 
@@ -35,9 +34,9 @@ abstract class $ContactStateCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ContactStateCopyWithImpl<$Res, $Val extends ContactState>
-    implements $ContactStateCopyWith<$Res> {
-  _$ContactStateCopyWithImpl(this._value, this._then);
+class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
+    implements $ChatStateCopyWith<$Res> {
+  _$ChatStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -67,11 +66,11 @@ class _$ContactStateCopyWithImpl<$Res, $Val extends ContactState>
 }
 
 /// @nodoc
-abstract class _$$ContactStateImplCopyWith<$Res>
-    implements $ContactStateCopyWith<$Res> {
-  factory _$$ContactStateImplCopyWith(
-          _$ContactStateImpl value, $Res Function(_$ContactStateImpl) then) =
-      __$$ContactStateImplCopyWithImpl<$Res>;
+abstract class _$$ChatStateImplCopyWith<$Res>
+    implements $ChatStateCopyWith<$Res> {
+  factory _$$ChatStateImplCopyWith(
+          _$ChatStateImpl value, $Res Function(_$ChatStateImpl) then) =
+      __$$ChatStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({UIStatus status});
@@ -81,11 +80,11 @@ abstract class _$$ContactStateImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$ContactStateImplCopyWithImpl<$Res>
-    extends _$ContactStateCopyWithImpl<$Res, _$ContactStateImpl>
-    implements _$$ContactStateImplCopyWith<$Res> {
-  __$$ContactStateImplCopyWithImpl(
-      _$ContactStateImpl _value, $Res Function(_$ContactStateImpl) _then)
+class __$$ChatStateImplCopyWithImpl<$Res>
+    extends _$ChatStateCopyWithImpl<$Res, _$ChatStateImpl>
+    implements _$$ChatStateImplCopyWith<$Res> {
+  __$$ChatStateImplCopyWithImpl(
+      _$ChatStateImpl _value, $Res Function(_$ChatStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -93,7 +92,7 @@ class __$$ContactStateImplCopyWithImpl<$Res>
   $Res call({
     Object? status = null,
   }) {
-    return _then(_$ContactStateImpl(
+    return _then(_$ChatStateImpl(
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -104,8 +103,8 @@ class __$$ContactStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ContactStateImpl implements _ContactState {
-  const _$ContactStateImpl({this.status = const UIInitial()});
+class _$ChatStateImpl implements _ChatState {
+  const _$ChatStateImpl({this.status = const UIInitial()});
 
   @override
   @JsonKey()
@@ -113,14 +112,14 @@ class _$ContactStateImpl implements _ContactState {
 
   @override
   String toString() {
-    return 'ContactState(status: $status)';
+    return 'ChatState(status: $status)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ContactStateImpl &&
+            other is _$ChatStateImpl &&
             (identical(other.status, status) || other.status == status));
   }
 
@@ -130,17 +129,17 @@ class _$ContactStateImpl implements _ContactState {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$ContactStateImplCopyWith<_$ContactStateImpl> get copyWith =>
-      __$$ContactStateImplCopyWithImpl<_$ContactStateImpl>(this, _$identity);
+  _$$ChatStateImplCopyWith<_$ChatStateImpl> get copyWith =>
+      __$$ChatStateImplCopyWithImpl<_$ChatStateImpl>(this, _$identity);
 }
 
-abstract class _ContactState implements ContactState {
-  const factory _ContactState({final UIStatus status}) = _$ContactStateImpl;
+abstract class _ChatState implements ChatState {
+  const factory _ChatState({final UIStatus status}) = _$ChatStateImpl;
 
   @override
   UIStatus get status;
   @override
   @JsonKey(ignore: true)
-  _$$ContactStateImplCopyWith<_$ContactStateImpl> get copyWith =>
+  _$$ChatStateImplCopyWith<_$ChatStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
