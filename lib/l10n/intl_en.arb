@@ -35,5 +35,7 @@
   "expired_session" : "Your session is expired. Please re sign-in to continue",
   "contact": "Contact",
   "chats" : "Chats",
-  "search" : "Search"
+  "search" : "Search",
+  "your_story" : "Your story"
+
 }

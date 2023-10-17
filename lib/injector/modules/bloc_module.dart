@@ -1,5 +1,6 @@
 import 'package:boilerplate/features/app/bloc/app_bloc.dart';
 import 'package:boilerplate/features/authentication/cubit/auth_cubit.dart';
+import 'package:boilerplate/features/contact/cubit/chat_cubit.dart';
 import 'package:boilerplate/features/demo/bloc/demo_bloc.dart';
 import 'package:boilerplate/features/dog_image_random/bloc/dog_image_random_bloc.dart';
 import 'package:boilerplate/features/home/cubit/home_cubit.dart';
@@ -28,6 +29,9 @@ class BlocModule {
       )
       ..registerFactory<HomeCubit>(
         HomeCubit.new,
+      )
+      ..registerFactory<ChatCubit>(
+        ChatCubit.new,
       )
       ..registerLazySingleton(() => AuthCubit(authService: injector()))
       ..registerFactory<DemoBloc>(

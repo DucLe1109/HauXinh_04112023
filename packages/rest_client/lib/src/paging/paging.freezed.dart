@@ -80,10 +80,11 @@ class _$PagingCopyWithImpl<T, $Res, $Val extends Paging<T>>
 }
 
 /// @nodoc
-abstract class _$$_PagingCopyWith<T, $Res> implements $PagingCopyWith<T, $Res> {
-  factory _$$_PagingCopyWith(
-          _$_Paging<T> value, $Res Function(_$_Paging<T>) then) =
-      __$$_PagingCopyWithImpl<T, $Res>;
+abstract class _$$PagingImplCopyWith<T, $Res>
+    implements $PagingCopyWith<T, $Res> {
+  factory _$$PagingImplCopyWith(
+          _$PagingImpl<T> value, $Res Function(_$PagingImpl<T>) then) =
+      __$$PagingImplCopyWithImpl<T, $Res>;
   @override
   @useResult
   $Res call(
@@ -93,11 +94,11 @@ abstract class _$$_PagingCopyWith<T, $Res> implements $PagingCopyWith<T, $Res> {
 }
 
 /// @nodoc
-class __$$_PagingCopyWithImpl<T, $Res>
-    extends _$PagingCopyWithImpl<T, $Res, _$_Paging<T>>
-    implements _$$_PagingCopyWith<T, $Res> {
-  __$$_PagingCopyWithImpl(
-      _$_Paging<T> _value, $Res Function(_$_Paging<T>) _then)
+class __$$PagingImplCopyWithImpl<T, $Res>
+    extends _$PagingCopyWithImpl<T, $Res, _$PagingImpl<T>>
+    implements _$$PagingImplCopyWith<T, $Res> {
+  __$$PagingImplCopyWithImpl(
+      _$PagingImpl<T> _value, $Res Function(_$PagingImpl<T>) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -107,7 +108,7 @@ class __$$_PagingCopyWithImpl<T, $Res>
     Object? totalCount = freezed,
     Object? currentCount = freezed,
   }) {
-    return _then(_$_Paging<T>(
+    return _then(_$PagingImpl<T>(
       items: null == items
           ? _value._items
           : items // ignore: cast_nullable_to_non_nullable
@@ -126,16 +127,16 @@ class __$$_PagingCopyWithImpl<T, $Res>
 
 /// @nodoc
 @JsonSerializable(genericArgumentFactories: true)
-class _$_Paging<T> implements _Paging<T> {
-  const _$_Paging(
+class _$PagingImpl<T> implements _Paging<T> {
+  const _$PagingImpl(
       {required final List<T> items,
       @JsonKey(name: 'totalCount') this.totalCount,
       @JsonKey(name: 'currentCount') this.currentCount})
       : _items = items;
 
-  factory _$_Paging.fromJson(
+  factory _$PagingImpl.fromJson(
           Map<String, dynamic> json, T Function(Object?) fromJsonT) =>
-      _$$_PagingFromJson(json, fromJsonT);
+      _$$PagingImplFromJson(json, fromJsonT);
 
   final List<T> _items;
   @override
@@ -161,7 +162,7 @@ class _$_Paging<T> implements _Paging<T> {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Paging<T> &&
+            other is _$PagingImpl<T> &&
             const DeepCollectionEquality().equals(other._items, _items) &&
             (identical(other.totalCount, totalCount) ||
                 other.totalCount == totalCount) &&
@@ -177,24 +178,25 @@ class _$_Paging<T> implements _Paging<T> {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_PagingCopyWith<T, _$_Paging<T>> get copyWith =>
-      __$$_PagingCopyWithImpl<T, _$_Paging<T>>(this, _$identity);
+  _$$PagingImplCopyWith<T, _$PagingImpl<T>> get copyWith =>
+      __$$PagingImplCopyWithImpl<T, _$PagingImpl<T>>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson(Object? Function(T) toJsonT) {
-    return _$$_PagingToJson<T>(this, toJsonT);
+    return _$$PagingImplToJson<T>(this, toJsonT);
   }
 }
 
 abstract class _Paging<T> implements Paging<T> {
   const factory _Paging(
-      {required final List<T> items,
-      @JsonKey(name: 'totalCount') final int? totalCount,
-      @JsonKey(name: 'currentCount') final int? currentCount}) = _$_Paging<T>;
+          {required final List<T> items,
+          @JsonKey(name: 'totalCount') final int? totalCount,
+          @JsonKey(name: 'currentCount') final int? currentCount}) =
+      _$PagingImpl<T>;
 
   factory _Paging.fromJson(
           Map<String, dynamic> json, T Function(Object?) fromJsonT) =
-      _$_Paging<T>.fromJson;
+      _$PagingImpl<T>.fromJson;
 
   @override
   List<T> get items;
@@ -206,6 +208,6 @@ abstract class _Paging<T> implements Paging<T> {
   int? get currentCount;
   @override
   @JsonKey(ignore: true)
-  _$$_PagingCopyWith<T, _$_Paging<T>> get copyWith =>
+  _$$PagingImplCopyWith<T, _$PagingImpl<T>> get copyWith =>
       throw _privateConstructorUsedError;
 }

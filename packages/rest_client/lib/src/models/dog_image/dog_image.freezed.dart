@@ -67,21 +67,22 @@ class _$DogImageCopyWithImpl<$Res, $Val extends DogImage>
 }
 
 /// @nodoc
-abstract class _$$_DogImageCopyWith<$Res> implements $DogImageCopyWith<$Res> {
-  factory _$$_DogImageCopyWith(
-          _$_DogImage value, $Res Function(_$_DogImage) then) =
-      __$$_DogImageCopyWithImpl<$Res>;
+abstract class _$$DogImageImplCopyWith<$Res>
+    implements $DogImageCopyWith<$Res> {
+  factory _$$DogImageImplCopyWith(
+          _$DogImageImpl value, $Res Function(_$DogImageImpl) then) =
+      __$$DogImageImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String message, String status});
 }
 
 /// @nodoc
-class __$$_DogImageCopyWithImpl<$Res>
-    extends _$DogImageCopyWithImpl<$Res, _$_DogImage>
-    implements _$$_DogImageCopyWith<$Res> {
-  __$$_DogImageCopyWithImpl(
-      _$_DogImage _value, $Res Function(_$_DogImage) _then)
+class __$$DogImageImplCopyWithImpl<$Res>
+    extends _$DogImageCopyWithImpl<$Res, _$DogImageImpl>
+    implements _$$DogImageImplCopyWith<$Res> {
+  __$$DogImageImplCopyWithImpl(
+      _$DogImageImpl _value, $Res Function(_$DogImageImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -90,7 +91,7 @@ class __$$_DogImageCopyWithImpl<$Res>
     Object? message = null,
     Object? status = null,
   }) {
-    return _then(_$_DogImage(
+    return _then(_$DogImageImpl(
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -105,11 +106,11 @@ class __$$_DogImageCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_DogImage implements _DogImage {
-  const _$_DogImage({required this.message, required this.status});
+class _$DogImageImpl implements _DogImage {
+  const _$DogImageImpl({required this.message, required this.status});
 
-  factory _$_DogImage.fromJson(Map<String, dynamic> json) =>
-      _$$_DogImageFromJson(json);
+  factory _$DogImageImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DogImageImplFromJson(json);
 
   @override
   final String message;
@@ -125,7 +126,7 @@ class _$_DogImage implements _DogImage {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_DogImage &&
+            other is _$DogImageImpl &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.status, status) || other.status == status));
   }
@@ -137,12 +138,12 @@ class _$_DogImage implements _DogImage {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_DogImageCopyWith<_$_DogImage> get copyWith =>
-      __$$_DogImageCopyWithImpl<_$_DogImage>(this, _$identity);
+  _$$DogImageImplCopyWith<_$DogImageImpl> get copyWith =>
+      __$$DogImageImplCopyWithImpl<_$DogImageImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_DogImageToJson(
+    return _$$DogImageImplToJson(
       this,
     );
   }
@@ -151,9 +152,10 @@ class _$_DogImage implements _DogImage {
 abstract class _DogImage implements DogImage {
   const factory _DogImage(
       {required final String message,
-      required final String status}) = _$_DogImage;
+      required final String status}) = _$DogImageImpl;
 
-  factory _DogImage.fromJson(Map<String, dynamic> json) = _$_DogImage.fromJson;
+  factory _DogImage.fromJson(Map<String, dynamic> json) =
+      _$DogImageImpl.fromJson;
 
   @override
   String get message;
@@ -161,6 +163,6 @@ abstract class _DogImage implements DogImage {
   String get status;
   @override
   @JsonKey(ignore: true)
-  _$$_DogImageCopyWith<_$_DogImage> get copyWith =>
+  _$$DogImageImplCopyWith<_$DogImageImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

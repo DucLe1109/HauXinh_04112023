@@ -59,7 +59,6 @@ linter:
     - dangling_library_doc_comments
     - depend_on_referenced_packages
     - deprecated_consistency
-    - directives_ordering
     - empty_catches
     - empty_constructor_bodies
     - empty_statements
@@ -95,7 +94,6 @@ linter:
     - null_closures
     - only_throw_errors
     - overridden_fields
-    - package_api_docs
     - package_names
     - package_prefixed_library_names
     - parameter_assignments
@@ -133,7 +131,6 @@ linter:
     - prefer_typing_uninitialized_variables
     - prefer_void_to_null
     - provide_deprecation_message
-    - public_member_api_docs
     - recursive_getters
     - require_trailing_commas
     - secure_pubspec_urls
@@ -141,7 +138,6 @@ linter:
     - sized_box_shrink_expand
     - slash_for_doc_comments
     - sort_child_properties_last
-    - sort_constructors_first
     - sort_unnamed_constructors_first
     - test_types_in_equals
     - throw_in_finally

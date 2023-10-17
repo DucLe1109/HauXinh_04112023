@@ -48,4 +48,5 @@ class AppColors {
   static const Color failureToastBgColor = Color(0xffF04438);
   static const Color waringToastColor = Color(0xffFEC84B);
   static const Color blackToastColor = Color(0xff101828);
+  static const Color greyLight = Color(0xffADB5BD);
 }

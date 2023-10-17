@@ -34,6 +34,6 @@
   "authentication" : "Xác thực",
   "expired_session" : "Phiên đăng nhập của bạn đã hết hạn. Vui lòng đăng nhập lại để tiếp tục",
   "contact": "Liên hệ",
-  "search" : "Tìm kiếm"
-
+  "search" : "Tìm kiếm",
+  "your_story" : "Story"
 }

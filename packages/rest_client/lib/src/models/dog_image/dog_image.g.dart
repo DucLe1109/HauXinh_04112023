@@ -6,12 +6,13 @@ part of 'dog_image.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_DogImage _$$_DogImageFromJson(Map<String, dynamic> json) => _$_DogImage(
+_$DogImageImpl _$$DogImageImplFromJson(Map<String, dynamic> json) =>
+    _$DogImageImpl(
       message: json['message'] as String,
       status: json['status'] as String,
     );
 
-Map<String, dynamic> _$$_DogImageToJson(_$_DogImage instance) =>
+Map<String, dynamic> _$$DogImageImplToJson(_$DogImageImpl instance) =>
     <String, dynamic>{
       'message': instance.message,
       'status': instance.status,
