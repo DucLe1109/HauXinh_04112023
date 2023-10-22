@@ -1,4 +1,5 @@
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
+import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -10,11 +11,10 @@ part 'chat_state.dart';
 
 class ChatCubit extends Cubit<ChatState> {
   ChatCubit() : super(const ChatState()) {
-    // firebaseFirestore = FirebaseFirestore.instance;
-    // chatStream =
-    //     firebaseFirestore.collection(Collections.users.value).snapshots();
+    chatStream = FirebaseUtils.firebaseStore
+        .collection(Collections.users.value)
+        .snapshots();
   }
-  //
-  // late FirebaseFirestore firebaseFirestore;
-  // late Stream<QuerySnapshot> chatStream;
+
+  late Stream<QuerySnapshot<Map<String, dynamic>>> chatStream;
 }

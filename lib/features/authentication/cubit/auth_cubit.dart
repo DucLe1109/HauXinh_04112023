@@ -3,12 +3,13 @@
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/services/auth_service/auth_service.dart';
+import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 
 part 'auth_cubit.freezed.dart';
@@ -23,8 +24,7 @@ class AuthCubit extends Cubit<AuthState> {
     isRememberAccount = _authService.isRememberAccount;
     username = _authService.username;
     password = _authService.password;
-    _app = Firebase.app();
-    _auth = FirebaseAuth.instanceFor(app: _app);
+    _auth = FirebaseAuth.instance;
   }
 
   late final AuthService _authService;
@@ -32,7 +32,6 @@ class AuthCubit extends Cubit<AuthState> {
   late bool isRememberAccount;
   late String username;
   late String password;
-  late final FirebaseApp _app;
   late final FirebaseAuth _auth;
 
   Future<void> login(String username, String password) async {
@@ -78,6 +77,63 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  Future<void> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    try {
+      emit(
+        state.copyWith(
+          status: const UIStatus.loading(),
+        ),
+      );
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+      if (userCredential.user != null) {
+        setLoginSessionDuration();
+        setRememberAccount(isRememberAccount);
+        isRememberAccount
+            ? rememberUser(username, password)
+            : rememberUser('', '');
+
+        if (await FirebaseUtils.isExistUser() == false) {
+          await FirebaseUtils.createUser();
+        }
+        emit(
+          state.copyWith(
+            status: const UIStatus.loadSuccess(message: ''),
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            status: UIStatus.loadFailed(message: S.current.has_some_error),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      debugPrint('Failed with error code: ${e.code}');
+      emit(
+        state.copyWith(
+          status: UIStatus.loadFailed(
+            message: S.current.email_or_password_is_not_correct,
+          ),
+        ),
+      );
+    }
+  }
+
   void setRememberAccount(bool value) {
     _authService.setAuthProperty(
       property: AuthProperty.isRememberAccount,
@@ -88,7 +144,9 @@ class AuthCubit extends Cubit<AuthState> {
   void setLoginSessionDuration() {
     final String nowString = Utils.getDateTimeNow();
     _authService.setAuthProperty(
-        property: AuthProperty.loginStartTime, value: nowString,);
+      property: AuthProperty.loginStartTime,
+      value: nowString,
+    );
 
     final DateTime nowDatetime = DateTime.now();
     final DateTime loginEndTime = nowDatetime.add(const Duration(days: 5));
@@ -108,6 +166,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   void logout() {
     FirebaseAuth.instance.signOut();
+    GoogleSignIn().signOut();
     isRememberAccount = _authService.isRememberAccount;
     username = _authService.username;
     password = _authService.password;

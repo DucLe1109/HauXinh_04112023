@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:boilerplate/animation/translation_fade_in.dart';
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
@@ -52,6 +51,7 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
     _passwordController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
@@ -88,33 +88,47 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
       child: GestureDetector(
         onTap: Utils.hideKeyboard,
         child: Scaffold(
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildBgSection(context),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 25,
+          body: Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildBgSection(context),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 25,
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        _buildTextFieldSection(context),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        _buildRememberAccount(context),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        _buildLoginButton(),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        TranslationFadeIn(
+                          translateDirection: TranslateDirection.up,
+                          delay: const Duration(milliseconds: 750),
+                          mChild: Text(
+                            S.current.or_login_with,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        _buildSocialLogin()
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    children: <Widget>[
-                      _buildTextFieldSection(context),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      _buildRememberAccount(context),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      _buildLoginButton(),
-                      // const SizedBox(
-                      //   height: 70,
-                      // ),
-                      // _buildForgotPasswordSection(),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -122,9 +136,35 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
     );
   }
 
+  Widget _buildSocialLogin() {
+    return TranslationFadeIn(
+      translateDirection: TranslateDirection.up,
+      delay: const Duration(milliseconds: 1000),
+      mChild: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Assets.images.facebook.image(scale: 13),
+          const SizedBox(
+            width: 20,
+          ),
+          GestureDetector(
+              onTap: () {
+                authCubit.signInWithGoogle();
+              },
+              child: Assets.images.google.image(scale: 12)),
+          const SizedBox(
+            width: 20,
+          ),
+          Assets.images.apple.image(
+              scale: 12, color: Theme.of(context).textTheme.bodyMedium!.color)
+        ],
+      ),
+    );
+  }
+
   Widget _buildRememberAccount(BuildContext context) {
     return TranslationFadeIn(
-      delay: const Duration(milliseconds: 900),
+      delay: const Duration(milliseconds: 300),
       translateDirection: TranslateDirection.up,
       mChild: Row(
         children: [
@@ -160,80 +200,19 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
     );
   }
 
-  // Widget _buildForgotPasswordSection() {
-  //   return TranslationFadeIn(
-  //     delay: const Duration(milliseconds: 1100),
-  //     translateDirection: TranslateDirection.up,
-  //     mChild: Text(
-  //       S.current.forget_password,
-  //       style: const TextStyle(color: Color.fromRGBO(143, 148, 251, 1)),
-  //     ),
-  //   );
-  // }
-
   Widget _buildBgSection(BuildContext context) {
     return Stack(
       children: [
         Assets.images.bgLogin.image(),
         Positioned(
-          top: 200,
-          child: TranslationFadeIn(
-            translateDirection: TranslateDirection.up,
-            mChild: Transform.rotate(
-              angle: 3 * pi / 2,
-              child: Assets.images.hangLamp.image(
-                scale: 6,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 100),
-          alignment: Alignment.topCenter,
-          child: const TranslationFadeIn(
-            translateDirection: TranslateDirection.up,
-            mChild: Icon(
-              Icons.ac_unit_rounded,
-              size: 70,
-              color: Colors.white,
-            ),
-            delay: Duration(milliseconds: 300),
-          ),
-        ),
-        const Positioned(
-          right: 20,
-          top: 80,
-          child: TranslationFadeIn(
-            mChild: Icon(
-              Icons.watch_later,
-              size: 60,
-              color: Colors.white,
-            ),
-            translateDirection: TranslateDirection.up,
-            delay: Duration(milliseconds: 500),
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 20),
-          alignment: Alignment.topCenter,
-          child: TranslationFadeIn(
-            delay: const Duration(milliseconds: 300),
-            translateDirection: TranslateDirection.up,
-            mChild: Container(
-              width: 2,
-              height: 100,
-              color: Colors.white,
-            ),
-          ),
-        ),
+            top: 120, left: -8, child: Assets.images.rose.image(scale: 5)),
       ],
     );
   }
 
   Widget _buildLoginButton() {
     return TranslationFadeIn(
-      delay: const Duration(milliseconds: 1000),
+      delay: const Duration(milliseconds: 500),
       translateDirection: TranslateDirection.up,
       mChild: Material(
         borderRadius: BorderRadius.circular(10),
@@ -254,11 +233,10 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
             child: Center(
               child: Text(
                 S.current.login,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  fontSize: 14,
-                ),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(color: Colors.white),
               ),
             ),
           ),
@@ -269,10 +247,9 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
 
   Widget _buildTextFieldSection(BuildContext context) {
     return TranslationFadeIn(
-      delay: const Duration(milliseconds: 800),
+      delay: const Duration(milliseconds: 200),
       translateDirection: TranslateDirection.up,
-      mChild: Container(
-        padding: const EdgeInsets.all(5),
+      mChild: DecoratedBox(
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,
           borderRadius: BorderRadius.circular(10),
@@ -303,7 +280,7 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
     bool isPassword = true;
     return StatefulBuilder(
       builder: (context, setState) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 15),
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 20),
         child: TextField(
           onChanged: (value) => setState(() {}),
           obscureText: isPassword,
@@ -314,30 +291,21 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
           style: Theme.of(context).textTheme.bodyMedium,
           textAlignVertical: TextAlignVertical.center,
           decoration: InputDecoration(
-            suffixIcon: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    setState(() {
-                      isPassword = !isPassword;
-                    });
-                  },
-                  icon: _passwordController.text.isNotEmpty
+            suffixIconConstraints: const BoxConstraints(),
+            suffixIcon: InkWell(
+                onTap: () {
+                  setState(() {
+                    isPassword = !isPassword;
+                  });
+                },
+                child: Icon(
+                  _passwordController.text.isNotEmpty
                       ? (isPassword
-                          ? const Icon(
-                              Icons.remove_red_eye_outlined,
-                              size: 20,
-                            )
-                          : const Icon(
-                              Icons.remove_red_eye,
-                              size: 20,
-                            ))
-                      : Container(),
-                ),
-              ],
-            ),
+                          ? Icons.remove_red_eye_outlined
+                          : Icons.remove_red_eye)
+                      : null,
+                  size: 20,
+                )),
             border: InputBorder.none,
             hintText: S.current.password,
             hintStyle: TextStyle(color: Colors.grey[400]),
@@ -350,7 +318,7 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
   Widget _buildEmail(BuildContext context) {
     return StatefulBuilder(
       builder: (context, setState) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 15),
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 20),
         decoration: const BoxDecoration(
           border: Border(
             bottom: BorderSide(color: Colors.grey, width: 0.3),
@@ -366,19 +334,17 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
           controller: _emailController,
           style: Theme.of(context).textTheme.bodyMedium,
           decoration: InputDecoration(
+            suffixIconConstraints: const BoxConstraints(),
             border: InputBorder.none,
-            suffixIcon: IconButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
+            suffixIcon: InkWell(
+              onTap: () {
                 _emailController.text = '';
                 setState(() {});
               },
-              icon: _emailController.text.isNotEmpty
-                  ? const Icon(
-                      Icons.clear,
-                      size: 20,
-                    )
-                  : Container(),
+              child: Icon(
+                _emailController.text.isNotEmpty ? Icons.clear : null,
+                size: 20,
+              ),
             ),
             hintText: S.current.email,
             hintStyle: TextStyle(color: Colors.grey[400]),
@@ -389,7 +355,8 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
   }
 
   bool validateLoginInfo() {
-    return _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+    return _emailController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty;
   }
 
   bool validateEmailFormat() {

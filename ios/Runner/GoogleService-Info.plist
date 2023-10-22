@@ -32,5 +32,17 @@
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:391246139085:ios:da07f8407c20658e116384</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+    	<dict>
+    		<key>CFBundleTypeRole</key>
+    		<string>Editor</string>
+    		<key>CFBundleURLSchemes</key>
+    		<array>
+    			<string>com.googleusercontent.apps.391246139085-76048k2l8vjfpb0qb6a47cd0vssoo6dh</string>
+    		</array>
+    	</dict>
+    </array>
+    <!-- End of the Google Sign-in Section -->
 </dict>
 </plist>

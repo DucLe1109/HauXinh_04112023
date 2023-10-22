@@ -11,7 +11,7 @@ abstract class BaseStateFulWidgetState<T extends BaseStateFulWidget>
     extends State<T> {
   int toastDuration = 3000;
   int toastAnimationDuration = 600;
-  double toastWidth = 380;
+  double toastWidth = 300;
   double toastHeight = 80;
 
   @override
@@ -53,131 +53,132 @@ abstract class BaseStateFulWidgetState<T extends BaseStateFulWidget>
     required BuildContext context,
     required String title,
     required String description,
+    double? toastWidth,
+    double? toastHeight,
   }) {
     switch (toastType) {
       case ToastType.warning:
         MotionToast.warning(
-          width: toastWidth,
-          height: toastHeight,
+          width: toastWidth ?? 300,
+          height: toastHeight ?? 60,
           animationDuration: Duration(milliseconds: toastAnimationDuration),
           toastDuration: Duration(milliseconds: toastDuration),
-          title: Text(
-            title,
-            style: Theme
-                .of(context)
-                .textTheme
-                .bodyLarge,
+          title: Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text(
+              title,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.w500),
+            ),
           ),
           iconType: IconType.cupertino,
           animationCurve: Curves.easeOut,
           description: Text(
             description,
-            style: Theme
-                .of(context)
-                .textTheme
-                .bodyMedium,
+            style: Theme.of(context).textTheme.bodySmall,
           ),
         ).show(context);
         break;
       case ToastType.error:
         MotionToast.error(
-          width: toastWidth,
-          height: toastHeight,
+          width: toastWidth ?? 300,
+          height: toastHeight ?? 60,
           animationDuration: Duration(milliseconds: toastAnimationDuration),
           toastDuration: Duration(milliseconds: toastDuration),
-          title: Text(
-            title,
-            style: Theme
-                .of(context)
-                .textTheme
-                .bodyLarge,
+          title: Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text(
+              title,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.w500),
+            ),
           ),
           iconType: IconType.cupertino,
           animationCurve: Curves.easeOut,
           description: Text(
             description,
-            style: Theme
-                .of(context)
-                .textTheme
-                .bodyMedium,
+            style: Theme.of(context).textTheme.bodySmall,
           ),
         ).show(context);
         break;
       case ToastType.info:
         MotionToast.info(
-          width: toastWidth,
-          height: toastHeight,
+          width: toastWidth ?? 300,
+          height: toastHeight ?? 60,
           animationDuration: Duration(milliseconds: toastAnimationDuration),
           toastDuration: Duration(milliseconds: toastDuration),
-          title: Text(
-            title,
-            style: Theme
-                .of(context)
-                .textTheme
-                .bodyLarge,
+          title: Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text(
+              title,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.w500),
+            ),
           ),
           iconType: IconType.cupertino,
           animationCurve: Curves.easeOut,
           description: Text(
             description,
-            style: Theme
-                .of(context)
-                .textTheme
-                .bodyMedium,
+            style: Theme.of(context).textTheme.bodySmall,
           ),
         ).show(context);
         break;
       case ToastType.success:
         MotionToast.success(
-          width: toastWidth,
-          height: toastHeight,
+          width: toastWidth ?? 300,
+          height: toastHeight ?? 60,
           animationDuration: Duration(milliseconds: toastAnimationDuration),
           toastDuration: Duration(milliseconds: toastDuration),
-          title: Text(
-            title,
-            style: Theme
-                .of(context)
-                .textTheme
-                .bodyLarge,
+          title: Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text(
+              title,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.w500),
+            ),
           ),
           iconType: IconType.cupertino,
           animationCurve: Curves.easeOut,
           description: Text(
             description,
-            style: Theme
-                .of(context)
-                .textTheme
-                .bodyMedium,
+            style: Theme.of(context).textTheme.bodySmall,
           ),
         ).show(context);
         break;
       case ToastType.delete:
         MotionToast.delete(
-          width: toastWidth,
-          height: toastHeight,
+          width: toastWidth ?? 300,
+          height: toastHeight ?? 60,
           animationDuration: Duration(milliseconds: toastAnimationDuration),
           toastDuration: Duration(milliseconds: toastDuration),
-          title: Text(
-            title,
-            style: Theme
-                .of(context)
-                .textTheme
-                .bodyLarge,
+          title: Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text(
+              title,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.w500),
+            ),
           ),
           iconType: IconType.cupertino,
           animationCurve: Curves.easeOut,
           description: Text(
             description,
-            style: Theme
-                .of(context)
-                .textTheme
-                .bodyMedium,
+            style: Theme.of(context).textTheme.bodySmall,
           ),
         ).show(context);
         break;
     }
   }
 }
-
 
 enum ToastType { warning, error, info, success, delete }

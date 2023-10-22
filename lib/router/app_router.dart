@@ -5,11 +5,15 @@ import 'package:boilerplate/features/demo/view/images_from_db_page.dart';
 import 'package:boilerplate/features/dog_image_random/view/dog_image_random_page.dart';
 import 'package:boilerplate/features/home/view/home_page.dart';
 import 'package:boilerplate/features/intro/intro_page.dart';
-import 'package:boilerplate/features/setting/setting_page.dart';
+import 'package:boilerplate/features/setting/cubit/setting_cubit.dart';
+import 'package:boilerplate/features/setting/view/infor_utility/information_screen.dart';
+import 'package:boilerplate/features/setting/view/setting_page.dart';
 import 'package:boilerplate/features/vacation/view/vacation.dart';
 import 'package:boilerplate/generated/l10n.dart';
+import 'package:boilerplate/router/navigator_service.dart';
 import 'package:boilerplate/widgets/error_page.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -42,8 +46,12 @@ class AppRouter {
   static const String imagesFromDbNamed = 'imagesFromDb';
   static const String imagesFromDbPath = '/imagesFromDb';
 
+  static const String userInfo = 'userInfo';
+  static const String userInfoPath = '/userInfoPath';
+
   static GoRouter get router => _router;
   static final _router = GoRouter(
+    navigatorKey: NavigationService.navigatorKey,
     routes: <GoRoute>[
       GoRoute(
         name: loginNamed,
@@ -90,6 +98,15 @@ class AppRouter {
         name: dogImageRandomNamed,
         path: dogImageRandomPath,
         builder: (context, state) => const DogImageRandomPage(),
+      ),
+      GoRoute(
+        name: userInfo,
+        path: userInfoPath,
+        builder: (context, state) {
+          final SettingCubit settingCubit = state.extra! as SettingCubit;
+          return BlocProvider.value(
+              value: settingCubit, child: const InformationScreen());
+        },
       ),
       GoRoute(
         name: imagesFromDbNamed,

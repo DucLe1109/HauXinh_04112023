@@ -1,14 +1,20 @@
 // ignore_for_file: lines_longer_than_80_chars
 
+import 'dart:async';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
+import 'package:boilerplate/core/global_variable.dart';
 import 'package:boilerplate/core/widget_core.dart';
-import 'package:boilerplate/features/contact/view/chats_tab.dart';
+import 'package:boilerplate/features/chat/view/chats_screen.dart';
 import 'package:boilerplate/features/home/cubit/home_cubit.dart';
-import 'package:boilerplate/features/vacation/view/vacation.dart';
+import 'package:boilerplate/features/setting/view/setting_screen.dart';
+import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/injector/injector.dart';
 import 'package:boilerplate/router/app_router.dart';
+import 'package:boilerplate/router/navigator_service.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,16 +31,77 @@ class HomePage extends BaseStateFulWidget {
 class _HomePageState extends BaseStateFulWidgetState<HomePage> {
   late PersistentTabController _controller;
   late HomeCubit homeCubit;
+  late StreamSubscription subscription;
 
   @override
   void initState() {
     super.initState();
-    _controller = PersistentTabController();
+    _controller = PersistentTabController(initialIndex: 1);
     homeCubit = Injector.instance();
     Future.delayed(
       const Duration(seconds: 2),
       () => homeCubit.checkAuthentication(),
     );
+
+    Connectivity().checkConnectivity().then((value) {
+      if (value == ConnectivityResult.none) {
+        isHasConnection = false;
+        AwesomeDialog(
+          dismissOnBackKeyPress: false,
+          dismissOnTouchOutside: false,
+          dialogType: DialogType.error,
+          context: context,
+          title: S.current.no_connection,
+          desc: S.current.no_connection_des,
+          btnOkColor: Colors.redAccent,
+          btnOkOnPress: () {
+            context.go(AppRouter.homePath);
+          },
+        ).show();
+      }
+    });
+
+    subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.none) {
+        isHasConnection = false;
+        AwesomeDialog(
+          dismissOnBackKeyPress: false,
+          dismissOnTouchOutside: false,
+          dialogType: DialogType.error,
+          context: context,
+          title: S.current.no_connection,
+          desc: S.current.no_connection_des,
+          btnOkColor: Colors.redAccent,
+          btnOkOnPress: () {
+            context.go(AppRouter.homePath);
+          },
+        ).show();
+      } else if (isHasConnection == false &&
+              result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.ethernet) {
+        isHasConnection = true;
+        AwesomeDialog(
+          dismissOnBackKeyPress: false,
+          dismissOnTouchOutside: false,
+          dialogType: DialogType.success,
+          context: context,
+          title: S.current.connection_is_recover,
+          desc: S.current.continue_with_app,
+          btnOkColor: Colors.lightBlue,
+          btnOkOnPress: () {
+            context.go(AppRouter.homePath);
+          },
+        ).show();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -57,28 +124,31 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
         }
       },
       bloc: homeCubit,
-      child: PersistentTabView(
-        context,
-        controller: _controller,
-        screens: _buildScreens(),
-        items: _navBarsItems(),
-        resizeToAvoidBottomInset: true,
-        // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
-        decoration: NavBarDecoration(
-          borderRadius: BorderRadius.circular(10),
-          colorBehindNavBar: Colors.white,
+      child: WillPopScope(
+        onWillPop: () => Future.value(false),
+        child: PersistentTabView(
+          context,
+          controller: _controller,
+          screens: _buildScreens(),
+          items: _navBarsItems(),
+          resizeToAvoidBottomInset: true,
+          // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
+          decoration: NavBarDecoration(
+            borderRadius: BorderRadius.circular(10),
+            colorBehindNavBar: Colors.white,
+          ),
+          itemAnimationProperties: const ItemAnimationProperties(
+            // Navigation Bar's items animation properties.
+            duration: Duration(milliseconds: 200),
+            curve: Curves.ease,
+          ),
+          screenTransitionAnimation: const ScreenTransitionAnimation(
+            // Screen transition animation on change of selected tab.
+            animateTabTransition: true,
+          ),
+          backgroundColor:
+              Theme.of(context).bottomNavigationBarTheme.backgroundColor!,
         ),
-        itemAnimationProperties: const ItemAnimationProperties(
-          // Navigation Bar's items animation properties.
-          duration: Duration(milliseconds: 200),
-          curve: Curves.ease,
-        ),
-        screenTransitionAnimation: const ScreenTransitionAnimation(
-          // Screen transition animation on change of selected tab.
-          animateTabTransition: true,
-        ),
-        backgroundColor:
-            Theme.of(context).bottomNavigationBarTheme.backgroundColor!,
       ),
     );
   }
@@ -86,8 +156,8 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
   List<Widget> _buildScreens() {
     return [
       Container(),
-      ChatScreen(),
-      Container(),
+      const ChatScreen(),
+      const SettingScreen(),
     ];
   }
 

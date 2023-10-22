@@ -39,7 +39,7 @@ class _TranslationFadeInState extends State<TranslationFadeIn>
     _animation = AnimationController(
       vsync: this,
       duration: const Duration(
-        milliseconds: 400,
+        milliseconds: 300,
       ),
     );
     _opacityTween = Tween(begin: 0, end: 1);
@@ -68,7 +68,7 @@ class _TranslationFadeInState extends State<TranslationFadeIn>
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: CurvedAnimation(parent: _animation, curve: Curves.decelerate),
+      animation: CurvedAnimation(parent: _animation, curve: Curves.easeOut),
       builder: (context, child) => Opacity(
         opacity: _opacityTween.evaluate(_animation),
         child: Transform.translate(

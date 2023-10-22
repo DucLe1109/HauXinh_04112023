@@ -1,10 +1,9 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'chat_user.freezed.dart';
-
 part 'chat_user.g.dart';
 
-@Freezed(fromJson: true, toJson: true)
+@Freezed()
 class ChatUser with _$ChatUser {
   const factory ChatUser({
     required String about,
@@ -16,6 +15,8 @@ class ChatUser with _$ChatUser {
     required String lastActive,
     required String fullName,
     required String pushToken,
+    required String avatar,
+    required String birthday,
   }) = _ChatUser;
 
   factory ChatUser.fromJson(Map<String, dynamic> json) =>

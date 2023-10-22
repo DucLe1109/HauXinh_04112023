@@ -17,6 +17,8 @@ _$ChatUserImpl _$$ChatUserImplFromJson(Map<String, dynamic> json) =>
       lastActive: json['lastActive'] as String,
       fullName: json['fullName'] as String,
       pushToken: json['pushToken'] as String,
+      avatar: json['avatar'] as String,
+      birthday: json['birthday'] as String,
     );
 
 Map<String, dynamic> _$$ChatUserImplToJson(_$ChatUserImpl instance) =>
@@ -30,4 +32,6 @@ Map<String, dynamic> _$$ChatUserImplToJson(_$ChatUserImpl instance) =>
       'lastActive': instance.lastActive,
       'fullName': instance.fullName,
       'pushToken': instance.pushToken,
+      'avatar': instance.avatar,
+      'birthday': instance.birthday,
     };

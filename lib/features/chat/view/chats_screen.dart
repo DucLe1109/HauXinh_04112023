@@ -1,9 +1,11 @@
+import 'package:boilerplate/core/global_variable.dart';
 import 'package:boilerplate/core/themes/app_colors.dart';
-import 'package:boilerplate/features/contact/view/chatting_widget.dart';
-import 'package:boilerplate/features/contact/view/story_widget.dart';
+import 'package:boilerplate/features/chat/view/chatting_widget.dart';
+import 'package:boilerplate/features/chat/view/story_widget.dart';
+import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/assets.gen.dart';
 import 'package:boilerplate/generated/l10n.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:boilerplate/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rest_client/rest_client.dart';
@@ -17,23 +19,38 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   late TextEditingController _searchController;
+  late FocusNode _searchFocusNode;
+  late List<ChatUser> _searchListUser;
+  late List<ChatUser> _listUser;
+  late bool isSearch;
+  late bool isShowClearIcon;
+
+  final chatUserStream = FirebaseUtils.getAllUsers();
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    _searchFocusNode = FocusNode();
+    isSearch = false;
+    isShowClearIcon = false;
+
+    _searchListUser = [];
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
         title: const Text('Chats'),
         actions: [
@@ -53,25 +70,29 @@ class _ChatScreenState extends State<ChatScreen> {
               icon: const Icon(CupertinoIcons.arrow_2_circlepath))
         ],
       ),
-      body: ListView(
-        children: [
-          buildStorySection(),
-          Container(
-            height: 1,
-            color: Colors.grey[200],
-          ),
-          buildSearchSection(context),
-          buildChatSection(),
-        ],
+      body: GestureDetector(
+        onTap: Utils.hideKeyboard,
+        child: ListView(
+          children: [
+            buildStorySection(),
+            Container(
+              height: 1,
+              color: Theme.of(context)
+                  .searchBarTheme
+                  .backgroundColor
+                  ?.resolve(<MaterialState>{}),
+            ),
+            buildSearchSection(context),
+            buildChatSection(),
+          ],
+        ),
       ),
     );
   }
 
   Widget buildChatSection() {
     return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection(Collections.chatUser.value)
-          .snapshots(),
+      stream: chatUserStream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Container();
@@ -86,50 +107,20 @@ class _ChatScreenState extends State<ChatScreen> {
               );
             case ConnectionState.active:
               final data = snapshot.data?.docs;
-              final list =
+              _listUser =
                   data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
               return ListView.builder(
                 shrinkWrap: true,
-                itemCount: list.length,
+                itemCount:
+                    !isSearch ? _listUser.length : _searchListUser.length,
                 itemBuilder: (context, index) => Chatting(
-                    isOnline: list[index].isOnline,
-                    isHasStory: list[index].isHasStory,
-                    userName: list[index].fullName,
-                    message: list[index].about,
-                    time: list[index].createdAt,
-                    messageCount: 10),
+                    !isSearch ? _listUser[index] : _searchListUser[index]),
               );
             case ConnectionState.done:
               return Container();
           }
         }
       },
-    );
-    return Column(
-      children: [
-        Chatting(
-            isHasStory: true,
-            time: 'Today',
-            messageCount: 20,
-            imageProvider: AssetImage(Assets.images.page4.path),
-            message: 'Anh ăn cơm chưa',
-            isOnline: true,
-            userName: 'Hậu hâm'),
-        Chatting(
-            time: '15/10',
-            messageCount: 2,
-            imageProvider: AssetImage(Assets.images.page3.path),
-            message: 'what was going on',
-            isOnline: true,
-            userName: 'My friend 2'),
-        const Chatting(
-            isHasStory: true,
-            messageCount: 3,
-            time: '16/10',
-            isOnline: true,
-            userName: 'My friend 1',
-            message: 'What are you doing')
-      ],
     );
   }
 
@@ -140,15 +131,46 @@ class _ChatScreenState extends State<ChatScreen> {
         height: 45,
         padding: const EdgeInsets.symmetric(horizontal: 15),
         decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(12)),
-            color: Theme.of(context)
-                .searchBarTheme
-                .backgroundColor
-                ?.resolve(<MaterialState>{})),
+          borderRadius: BorderRadius.circular(borderRadius),
+          color: Theme.of(context).scaffoldBackgroundColor,
+        ),
         child: TextField(
+          focusNode: _searchFocusNode,
+          onChanged: (value) {
+            _searchListUser.clear();
+            for (final element in _listUser) {
+              if (element.fullName
+                      .toLowerCase()
+                      .contains(value.toLowerCase()) ||
+                  element.email.toLowerCase().contains(value.toLowerCase())) {
+                _searchListUser.add(element);
+              }
+            }
+            setState(() {
+              isSearch = value.isNotEmpty;
+              isShowClearIcon = value.isNotEmpty;
+            });
+          },
+          onEditingComplete: Utils.hideKeyboard,
           controller: _searchController,
           textAlignVertical: TextAlignVertical.center,
           decoration: InputDecoration(
+            suffixIconConstraints: const BoxConstraints(),
+            suffixIcon: isShowClearIcon
+                ? InkWell(
+                    onTap: () {
+                      _searchController.text = '';
+                      setState(() {
+                        isSearch = false;
+                        isShowClearIcon = false;
+                      });
+                    },
+                    child: const Icon(
+                      CupertinoIcons.clear_circled,
+                      color: AppColors.grey600,
+                      size: 20,
+                    ))
+                : null,
             isDense: true,
             prefixIconColor: Theme.of(context).textTheme.bodyMedium?.color,
             prefixIconConstraints: BoxConstraints.loose(const Size(30, 50)),
@@ -158,6 +180,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 onPressed: () {},
                 icon: const Icon(
                   CupertinoIcons.search,
+                  color: AppColors.grey600,
                   size: 20,
                 )),
             contentPadding: EdgeInsets.zero,
@@ -183,8 +206,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   description: S.current.your_story,
                   child: DecoratedBox(
                     decoration: BoxDecoration(
-                      color: const Color(0xffF7F7FC),
-                      borderRadius: BorderRadius.circular(16),
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius:
+                          BorderRadius.circular(borderRadiusAvatar - 2),
                     ),
                     child: IconButton(
                         onPressed: () {},
@@ -202,7 +226,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   borderColor: Colors.blue,
                   child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius:
+                          BorderRadius.circular(borderRadiusAvatar - 2),
                       image: DecorationImage(
                           fit: BoxFit.cover,
                           image: AssetImage(Assets.images.page1.path)),
@@ -216,7 +241,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   borderColor: Colors.blue,
                   child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius:
+                          BorderRadius.circular(borderRadiusAvatar - 2),
                       image: DecorationImage(
                           fit: BoxFit.cover,
                           image: AssetImage(Assets.images.page2.path)),
@@ -230,7 +256,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   borderColor: Colors.blue,
                   child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius:
+                          BorderRadius.circular(borderRadiusAvatar - 2),
                       image: DecorationImage(
                           fit: BoxFit.cover,
                           image: AssetImage(Assets.images.page3.path)),

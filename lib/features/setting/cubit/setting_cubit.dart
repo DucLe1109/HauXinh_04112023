@@ -1,0 +1,30 @@
+import 'package:boilerplate/core/bloc_core/ui_status.dart';
+import 'package:boilerplate/firebase/firebase_utils.dart';
+import 'package:boilerplate/injector/injector.dart';
+import 'package:boilerplate/services/auth_service/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:intl/intl.dart';
+
+part 'setting_cubit.freezed.dart';
+
+part 'setting_state.dart';
+
+class SettingCubit extends Cubit<SettingState> {
+  SettingCubit() : super(const SettingState());
+
+  Future<void> updateUserInfo(
+      String fullName, String about, String birthday) async {
+    emit(state.copyWith(status: const UILoading()));
+    try {
+      await FirebaseUtils.updateUserInfo(fullName, about, birthday);
+      emit(state.copyWith(status: const UILoadSuccess()));
+    } on FirebaseException catch (e) {
+      emit(state.copyWith(
+          status:
+              UILoadFailed(message: FirebaseUtils.handleException(e.code))));
+    }
+  }
+}

@@ -17,6 +17,7 @@ class DTextField extends StatefulWidget {
     this.onSubmitted,
     this.suffixIcon,
     this.hintStyle,
+    this.label,
   });
 
   final TextEditingController controller;
@@ -24,6 +25,7 @@ class DTextField extends StatefulWidget {
   final double? paddingHorizontal;
   final double? paddingVertical;
   final String? hintText;
+  final String? label;
 
   final Color? focusedBorderColor;
   final Color? enabledBorderColor;

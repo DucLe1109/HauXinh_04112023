@@ -29,6 +29,8 @@ mixin _$ChatUser {
   String get lastActive => throw _privateConstructorUsedError;
   String get fullName => throw _privateConstructorUsedError;
   String get pushToken => throw _privateConstructorUsedError;
+  String get avatar => throw _privateConstructorUsedError;
+  String get birthday => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -50,7 +52,9 @@ abstract class $ChatUserCopyWith<$Res> {
       bool isHasStory,
       String lastActive,
       String fullName,
-      String pushToken});
+      String pushToken,
+      String avatar,
+      String birthday});
 }
 
 /// @nodoc
@@ -75,6 +79,8 @@ class _$ChatUserCopyWithImpl<$Res, $Val extends ChatUser>
     Object? lastActive = null,
     Object? fullName = null,
     Object? pushToken = null,
+    Object? avatar = null,
+    Object? birthday = null,
   }) {
     return _then(_value.copyWith(
       about: null == about
@@ -113,6 +119,14 @@ class _$ChatUserCopyWithImpl<$Res, $Val extends ChatUser>
           ? _value.pushToken
           : pushToken // ignore: cast_nullable_to_non_nullable
               as String,
+      avatar: null == avatar
+          ? _value.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
+              as String,
+      birthday: null == birthday
+          ? _value.birthday
+          : birthday // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -134,7 +148,9 @@ abstract class _$$ChatUserImplCopyWith<$Res>
       bool isHasStory,
       String lastActive,
       String fullName,
-      String pushToken});
+      String pushToken,
+      String avatar,
+      String birthday});
 }
 
 /// @nodoc
@@ -157,6 +173,8 @@ class __$$ChatUserImplCopyWithImpl<$Res>
     Object? lastActive = null,
     Object? fullName = null,
     Object? pushToken = null,
+    Object? avatar = null,
+    Object? birthday = null,
   }) {
     return _then(_$ChatUserImpl(
       about: null == about
@@ -195,6 +213,14 @@ class __$$ChatUserImplCopyWithImpl<$Res>
           ? _value.pushToken
           : pushToken // ignore: cast_nullable_to_non_nullable
               as String,
+      avatar: null == avatar
+          ? _value.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
+              as String,
+      birthday: null == birthday
+          ? _value.birthday
+          : birthday // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -211,7 +237,9 @@ class _$ChatUserImpl implements _ChatUser {
       required this.isHasStory,
       required this.lastActive,
       required this.fullName,
-      required this.pushToken});
+      required this.pushToken,
+      required this.avatar,
+      required this.birthday});
 
   factory _$ChatUserImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChatUserImplFromJson(json);
@@ -234,10 +262,14 @@ class _$ChatUserImpl implements _ChatUser {
   final String fullName;
   @override
   final String pushToken;
+  @override
+  final String avatar;
+  @override
+  final String birthday;
 
   @override
   String toString() {
-    return 'ChatUser(about: $about, createdAt: $createdAt, email: $email, id: $id, isOnline: $isOnline, isHasStory: $isHasStory, lastActive: $lastActive, fullName: $fullName, pushToken: $pushToken)';
+    return 'ChatUser(about: $about, createdAt: $createdAt, email: $email, id: $id, isOnline: $isOnline, isHasStory: $isHasStory, lastActive: $lastActive, fullName: $fullName, pushToken: $pushToken, avatar: $avatar, birthday: $birthday)';
   }
 
   @override
@@ -259,13 +291,16 @@ class _$ChatUserImpl implements _ChatUser {
             (identical(other.fullName, fullName) ||
                 other.fullName == fullName) &&
             (identical(other.pushToken, pushToken) ||
-                other.pushToken == pushToken));
+                other.pushToken == pushToken) &&
+            (identical(other.avatar, avatar) || other.avatar == avatar) &&
+            (identical(other.birthday, birthday) ||
+                other.birthday == birthday));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, about, createdAt, email, id,
-      isOnline, isHasStory, lastActive, fullName, pushToken);
+      isOnline, isHasStory, lastActive, fullName, pushToken, avatar, birthday);
 
   @JsonKey(ignore: true)
   @override
@@ -291,7 +326,9 @@ abstract class _ChatUser implements ChatUser {
       required final bool isHasStory,
       required final String lastActive,
       required final String fullName,
-      required final String pushToken}) = _$ChatUserImpl;
+      required final String pushToken,
+      required final String avatar,
+      required final String birthday}) = _$ChatUserImpl;
 
   factory _ChatUser.fromJson(Map<String, dynamic> json) =
       _$ChatUserImpl.fromJson;
@@ -314,6 +351,10 @@ abstract class _ChatUser implements ChatUser {
   String get fullName;
   @override
   String get pushToken;
+  @override
+  String get avatar;
+  @override
+  String get birthday;
   @override
   @JsonKey(ignore: true)
   _$$ChatUserImplCopyWith<_$ChatUserImpl> get copyWith =>
