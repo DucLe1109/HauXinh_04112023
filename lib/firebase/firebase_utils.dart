@@ -2,7 +2,6 @@ import 'package:boilerplate/firebase/firebase_firestore_exception.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:rest_client/rest_client.dart';
 

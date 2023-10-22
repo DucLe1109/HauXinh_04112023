@@ -2,12 +2,10 @@ import 'package:boilerplate/animation/translation_fade_in.dart';
 import 'package:boilerplate/features/app/bloc/app_bloc.dart';
 import 'package:boilerplate/generated/assets.gen.dart';
 import 'package:boilerplate/generated/l10n.dart';
-import 'package:boilerplate/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 
 class IntroPage extends StatelessWidget {
   const IntroPage({super.key});
