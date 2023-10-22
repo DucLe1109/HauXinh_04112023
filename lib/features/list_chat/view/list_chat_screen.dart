@@ -1,23 +1,25 @@
 import 'package:boilerplate/core/global_variable.dart';
 import 'package:boilerplate/core/themes/app_colors.dart';
-import 'package:boilerplate/features/chat/view/chatting_widget.dart';
-import 'package:boilerplate/features/chat/view/story_widget.dart';
+import 'package:boilerplate/features/list_chat/view/chatting_widget.dart';
+import 'package:boilerplate/features/list_chat/view/story_widget.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/assets.gen.dart';
 import 'package:boilerplate/generated/l10n.dart';
+import 'package:boilerplate/router/app_router.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rest_client/rest_client.dart';
 
-class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+class ListChatScreen extends StatefulWidget {
+  const ListChatScreen({super.key});
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  State<ListChatScreen> createState() => _ListChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ListChatScreenState extends State<ListChatScreen> {
   late TextEditingController _searchController;
   late FocusNode _searchFocusNode;
   late List<ChatUser> _searchListUser;
@@ -113,8 +115,14 @@ class _ChatScreenState extends State<ChatScreen> {
                 shrinkWrap: true,
                 itemCount:
                     !isSearch ? _listUser.length : _searchListUser.length,
-                itemBuilder: (context, index) => Chatting(
-                    !isSearch ? _listUser[index] : _searchListUser[index]),
+                itemBuilder: (context, index) => InkWell(
+                  onTap: () => context.push(AppRouter.chatScreenPath,
+                      extra: !isSearch
+                          ? _listUser[index]
+                          : _searchListUser[index]),
+                  child: Chatting(
+                      !isSearch ? _listUser[index] : _searchListUser[index]),
+                ),
               );
             case ConnectionState.done:
               return Container();

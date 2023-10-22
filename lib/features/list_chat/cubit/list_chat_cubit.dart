@@ -5,12 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:rest_client/rest_client.dart';
 
-part 'chat_cubit.freezed.dart';
+part 'list_chat_cubit.freezed.dart';
 
-part 'chat_state.dart';
+part 'list_chat_state.dart';
 
-class ChatCubit extends Cubit<ChatState> {
-  ChatCubit() : super(const ChatState()) {
+class ListChatCubit extends Cubit<ListChatState> {
+  ListChatCubit() : super(const ListChatState()) {
     chatStream = FirebaseUtils.firebaseStore
         .collection(Collections.users.value)
         .snapshots();

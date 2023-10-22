@@ -117,7 +117,7 @@ class _SettingScreenState extends BaseStateFulWidgetState<SettingScreen> {
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(100),
         child: CachedNetworkImage(
-          imageUrl: FirebaseUtils.user.photoURL ?? '',
+          imageUrl: FirebaseUtils.me.avatar ?? '',
           fit: BoxFit.fill,
           width: 50,
           height: 50,

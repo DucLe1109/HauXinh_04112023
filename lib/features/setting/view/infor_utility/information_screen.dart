@@ -1,3 +1,4 @@
+import 'dart:io';
 
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
 import 'package:boilerplate/core/global_variable.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 class InformationScreen extends BaseStateFulWidget {
   const InformationScreen({super.key});
@@ -29,6 +31,7 @@ class _InformationScreenState
   late TextEditingController _birthdayEditingController;
   late SettingCubit cubit;
   bool isUpdateSuccessfully = false;
+  String? imagePath;
 
   @override
   void initState() {
@@ -58,7 +61,9 @@ class _InformationScreenState
         return Future.value(true);
       },
       child: Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
         appBar: AppBar(
+          backgroundColor: Theme.of(context).primaryColor,
           elevation: 0,
           centerTitle: true,
           title: Text(S.current.user_info,
@@ -151,8 +156,11 @@ class _InformationScreenState
       child: FilledButton(
         onPressed: () {
           Utils.hideKeyboard();
-          cubit.updateUserInfo(_fullNameEditingController.text,
-              _aboutEditingController.text, _birthdayEditingController.text);
+          cubit.updateUserInfo(
+              _fullNameEditingController.text,
+              _aboutEditingController.text,
+              _birthdayEditingController.text,
+              imagePath != null ? File(imagePath!) : null);
         },
         style: FilledButton.styleFrom(
             shape: RoundedRectangleBorder(
@@ -232,18 +240,28 @@ class _InformationScreenState
     );
   }
 
-  Stack _buildCircleAvatar(BuildContext context) {
+  Widget _buildCircleAvatar(BuildContext context) {
     return Stack(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(100),
-          child: CachedNetworkImage(
-            imageUrl: FirebaseUtils.me.avatar,
-            fit: BoxFit.fill,
-            width: 140,
-            height: 140,
-          ),
-        ),
+        imagePath == null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: CachedNetworkImage(
+                  imageUrl: FirebaseUtils.me.avatar,
+                  fit: BoxFit.cover,
+                  width: 140,
+                  height: 140,
+                ),
+              )
+            : ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: Image.file(
+                  File(imagePath!),
+                  fit: BoxFit.cover,
+                  width: 140,
+                  height: 140,
+                ),
+              ),
         Positioned(
             top: 100,
             left: 90,
@@ -278,27 +296,11 @@ class _InformationScreenState
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.all(20),
-                                      shape: const CircleBorder(),
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor),
-                                  child: Assets.images.camera.image(scale: 8),
-                                ),
+                                _buildSelectImageButton(context),
                                 const SizedBox(
                                   width: 50,
                                 ),
-                                ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.all(20),
-                                      shape: const CircleBorder(),
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor),
-                                  child: Assets.images.addImage.image(scale: 8),
-                                ),
+                                _buildCameraButton(context),
                               ],
                             ),
                           ],
@@ -314,6 +316,48 @@ class _InformationScreenState
               ),
             ))
       ],
+    );
+  }
+
+  Widget _buildSelectImageButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        final ImagePicker picker = ImagePicker();
+        final XFile? photo = await picker.pickImage(
+            source: ImageSource.gallery, imageQuality: 60);
+        if (photo != null) {
+          setState(() {
+            context.pop();
+            imagePath = photo.path;
+          });
+        }
+      },
+      style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.all(20),
+          shape: const CircleBorder(),
+          backgroundColor: Theme.of(context).primaryColor),
+      child: Assets.images.addImage.image(scale: 8),
+    );
+  }
+
+  Widget _buildCameraButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        final ImagePicker picker = ImagePicker();
+        final XFile? photo = await picker.pickImage(
+            source: ImageSource.camera, imageQuality: 60);
+        if (photo != null) {
+          setState(() {
+            context.pop();
+            imagePath = photo.path;
+          });
+        }
+      },
+      style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.all(20),
+          shape: const CircleBorder(),
+          backgroundColor: Theme.of(context).primaryColor),
+      child: Assets.images.camera.image(scale: 8),
     );
   }
 }

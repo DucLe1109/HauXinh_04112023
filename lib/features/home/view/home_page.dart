@@ -6,8 +6,8 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
 import 'package:boilerplate/core/global_variable.dart';
 import 'package:boilerplate/core/widget_core.dart';
-import 'package:boilerplate/features/chat/view/chats_screen.dart';
 import 'package:boilerplate/features/home/cubit/home_cubit.dart';
+import 'package:boilerplate/features/list_chat/view/list_chat_screen.dart';
 import 'package:boilerplate/features/setting/view/setting_screen.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/injector/injector.dart';
@@ -154,7 +154,7 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
   List<Widget> _buildScreens() {
     return [
       Container(),
-      const ChatScreen(),
+      const ListChatScreen(),
       const SettingScreen(),
     ];
   }

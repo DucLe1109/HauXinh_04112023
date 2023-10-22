@@ -5,6 +5,7 @@ import 'package:boilerplate/features/demo/view/images_from_db_page.dart';
 import 'package:boilerplate/features/dog_image_random/view/dog_image_random_page.dart';
 import 'package:boilerplate/features/home/view/home_page.dart';
 import 'package:boilerplate/features/intro/intro_page.dart';
+import 'package:boilerplate/features/personal_chat/view/personal_chat_screen.dart';
 import 'package:boilerplate/features/setting/cubit/setting_cubit.dart';
 import 'package:boilerplate/features/setting/view/infor_utility/information_screen.dart';
 import 'package:boilerplate/features/setting/view/setting_page.dart';
@@ -15,6 +16,7 @@ import 'package:boilerplate/widgets/error_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rest_client/rest_client.dart';
 
 class AppRouter {
   AppRouter._();
@@ -48,6 +50,9 @@ class AppRouter {
 
   static const String userInfo = 'userInfo';
   static const String userInfoPath = '/userInfoPath';
+
+  static const String chatScreen = 'chatScreen';
+  static const String chatScreenPath = '/chatScreenPath';
 
   static GoRouter get router => _router;
   static final _router = GoRouter(
@@ -98,6 +103,14 @@ class AppRouter {
         name: dogImageRandomNamed,
         path: dogImageRandomPath,
         builder: (context, state) => const DogImageRandomPage(),
+      ),
+      GoRoute(
+        name: chatScreen,
+        path: chatScreenPath,
+        builder: (context, state) {
+          final ChatUser chatUser = state.extra! as ChatUser;
+          return ChatScreen(chatUser);
+        },
       ),
       GoRoute(
         name: userInfo,

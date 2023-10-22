@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,10 +14,13 @@ class SettingCubit extends Cubit<SettingState> {
   SettingCubit() : super(const SettingState());
 
   Future<void> updateUserInfo(
-      String fullName, String about, String birthday) async {
+      String fullName, String about, String birthday, File? file) async {
     emit(state.copyWith(status: const UILoading()));
     try {
       await FirebaseUtils.updateUserInfo(fullName, about, birthday);
+      if (file != null) {
+        await FirebaseUtils.updateAvatar(file);
+      }
       emit(state.copyWith(status: const UILoadSuccess()));
     } on FirebaseException catch (e) {
       emit(state.copyWith(

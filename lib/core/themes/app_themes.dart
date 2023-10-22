@@ -1,3 +1,4 @@
+import 'package:boilerplate/core/themes/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -9,8 +10,8 @@ class AppThemes {
   static const Color _darkPrimaryColor = Color(0xFF1F161E);
 
   //Background
-  static const Color _lightBackgroundColor = Color(0xffffffff);
-  static const Color _darkBackgroundColor = Color(0xFF1a222d);
+  static const Color _lightBackgroundColor = AppColors.naturalWhite;
+  static const Color _darkBackgroundColor = AppColors.grey800;
 
   //Text
   static const Color _lightTextColor = Color(0xff000000);
@@ -102,20 +103,22 @@ class AppThemes {
     color: CupertinoColors.systemGrey,
   );
 
-  static const BottomNavigationBarThemeData _darkBottomNavigationBarThemeData = BottomNavigationBarThemeData(
-      backgroundColor: _darkPrimaryColor,
-      selectedIconTheme: _darkSelectedIconThemeData,
-      unselectedIconTheme: _darkUnSelectedIconThemeData);
-  static const BottomNavigationBarThemeData _lightBottomNavigationBarThemeData = BottomNavigationBarThemeData(
-      backgroundColor: _lightPrimaryColor,
-      selectedIconTheme: _lightSelectedIconThemeData,
-      unselectedIconTheme: _lightUnSelectedIconThemeData);
+  static const BottomNavigationBarThemeData _darkBottomNavigationBarThemeData =
+      BottomNavigationBarThemeData(
+          backgroundColor: _darkPrimaryColor,
+          selectedIconTheme: _darkSelectedIconThemeData,
+          unselectedIconTheme: _darkUnSelectedIconThemeData);
+  static const BottomNavigationBarThemeData _lightBottomNavigationBarThemeData =
+      BottomNavigationBarThemeData(
+          backgroundColor: _lightPrimaryColor,
+          selectedIconTheme: _lightSelectedIconThemeData,
+          unselectedIconTheme: _lightUnSelectedIconThemeData);
 
   static final SearchBarThemeData _lightSearchBarThemeData = SearchBarThemeData(
     backgroundColor: MaterialStateProperty.all(const Color(0xFFF7F7FC)),
   );
   static final SearchBarThemeData _darkSearchBarThemeData = SearchBarThemeData(
-    backgroundColor: MaterialStateProperty.all(const Color(0xFF1B2B48)),
+    backgroundColor: MaterialStateProperty.all(Colors.grey[800]),
   );
 
   ///Light theme

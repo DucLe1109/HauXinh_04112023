@@ -33,7 +33,7 @@ class AppColors {
   static const Color grey500 = Color(0xffAFB1B6);
   static const Color grey600 = Color(0xff999BA0);
   static const Color grey700 = Color(0xff696A6F);
-  static const Color grey800 = Color(0xff47484A);
+  static const Color grey800 = Color(0xFF424242);
   static const Color black6 = Color(0xff19161D);
   static const Color black50 = Color(0xff19161D);
   static const Color black70 = Color(0xff272728);
@@ -49,4 +49,6 @@ class AppColors {
   static const Color waringToastColor = Color(0xffFEC84B);
   static const Color blackToastColor = Color(0xff101828);
   static const Color greyLight = Color(0xffADB5BD);
+  static const Color naturalWhite = Color(0xffeeedf8);
+
 }

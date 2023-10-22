@@ -1,7 +1,12 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:boilerplate/firebase/firebase_firestore_exception.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:rest_client/rest_client.dart';
 
@@ -11,6 +16,8 @@ class FirebaseUtils {
   static FirebaseAuth get firebaseAuth => FirebaseAuth.instance;
 
   static FirebaseFirestore get firebaseStore => FirebaseFirestore.instance;
+
+  static FirebaseStorage get firebaseStorage => FirebaseStorage.instance;
 
   static User get user => firebaseAuth.currentUser!;
 
@@ -73,6 +80,26 @@ class FirebaseUtils {
         .update(me
             .copyWith(about: about, birthday: birthday, fullName: fullName)
             .toJson());
+  }
+
+  static Future<void> updateAvatar(File file) async {
+    /// get extension image
+    final extension = file.path.split('.')[1];
+
+    /// upload image
+    final ref = firebaseStorage.ref().child('avatar/${user.uid}.$extension');
+    await ref
+        .putFile(file, SettableMetadata(contentType: 'image/*'))
+        .then((p0) {
+      debugPrint('Data transferred : ${p0.bytesTransferred / 1000} kb');
+    });
+
+    /// update avatar path in firebase storage
+    final String avatarPath = await ref.getDownloadURL();
+    await firebaseStore
+        .collection(Collections.chatUser.value)
+        .doc(user.uid)
+        .update(me.copyWith(avatar: avatarPath).toJson());
   }
 
   static String handleException(String errorCode) {
