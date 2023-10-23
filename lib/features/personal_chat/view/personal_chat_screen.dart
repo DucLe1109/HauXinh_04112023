@@ -1,6 +1,10 @@
 import 'dart:math' show pi;
 
 import 'package:boilerplate/core/global_variable.dart';
+import 'package:boilerplate/features/personal_chat/message_type.dart';
+import 'package:boilerplate/features/personal_chat/view/message_card.dart';
+import 'package:boilerplate/firebase/firebase_utils.dart';
+import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,6 +23,9 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   late TextEditingController _messageEditingController;
+
+  final double bottomActionHeight = 70;
+  late List<Message> listMessage;
 
   @override
   void initState() {
@@ -45,8 +52,8 @@ class _ChatScreenState extends State<ChatScreen> {
               borderRadius: BorderRadius.circular(100),
               child: CachedNetworkImage(
                 imageUrl: widget.chatUser.avatar,
-                width: 35,
-                height: 35,
+                width: 40,
+                height: 40,
                 fit: BoxFit.cover,
               ),
             ),
@@ -54,12 +61,19 @@ class _ChatScreenState extends State<ChatScreen> {
               width: 10,
             ),
             Flexible(
-              child: Text(
-                widget.chatUser.fullName,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(fontWeight: FontWeight.w500),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.chatUser.fullName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.w500),
+                  ),
+                  Text('Last seen on 1 Dec 8:28 am',
+                      style: Theme.of(context).textTheme.bodySmall)
+                ],
               ),
             ),
             const SizedBox(
@@ -90,90 +104,216 @@ class _ChatScreenState extends State<ChatScreen> {
               ))
         ],
       ),
-      backgroundColor: Theme.of(context).primaryColor,
-      body: Stack(
-        children: [
-          Container(
-            padding: const EdgeInsets.only(bottom: 80),
-            color: Theme.of(context).scaffoldBackgroundColor,
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              height: 70,
-              padding: const EdgeInsets.fromLTRB(
-                  verticalPadding, verticalPadding, verticalPadding, horizontalPadding),
-              color: Theme.of(context).primaryColor,
+      body: Column(
+        children: [_buildChatSection(context), _buildBottomAction(context)],
+      ),
+    );
+  }
+
+  Widget _buildBottomAction(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 6,
+          child: Card(
+            color: Theme.of(context).primaryColor,
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(borderRadius)),
+            margin: const EdgeInsets.fromLTRB(verticalPadding, verticalPadding,
+                verticalPadding, horizontalPadding),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               child: Row(
                 children: [
-                  Material(
-                    borderRadius: BorderRadius.circular(100),
-                    color: Colors.transparent,
-                    child: InkWell(
-                        borderRadius: BorderRadius.circular(100),
-                        onTap: () {},
-                        child: const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.add,
-                            size: 25,
-                          ),
-                        )),
-                  ),
+                  _buildIconAction(),
                   const SizedBox(
                     width: 5,
                   ),
-                  Expanded(
-                    child: TextField(
-                      onChanged: (value) {},
-                      onEditingComplete: Utils.hideKeyboard,
-                      controller: _messageEditingController,
-                      textAlignVertical: TextAlignVertical.top,
-                      decoration: InputDecoration(
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 0),
-                            borderRadius: BorderRadius.circular(borderRadius)),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Colors.transparent, width: 0),
-                            borderRadius: BorderRadius.circular(borderRadius)),
-                        filled: true,
-                        fillColor: Theme.of(context)
-                            .searchBarTheme
-                            .backgroundColor
-                            ?.resolve({}),
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 12),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
+                  _buildChatTextField(context),
                   const SizedBox(
                     width: 12,
                   ),
-                  Transform.rotate(
-                    angle: -pi / 4,
-                    child: Material(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(100),
-                      child: InkWell(
-                          borderRadius: BorderRadius.circular(100),
-                          onTap: () {},
-                          child: const Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Icon(
-                              Icons.send,
-                              size: 20,
-                            ),
-                          )),
-                    ),
-                  )
+                  _buildPickImageButton(),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  _buildCameraButton()
                 ],
               ),
             ),
-          )
-        ],
+          ),
+        ),
+        Expanded(child: _buildSendButton(context)),
+        const SizedBox(
+          width: 6,
+        )
+      ],
+    );
+  }
+
+  Widget _buildSendButton(BuildContext context) {
+    return Card(
+      elevation: 3,
+      shape: const CircleBorder(),
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: Theme.of(context).primaryColor,
+        shape: const CircleBorder(),
+        child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: () {},
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Transform.rotate(
+                angle: -pi / 4,
+                child: const Icon(
+                  Icons.send_rounded,
+                  size: 20,
+                  color: Colors.blue,
+                ),
+              ),
+            )),
+      ),
+    );
+  }
+
+  Widget _buildPickImageButton() {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(100),
+      child: InkWell(
+          borderRadius: BorderRadius.circular(100),
+          onTap: () {},
+          child: const Padding(
+            padding: EdgeInsets.all(8),
+            child: Icon(
+              Icons.image,
+              size: 23,
+              color: Colors.blue,
+            ),
+          )),
+    );
+  }
+
+  Widget _buildCameraButton() {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(100),
+      child: InkWell(
+          borderRadius: BorderRadius.circular(100),
+          onTap: () {},
+          child: const Padding(
+            padding: EdgeInsets.all(8),
+            child: Icon(
+              CupertinoIcons.photo_camera_solid,
+              size: 22,
+              color: Colors.blue,
+            ),
+          )),
+    );
+  }
+
+  Widget _buildChatTextField(BuildContext context) {
+    return Expanded(
+      child: TextField(
+        onChanged: (value) {},
+        onEditingComplete: Utils.hideKeyboard,
+        controller: _messageEditingController,
+        textAlignVertical: TextAlignVertical.center,
+        decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.transparent, width: 0),
+              borderRadius: BorderRadius.circular(borderRadius)),
+          enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.transparent, width: 0),
+              borderRadius: BorderRadius.circular(borderRadius)),
+          hintText: S.current.type_something_here,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 5),
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIconAction() {
+    return Material(
+      borderRadius: BorderRadius.circular(100),
+      color: Colors.transparent,
+      child: InkWell(
+          borderRadius: BorderRadius.circular(100),
+          onTap: () {},
+          child: const Padding(
+            padding: EdgeInsets.all(8),
+            child: Icon(
+              CupertinoIcons.smiley_fill,
+              size: 25,
+              color: Colors.blue,
+            ),
+          )),
+    );
+  }
+
+  Widget _buildChatSection(BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: horizontalPadding, vertical: horizontalPadding),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: StreamBuilder(
+          stream: FirebaseUtils.getAllMessages(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Container();
+            } else {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.red,
+                      strokeWidth: 1.5,
+                    ),
+                  );
+                case ConnectionState.active:
+                case ConnectionState.done:
+                  //   final data = snapshot.data?.docs;
+                  //   listMessage =
+                  //       data?.map((e) => Message.fromJson(e.data())).toList() ??
+                  //           [];
+                  listMessage = [];
+                  listMessage.add(Message(
+                      fromId: FirebaseUtils.user.uid,
+                      msg: 'Hello',
+                      read: '',
+                      type: MessageType.text.name,
+                      sent: '12:00 AM',
+                      toId: 'xyz'));
+
+                  listMessage.add(Message(
+                    fromId: 'xyz',
+                    msg: 'How are you? ',
+                    read: '',
+                    type: MessageType.text.name,
+                    sent: '12:05 AM',
+                    toId: FirebaseUtils.user.uid,
+                  ));
+
+                  if (listMessage.isNotEmpty) {
+                    return ListView.builder(
+                      itemCount: listMessage.length,
+                      itemBuilder: (context, index) =>
+                          MessageCard(message: listMessage[index]),
+                    );
+                  } else {
+                    return const Center(
+                      child: Text('No connection'),
+                    );
+                  }
+              }
+            }
+          },
+        ),
       ),
     );
   }

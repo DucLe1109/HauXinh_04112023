@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:boilerplate/firebase/firebase_firestore_exception.dart';
 import 'package:boilerplate/generated/l10n.dart';
@@ -100,6 +99,10 @@ class FirebaseUtils {
         .collection(Collections.chatUser.value)
         .doc(user.uid)
         .update(me.copyWith(avatar: avatarPath).toJson());
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages() {
+    return firebaseStore.collection(Collections.messages.value).snapshots();
   }
 
   static String handleException(String errorCode) {

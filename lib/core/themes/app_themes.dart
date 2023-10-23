@@ -82,10 +82,12 @@ class AppThemes {
 
   static const ButtonThemeData _lightButtonTheme = ButtonThemeData(
     buttonColor: Color(0xff002DE3),
+    focusColor: Color(0xff002DE3),
     height: 48,
   );
   static const ButtonThemeData _darkButtonTheme = ButtonThemeData(
     buttonColor: Color(0xff375FFF),
+    focusColor: Color(0xff375FFF),
     height: 48,
   );
 

@@ -12,6 +12,7 @@ import 'package:boilerplate/features/setting/view/setting_screen.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/injector/injector.dart';
 import 'package:boilerplate/router/app_router.dart';
+import 'package:boilerplate/router/navigator_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -52,9 +53,7 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
           title: S.current.no_connection,
           desc: S.current.no_connection_des,
           btnOkColor: Colors.redAccent,
-          btnOkOnPress: () {
-            context.go(AppRouter.homePath);
-          },
+          btnOkOnPress: () {},
         ).show();
       }
     });
@@ -72,9 +71,7 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
           title: S.current.no_connection,
           desc: S.current.no_connection_des,
           btnOkColor: Colors.redAccent,
-          btnOkOnPress: () {
-            context.go(AppRouter.homePath);
-          },
+          btnOkOnPress: () {},
         ).show();
       } else if (isHasConnection == false &&
               result == ConnectivityResult.wifi ||
@@ -88,9 +85,7 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
           title: S.current.connection_is_recover,
           desc: S.current.continue_with_app,
           btnOkColor: Colors.lightBlue,
-          btnOkOnPress: () {
-            context.go(AppRouter.homePath);
-          },
+          btnOkOnPress: () {},
         ).show();
       }
     });
@@ -104,7 +99,9 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<State> parentKey = GlobalKey<State>();
     return BlocListener<HomeCubit, HomeState>(
+      key: parentKey,
       listener: (context, state) {
         if (state.status is UILoadFailed) {
           AwesomeDialog(
