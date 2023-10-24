@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:boilerplate/features/personal_chat/message_type.dart';
 import 'package:boilerplate/firebase/firebase_firestore_exception.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,47 +13,44 @@ import 'package:rest_client/rest_client.dart';
 class FirebaseUtils {
   FirebaseUtils._();
 
+  /// --------------- Get firebase instance ---------------
   static FirebaseAuth get firebaseAuth => FirebaseAuth.instance;
 
   static FirebaseFirestore get firebaseStore => FirebaseFirestore.instance;
 
   static FirebaseStorage get firebaseStorage => FirebaseStorage.instance;
 
-  static User get user => firebaseAuth.currentUser!;
+  static User? get user => firebaseAuth.currentUser;
 
+  /// --------------- End get firebase instance ---------------
+
+  /// --------------- User information ---------------
   static Future<void> createUser() async {
     final String currentTime = DateFormat('dd/MM/yyyy').format(DateTime.now());
     final ChatUser chatUser = ChatUser(
         about: '',
         createdAt: currentTime,
-        email: user.email ?? '',
-        id: user.uid,
+        email: user?.email ?? '',
+        id: user?.uid ?? '',
         isOnline: false,
         isHasStory: false,
         lastActive: currentTime,
-        fullName: user.displayName ?? '',
+        fullName: user?.displayName ?? '',
         pushToken: '',
-        avatar: user.photoURL ?? '',
+        avatar: user?.photoURL ?? '',
         birthday: '');
     await firebaseStore
         .collection(Collections.chatUser.value)
-        .doc(user.uid)
+        .doc(user?.uid)
         .set(chatUser.toJson());
   }
 
   static Future<bool> isExistUser() async {
     return (await firebaseStore
             .collection(Collections.chatUser.value)
-            .doc(user.uid)
+            .doc(user?.uid)
             .get())
         .exists;
-  }
-
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
-    return firebaseStore
-        .collection(Collections.chatUser.value)
-        .where('id', isNotEqualTo: user.uid)
-        .snapshots();
   }
 
   static late ChatUser me;
@@ -60,7 +58,7 @@ class FirebaseUtils {
   static Future<void> getSelfInfo() async {
     return firebaseStore
         .collection(Collections.chatUser.value)
-        .doc(user.uid)
+        .doc(user?.uid)
         .get()
         .then((user) async {
       if (user.exists) {
@@ -75,7 +73,7 @@ class FirebaseUtils {
       String fullName, String about, String birthday) async {
     await firebaseStore
         .collection(Collections.chatUser.value)
-        .doc(user.uid)
+        .doc(user?.uid)
         .update(me
             .copyWith(about: about, birthday: birthday, fullName: fullName)
             .toJson());
@@ -86,7 +84,7 @@ class FirebaseUtils {
     final extension = file.path.split('.')[1];
 
     /// upload image
-    final ref = firebaseStorage.ref().child('avatar/${user.uid}.$extension');
+    final ref = firebaseStorage.ref().child('avatar/${user?.uid}.$extension');
     await ref
         .putFile(file, SettableMetadata(contentType: 'image/*'))
         .then((p0) {
@@ -97,14 +95,49 @@ class FirebaseUtils {
     final String avatarPath = await ref.getDownloadURL();
     await firebaseStore
         .collection(Collections.chatUser.value)
-        .doc(user.uid)
+        .doc(user?.uid)
         .update(me.copyWith(avatar: avatarPath).toJson());
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages() {
-    return firebaseStore.collection(Collections.messages.value).snapshots();
+  /// --------------- End user information ---------------
+
+  /// --------------- Firebase chat ---------------
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
+    return firebaseStore
+        .collection(Collections.chatUser.value)
+        .where('id', isNotEqualTo: user?.uid)
+        .snapshots();
   }
 
+  static String getConversationID(String id) => user!.uid.hashCode <= id.hashCode
+      ? '${user?.uid}_$id'
+      : '${id}_${user?.uid}';
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
+      ChatUser chatUser) {
+    return firebaseStore
+        .collection(
+            '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
+        .snapshots();
+  }
+
+  static Future<void> sendMessage(ChatUser chatUser, String msg) async {
+    final time = DateTime.now().millisecondsSinceEpoch.toString();
+    final ref = firebaseStore.collection(
+        '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/');
+    await ref.doc(time).set(Message(
+          toId: chatUser.id,
+          sent: time,
+          type: MessageType.text.name,
+          read: '',
+          msg: msg,
+          fromId: user?.uid,
+        ).toJson());
+  }
+
+  /// --------------- End firebase chat ---------------
+
+  /// --------------- Firebase exception ---------------
   static String handleException(String errorCode) {
     if (errorCode == FirebaseFirestoreException.CANCELLED.code) {
       return S.current.error_code_cancelled;
@@ -143,4 +176,6 @@ class FirebaseUtils {
     }
     return '';
   }
+
+  /// --------------- End firebase exception ---------------
 }

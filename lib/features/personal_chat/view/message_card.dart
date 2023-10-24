@@ -1,4 +1,3 @@
-import 'package:boilerplate/core/global_variable.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:rest_client/rest_client.dart';
@@ -10,9 +9,9 @@ class MessageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FirebaseUtils.user.uid == message.fromId
-        ? _buildGreenMessage(context)
-        : _buildBlueMessage(context);
+    return FirebaseUtils.user?.uid == message.fromId
+        ? _buildBlueMessage(context)
+        : _buildGreenMessage(context);
   }
 
   Widget _buildGreenMessage(BuildContext context) {

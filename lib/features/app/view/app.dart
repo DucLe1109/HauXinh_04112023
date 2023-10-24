@@ -63,9 +63,6 @@ class _App extends StatelessWidget {
       (AppBloc value) => value.state.locale,
     );
 
-    final bool isDarkMode = context.select(
-      (AppBloc value) => value.state.isDarkMode,
-    );
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(

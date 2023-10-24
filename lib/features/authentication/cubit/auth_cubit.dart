@@ -1,9 +1,9 @@
 // ignore_for_file: avoid_positional_boolean_parameters, depend_on_referenced_packages, lines_longer_than_80_chars
 
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
+import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/services/auth_service/auth_service.dart';
-import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,7 +13,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 
 part 'auth_cubit.freezed.dart';
-
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {

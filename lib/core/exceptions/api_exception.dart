@@ -9,7 +9,7 @@ class ApiException implements Exception {
     this.data,
   });
 
-  factory ApiException.fromDioError(DioError error) {
+  factory ApiException.fromDioError(DioException error) {
     return ApiException(
       statusCode: error.response?.statusCode,
       message: error.error?.toString(),
@@ -42,9 +42,9 @@ extension HandleExceptionExtensions<T> on Future<T> {
   Future<T> get onApiError {
     return onError<Exception>(
       (exception, stackTrace) {
-        throw ApiException.fromDioError(exception as DioError);
+        throw ApiException.fromDioError(exception as DioException);
       },
-      test: (exception) => exception is DioError,
+      test: (exception) => exception is DioException,
     );
   }
 }

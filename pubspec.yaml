@@ -69,7 +69,7 @@ dependencies:
   cloud_firestore: ^4.10.0
   cached_network_image: ^3.3.0
   json_annotation: ^4.8.0
-  connectivity_plus: ^5.0.1
+#  connectivity_plus: ^5.0.1
   image_picker: ^1.0.4
   firebase_storage: ^11.3.1
 

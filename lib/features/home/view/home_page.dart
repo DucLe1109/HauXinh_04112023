@@ -4,7 +4,6 @@ import 'dart:async';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
-import 'package:boilerplate/core/global_variable.dart';
 import 'package:boilerplate/core/widget_core.dart';
 import 'package:boilerplate/features/home/cubit/home_cubit.dart';
 import 'package:boilerplate/features/list_chat/view/list_chat_screen.dart';
@@ -12,8 +11,6 @@ import 'package:boilerplate/features/setting/view/setting_screen.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/injector/injector.dart';
 import 'package:boilerplate/router/app_router.dart';
-import 'package:boilerplate/router/navigator_service.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,7 +27,7 @@ class HomePage extends BaseStateFulWidget {
 class _HomePageState extends BaseStateFulWidgetState<HomePage> {
   late PersistentTabController _controller;
   late HomeCubit homeCubit;
-  late StreamSubscription subscription;
+  // late StreamSubscription subscription;
 
   @override
   void initState() {
@@ -42,58 +39,58 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
       () => homeCubit.checkAuthentication(),
     );
 
-    Connectivity().checkConnectivity().then((value) {
-      if (value == ConnectivityResult.none) {
-        isHasConnection = false;
-        AwesomeDialog(
-          dismissOnBackKeyPress: false,
-          dismissOnTouchOutside: false,
-          dialogType: DialogType.error,
-          context: context,
-          title: S.current.no_connection,
-          desc: S.current.no_connection_des,
-          btnOkColor: Colors.redAccent,
-          btnOkOnPress: () {},
-        ).show();
-      }
-    });
-
-    subscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) {
-      if (result == ConnectivityResult.none) {
-        isHasConnection = false;
-        AwesomeDialog(
-          dismissOnBackKeyPress: false,
-          dismissOnTouchOutside: false,
-          dialogType: DialogType.error,
-          context: context,
-          title: S.current.no_connection,
-          desc: S.current.no_connection_des,
-          btnOkColor: Colors.redAccent,
-          btnOkOnPress: () {},
-        ).show();
-      } else if (isHasConnection == false &&
-              result == ConnectivityResult.wifi ||
-          result == ConnectivityResult.ethernet) {
-        isHasConnection = true;
-        AwesomeDialog(
-          dismissOnBackKeyPress: false,
-          dismissOnTouchOutside: false,
-          dialogType: DialogType.success,
-          context: context,
-          title: S.current.connection_is_recover,
-          desc: S.current.continue_with_app,
-          btnOkColor: Colors.lightBlue,
-          btnOkOnPress: () {},
-        ).show();
-      }
-    });
+    // Connectivity().checkConnectivity().then((value) {
+    //   if (value == ConnectivityResult.none) {
+    //     isHasConnection = false;
+    //     AwesomeDialog(
+    //       dismissOnBackKeyPress: false,
+    //       dismissOnTouchOutside: false,
+    //       dialogType: DialogType.error,
+    //       context: context,
+    //       title: S.current.no_connection,
+    //       desc: S.current.no_connection_des,
+    //       btnOkColor: Colors.redAccent,
+    //       btnOkOnPress: () {},
+    //     ).show();
+    //   }
+    // });
+    //
+    // subscription = Connectivity()
+    //     .onConnectivityChanged
+    //     .listen((ConnectivityResult result) {
+    //   if (result == ConnectivityResult.none) {
+    //     isHasConnection = false;
+    //     AwesomeDialog(
+    //       dismissOnBackKeyPress: false,
+    //       dismissOnTouchOutside: false,
+    //       dialogType: DialogType.error,
+    //       context: context,
+    //       title: S.current.no_connection,
+    //       desc: S.current.no_connection_des,
+    //       btnOkColor: Colors.redAccent,
+    //       btnOkOnPress: () {},
+    //     ).show();
+    //   } else if (isHasConnection == false &&
+    //           result == ConnectivityResult.wifi ||
+    //       result == ConnectivityResult.ethernet) {
+    //     isHasConnection = true;
+    //     AwesomeDialog(
+    //       dismissOnBackKeyPress: false,
+    //       dismissOnTouchOutside: false,
+    //       dialogType: DialogType.success,
+    //       context: context,
+    //       title: S.current.connection_is_recover,
+    //       desc: S.current.continue_with_app,
+    //       btnOkColor: Colors.lightBlue,
+    //       btnOkOnPress: () {},
+    //     ).show();
+    //   }
+    // });
   }
 
   @override
   void dispose() {
-    subscription.cancel();
+    // subscription.cancel();
     super.dispose();
   }
 

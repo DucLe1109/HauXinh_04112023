@@ -7,6 +7,7 @@ import 'package:boilerplate/generated/assets.gen.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/router/app_router.dart';
 import 'package:boilerplate/utils/utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -27,11 +28,12 @@ class _ListChatScreenState extends State<ListChatScreen> {
   late bool isSearch;
   late bool isShowClearIcon;
 
-  final chatUserStream = FirebaseUtils.getAllUsers();
+  late Stream<QuerySnapshot<Map<String, dynamic>>> chatUserStream;
 
   @override
   void initState() {
     super.initState();
+    chatUserStream = FirebaseUtils.getAllUsers();
     _searchController = TextEditingController();
     _searchFocusNode = FocusNode();
     isSearch = false;

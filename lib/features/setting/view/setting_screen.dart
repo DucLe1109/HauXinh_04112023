@@ -32,6 +32,7 @@ class _SettingScreenState extends BaseStateFulWidgetState<SettingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: false,
         elevation: 0,
         backgroundColor: Theme.of(context).primaryColor,
         title: Text(S.current.setting),
@@ -39,8 +40,7 @@ class _SettingScreenState extends BaseStateFulWidgetState<SettingScreen> {
       backgroundColor: Theme.of(context).primaryColor,
       body: SingleChildScrollView(
         child: Container(
-          margin: const EdgeInsets.only(top: 16),
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
+          padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 10),
           child: Column(
             children: [
               _buildSettingInfo(context),
@@ -117,14 +117,14 @@ class _SettingScreenState extends BaseStateFulWidgetState<SettingScreen> {
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(100),
         child: CachedNetworkImage(
-          imageUrl: FirebaseUtils.me.avatar ?? '',
-          fit: BoxFit.fill,
+          imageUrl: FirebaseUtils.me.avatar,
+          fit: BoxFit.cover,
           width: 50,
           height: 50,
         ),
       ),
       title: Text(
-        FirebaseUtils.me.fullName ?? '',
+        FirebaseUtils.me.fullName,
         style: Theme.of(context)
             .textTheme
             .bodyMedium
@@ -133,7 +133,7 @@ class _SettingScreenState extends BaseStateFulWidgetState<SettingScreen> {
       subtitle: Padding(
         padding: const EdgeInsets.only(top: 10),
         child: Text(
-          FirebaseUtils.me.email ?? '',
+          FirebaseUtils.me.email,
           style: Theme.of(context).textTheme.bodySmall,
         ),
       ),

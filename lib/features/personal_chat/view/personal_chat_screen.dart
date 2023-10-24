@@ -7,6 +7,7 @@ import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -26,10 +27,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
   final double bottomActionHeight = 70;
   late List<Message> listMessage;
+  late Stream<QuerySnapshot<Map<String, dynamic>>> chatStream;
 
   @override
   void initState() {
     super.initState();
+    chatStream = FirebaseUtils.getAllMessages(widget.chatUser);
     _messageEditingController = TextEditingController();
   }
 
@@ -37,7 +40,9 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Theme
+            .of(context)
+            .primaryColor,
         elevation: 0,
         leading: IconButton(
             onPressed: () => context.pop(),
@@ -66,13 +71,17 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: [
                   Text(
                     widget.chatUser.fullName,
-                    style: Theme.of(context)
+                    style: Theme
+                        .of(context)
                         .textTheme
                         .bodyLarge
                         ?.copyWith(fontWeight: FontWeight.w500),
                   ),
                   Text('Last seen on 1 Dec 8:28 am',
-                      style: Theme.of(context).textTheme.bodySmall)
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .bodySmall)
                 ],
               ),
             ),
@@ -116,12 +125,14 @@ class _ChatScreenState extends State<ChatScreen> {
         Expanded(
           flex: 6,
           child: Card(
-            color: Theme.of(context).primaryColor,
+            color: Theme
+                .of(context)
+                .primaryColor,
             elevation: 3,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(borderRadius)),
-            margin: const EdgeInsets.fromLTRB(verticalPadding, verticalPadding,
-                verticalPadding, horizontalPadding),
+            margin: const EdgeInsets.fromLTRB(horizontalPadding,
+                verticalPadding, verticalPadding, horizontalPadding),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6),
               child: Row(
@@ -158,11 +169,15 @@ class _ChatScreenState extends State<ChatScreen> {
       shape: const CircleBorder(),
       margin: const EdgeInsets.only(bottom: 8),
       child: Material(
-        color: Theme.of(context).primaryColor,
+        color: Theme
+            .of(context)
+            .primaryColor,
         shape: const CircleBorder(),
         child: InkWell(
+            onTap: () {
+              FirebaseUtils.sendMessage(widget.chatUser, '1234');
+            },
             customBorder: const CircleBorder(),
-            onTap: () {},
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: Transform.rotate(
@@ -184,7 +199,6 @@ class _ChatScreenState extends State<ChatScreen> {
       borderRadius: BorderRadius.circular(100),
       child: InkWell(
           borderRadius: BorderRadius.circular(100),
-          onTap: () {},
           child: const Padding(
             padding: EdgeInsets.all(8),
             child: Icon(
@@ -202,7 +216,6 @@ class _ChatScreenState extends State<ChatScreen> {
       borderRadius: BorderRadius.circular(100),
       child: InkWell(
           borderRadius: BorderRadius.circular(100),
-          onTap: () {},
           child: const Padding(
             padding: EdgeInsets.all(8),
             child: Icon(
@@ -242,7 +255,6 @@ class _ChatScreenState extends State<ChatScreen> {
       color: Colors.transparent,
       child: InkWell(
           borderRadius: BorderRadius.circular(100),
-          onTap: () {},
           child: const Padding(
             padding: EdgeInsets.all(8),
             child: Icon(
@@ -259,9 +271,11 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(
             horizontal: horizontalPadding, vertical: horizontalPadding),
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: Theme
+            .of(context)
+            .scaffoldBackgroundColor,
         child: StreamBuilder(
-          stream: FirebaseUtils.getAllMessages(),
+          stream: chatStream,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Container();
@@ -277,28 +291,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   );
                 case ConnectionState.active:
                 case ConnectionState.done:
-                  //   final data = snapshot.data?.docs;
-                  //   listMessage =
-                  //       data?.map((e) => Message.fromJson(e.data())).toList() ??
-                  //           [];
-                  listMessage = [];
-                  listMessage.add(Message(
-                      fromId: FirebaseUtils.user.uid,
-                      msg: 'Hello',
-                      read: '',
-                      type: MessageType.text.name,
-                      sent: '12:00 AM',
-                      toId: 'xyz'));
-
-                  listMessage.add(Message(
-                    fromId: 'xyz',
-                    msg: 'How are you? ',
-                    read: '',
-                    type: MessageType.text.name,
-                    sent: '12:05 AM',
-                    toId: FirebaseUtils.user.uid,
-                  ));
-
+                  final data = snapshot.data?.docs;
+                  listMessage =
+                      data?.map((e) => Message.fromJson(e.data())).toList() ??
+                          [];
                   if (listMessage.isNotEmpty) {
                     return ListView.builder(
                       itemCount: listMessage.length,
