@@ -96,9 +96,7 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<State> parentKey = GlobalKey<State>();
     return BlocListener<HomeCubit, HomeState>(
-      key: parentKey,
       listener: (context, state) {
         if (state.status is UILoadFailed) {
           AwesomeDialog(
