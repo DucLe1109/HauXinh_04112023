@@ -79,5 +79,6 @@
   "error_code_data_loss": "Không thể phục hồi dữ liệu",
   "error_code_deadline_exceeded": "Hành động vượt quá thời gian cho phép",
   "error_code_resource_permission_denied ": "Không có quyền truy cập",
-  "type_something_here" : "Aa..."
+  "type_something_here" : "Aa...",
+  "say_hello" : "Say hello!"
 }

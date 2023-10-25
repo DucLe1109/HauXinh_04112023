@@ -63,8 +63,6 @@ class FirebaseUtils {
         .then((user) async {
       if (user.exists) {
         me = ChatUser.fromJson(user.data()!);
-      } else {
-        await createUser().then((value) => getSelfInfo());
       }
     });
   }
@@ -109,10 +107,13 @@ class FirebaseUtils {
         .snapshots();
   }
 
-  static String getConversationID(String id) => user!.uid.hashCode <= id.hashCode
-      ? '${user?.uid}_$id'
-      : '${id}_${user?.uid}';
+  /// Function to generate unique ID by 2 user id
+  static String getConversationID(String id) =>
+      user!.uid.hashCode <= id.hashCode
+          ? '${user?.uid}_$id'
+          : '${id}_${user?.uid}';
 
+  /// Function to get all message of myself  with specific user.
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
       ChatUser chatUser) {
     return firebaseStore
@@ -121,13 +122,16 @@ class FirebaseUtils {
         .snapshots();
   }
 
+  /// Function to send message to specific user.
   static Future<void> sendMessage(ChatUser chatUser, String msg) async {
-    final time = DateTime.now().millisecondsSinceEpoch.toString();
+    final messageID = DateTime.now().millisecondsSinceEpoch.toString();
+    final now = DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now());
     final ref = firebaseStore.collection(
         '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/');
-    await ref.doc(time).set(Message(
+    await ref.doc(messageID).set(Message(
           toId: chatUser.id,
-          sent: time,
+          createdTime: now,
+          updatedTime: '',
           type: MessageType.text.name,
           read: '',
           msg: msg,

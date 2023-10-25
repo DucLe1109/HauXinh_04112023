@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 class App extends StatefulWidget {
@@ -68,22 +69,25 @@ class _App extends StatelessWidget {
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
       ),
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        scrollBehavior: MScrollBehavior(),
-        localizationsDelegates: const [
-          AppLocalizationDelegate(),
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          DefaultCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const AppLocalizationDelegate().supportedLocales,
-        locale: Locale(locale),
-        theme: AppThemes.lightTheme,
-        darkTheme: AppThemes.darkTheme,
-        routerConfig: AppRouter.router,
-        title: 'BoilerPlate',
+      child: ScreenUtilInit(
+        designSize: const Size(360, 720),
+        child: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          scrollBehavior: MScrollBehavior(),
+          localizationsDelegates: const [
+            AppLocalizationDelegate(),
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            DefaultCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const AppLocalizationDelegate().supportedLocales,
+          locale: Locale(locale),
+          theme: AppThemes.lightTheme,
+          darkTheme: AppThemes.darkTheme,
+          routerConfig: AppRouter.router,
+          title: 'BoilerPlate',
+        ),
       ),
     );
   }

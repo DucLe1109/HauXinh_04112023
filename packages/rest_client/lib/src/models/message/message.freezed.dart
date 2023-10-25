@@ -22,7 +22,8 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
 mixin _$Message {
   String? get fromId => throw _privateConstructorUsedError;
   String? get toId => throw _privateConstructorUsedError;
-  String? get sent => throw _privateConstructorUsedError;
+  String? get createdTime => throw _privateConstructorUsedError;
+  String? get updatedTime => throw _privateConstructorUsedError;
   String? get read => throw _privateConstructorUsedError;
   String? get msg => throw _privateConstructorUsedError;
   String? get type => throw _privateConstructorUsedError;
@@ -40,7 +41,8 @@ abstract class $MessageCopyWith<$Res> {
   $Res call(
       {String? fromId,
       String? toId,
-      String? sent,
+      String? createdTime,
+      String? updatedTime,
       String? read,
       String? msg,
       String? type});
@@ -61,7 +63,8 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
   $Res call({
     Object? fromId = freezed,
     Object? toId = freezed,
-    Object? sent = freezed,
+    Object? createdTime = freezed,
+    Object? updatedTime = freezed,
     Object? read = freezed,
     Object? msg = freezed,
     Object? type = freezed,
@@ -75,9 +78,13 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
           ? _value.toId
           : toId // ignore: cast_nullable_to_non_nullable
               as String?,
-      sent: freezed == sent
-          ? _value.sent
-          : sent // ignore: cast_nullable_to_non_nullable
+      createdTime: freezed == createdTime
+          ? _value.createdTime
+          : createdTime // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedTime: freezed == updatedTime
+          ? _value.updatedTime
+          : updatedTime // ignore: cast_nullable_to_non_nullable
               as String?,
       read: freezed == read
           ? _value.read
@@ -105,7 +112,8 @@ abstract class _$$MessageImplCopyWith<$Res> implements $MessageCopyWith<$Res> {
   $Res call(
       {String? fromId,
       String? toId,
-      String? sent,
+      String? createdTime,
+      String? updatedTime,
       String? read,
       String? msg,
       String? type});
@@ -124,7 +132,8 @@ class __$$MessageImplCopyWithImpl<$Res>
   $Res call({
     Object? fromId = freezed,
     Object? toId = freezed,
-    Object? sent = freezed,
+    Object? createdTime = freezed,
+    Object? updatedTime = freezed,
     Object? read = freezed,
     Object? msg = freezed,
     Object? type = freezed,
@@ -138,9 +147,13 @@ class __$$MessageImplCopyWithImpl<$Res>
           ? _value.toId
           : toId // ignore: cast_nullable_to_non_nullable
               as String?,
-      sent: freezed == sent
-          ? _value.sent
-          : sent // ignore: cast_nullable_to_non_nullable
+      createdTime: freezed == createdTime
+          ? _value.createdTime
+          : createdTime // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedTime: freezed == updatedTime
+          ? _value.updatedTime
+          : updatedTime // ignore: cast_nullable_to_non_nullable
               as String?,
       read: freezed == read
           ? _value.read
@@ -162,7 +175,13 @@ class __$$MessageImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$MessageImpl implements _Message {
   const _$MessageImpl(
-      {this.fromId, this.toId, this.sent, this.read, this.msg, this.type});
+      {this.fromId,
+      this.toId,
+      this.createdTime,
+      this.updatedTime,
+      this.read,
+      this.msg,
+      this.type});
 
   factory _$MessageImpl.fromJson(Map<String, dynamic> json) =>
       _$$MessageImplFromJson(json);
@@ -172,7 +191,9 @@ class _$MessageImpl implements _Message {
   @override
   final String? toId;
   @override
-  final String? sent;
+  final String? createdTime;
+  @override
+  final String? updatedTime;
   @override
   final String? read;
   @override
@@ -182,7 +203,7 @@ class _$MessageImpl implements _Message {
 
   @override
   String toString() {
-    return 'Message(fromId: $fromId, toId: $toId, sent: $sent, read: $read, msg: $msg, type: $type)';
+    return 'Message(fromId: $fromId, toId: $toId, createdTime: $createdTime, updatedTime: $updatedTime, read: $read, msg: $msg, type: $type)';
   }
 
   @override
@@ -192,7 +213,10 @@ class _$MessageImpl implements _Message {
             other is _$MessageImpl &&
             (identical(other.fromId, fromId) || other.fromId == fromId) &&
             (identical(other.toId, toId) || other.toId == toId) &&
-            (identical(other.sent, sent) || other.sent == sent) &&
+            (identical(other.createdTime, createdTime) ||
+                other.createdTime == createdTime) &&
+            (identical(other.updatedTime, updatedTime) ||
+                other.updatedTime == updatedTime) &&
             (identical(other.read, read) || other.read == read) &&
             (identical(other.msg, msg) || other.msg == msg) &&
             (identical(other.type, type) || other.type == type));
@@ -200,8 +224,8 @@ class _$MessageImpl implements _Message {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, fromId, toId, sent, read, msg, type);
+  int get hashCode => Object.hash(
+      runtimeType, fromId, toId, createdTime, updatedTime, read, msg, type);
 
   @JsonKey(ignore: true)
   @override
@@ -221,7 +245,8 @@ abstract class _Message implements Message {
   const factory _Message(
       {final String? fromId,
       final String? toId,
-      final String? sent,
+      final String? createdTime,
+      final String? updatedTime,
       final String? read,
       final String? msg,
       final String? type}) = _$MessageImpl;
@@ -233,7 +258,9 @@ abstract class _Message implements Message {
   @override
   String? get toId;
   @override
-  String? get sent;
+  String? get createdTime;
+  @override
+  String? get updatedTime;
   @override
   String? get read;
   @override

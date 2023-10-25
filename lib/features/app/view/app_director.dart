@@ -19,7 +19,6 @@ class AppDirector extends StatelessWidget {
         if (isFirstUse) {
           return const IntroPage();
         } else {
-          FirebaseUtils.getSelfInfo();
           return FirebaseAuth.instance.currentUser != null
               ? const HomePage()
               : const LoginScreen();

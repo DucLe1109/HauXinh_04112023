@@ -9,7 +9,8 @@ class Message with _$Message {
   const factory Message({
     String? fromId,
     String? toId,
-    String? sent,
+    String? createdTime,
+    String? updatedTime,
     String? read,
     String? msg,
     String? type,

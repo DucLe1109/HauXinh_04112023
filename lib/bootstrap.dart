@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:boilerplate/core/bloc_core/bloc_observer.dart';
 import 'package:boilerplate/features/app/view/app.dart';
+import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/injector/injector.dart';
 import 'package:boilerplate/services/crashlytics_service/crashlytics_service.dart';
 import 'package:flutter/foundation.dart';
@@ -25,6 +26,9 @@ Future<void> bootstrap({
 
     Bloc.observer = AppBlocObserver();
 
+    if(FirebaseUtils.user != null){
+      await FirebaseUtils.getSelfInfo();
+    }
     runApp(const App());
   }, (error, stack) {
     Injector.instance<CrashlyticsService>().recordException(error, stack);

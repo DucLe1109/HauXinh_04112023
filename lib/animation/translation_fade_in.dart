@@ -10,11 +10,17 @@ class TranslationFadeIn extends StatefulWidget {
     required this.translateDirection,
     super.key,
     this.delay = Duration.zero,
+    this.duration,
+    this.translationDistanceY,
+    this.translationDistanceX,
   });
 
   final Widget? mChild;
   final Duration delay;
   final TranslateDirection translateDirection;
+  final Duration? duration;
+  final double? translationDistanceY;
+  final double? translationDistanceX;
 
   @override
   State<TranslationFadeIn> createState() => _TranslationFadeInState();
@@ -38,24 +44,35 @@ class _TranslationFadeInState extends State<TranslationFadeIn>
     super.initState();
     _animation = AnimationController(
       vsync: this,
-      duration: const Duration(
-        milliseconds: 300,
-      ),
+      duration: widget.duration ??
+          const Duration(
+            milliseconds: 300,
+          ),
     );
     _opacityTween = Tween(begin: 0, end: 1);
 
     switch (widget.translateDirection) {
       case TranslateDirection.left:
-        _translateXTween = Tween(begin: 120, end: 0);
+        _translateXTween =
+            Tween(begin: widget.translationDistanceX ?? 120, end: 0);
         break;
       case TranslateDirection.right:
-        _translateXTween = Tween(begin: -120, end: 0);
+        _translateXTween = Tween(
+            begin: widget.translationDistanceX != null
+                ? -widget.translationDistanceX!
+                : -120,
+            end: 0);
         break;
       case TranslateDirection.down:
-        _translateYTween = Tween(begin: -120, end: 0);
+        _translateYTween = Tween(
+            begin: widget.translationDistanceY != null
+                ? -widget.translationDistanceY!
+                : -120,
+            end: 0);
         break;
       case TranslateDirection.up:
-        _translateYTween = Tween(begin: 120, end: 0);
+        _translateYTween =
+            Tween(begin: widget.translationDistanceY ?? 120, end: 0);
         break;
     }
     Timer(widget.delay, () {

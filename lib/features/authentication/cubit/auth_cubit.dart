@@ -109,6 +109,7 @@ class AuthCubit extends Cubit<AuthState> {
         if (await FirebaseUtils.isExistUser() == false) {
           await FirebaseUtils.createUser();
         }
+        await FirebaseUtils.getSelfInfo();
         emit(
           state.copyWith(
             status: const UIStatus.loadSuccess(message: ''),

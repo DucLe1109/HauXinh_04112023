@@ -79,5 +79,7 @@
   "error_code_data_loss": "Irrecoverable data loss or corruption occurred in the database",
   "error_code_deadline_exceeded": "The operation exceeded the deadline, typically due to long-running queries or transactions",
   "error_code_resource_permission_denied ": "The operation was denied due to a permission issue on a resource, such as a collection or document",
-  "type_something_here" : "Type something here"
+  "type_something_here" : "Type something here",
+  "say_hello" : "Chưa có tin nhắn"
+
 }
