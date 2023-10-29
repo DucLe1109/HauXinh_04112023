@@ -1,8 +1,22 @@
-part of 'chat_cubit.dart';
+import 'package:d_bloc/state/d_state.dart';
+import 'package:rest_client/rest_client.dart';
 
-@Freezed()
-class ChatState with _$ChatState {
-  const factory ChatState({
-    @Default(UIInitial()) UIStatus status,
-  }) = _ChatState;
+class SendMessageSuccessState extends BlocState {
+  final Message message;
+
+  const SendMessageSuccessState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class SendMessageLoadingState extends BlocState {}
+
+class NewMessageState extends BlocState {
+  final Message message;
+
+  const NewMessageState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
 }

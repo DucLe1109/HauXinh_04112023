@@ -15,6 +15,7 @@ _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
       read: json['read'] as String?,
       msg: json['msg'] as String?,
       type: json['type'] as String?,
+      timeStamp: json['timeStamp'] as String?,
     );
 
 Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
@@ -26,4 +27,5 @@ Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
       'read': instance.read,
       'msg': instance.msg,
       'type': instance.type,
+      'timeStamp': instance.timeStamp,
     };

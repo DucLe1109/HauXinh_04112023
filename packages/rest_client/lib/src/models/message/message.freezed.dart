@@ -27,6 +27,7 @@ mixin _$Message {
   String? get read => throw _privateConstructorUsedError;
   String? get msg => throw _privateConstructorUsedError;
   String? get type => throw _privateConstructorUsedError;
+  String? get timeStamp => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -45,7 +46,8 @@ abstract class $MessageCopyWith<$Res> {
       String? updatedTime,
       String? read,
       String? msg,
-      String? type});
+      String? type,
+      String? timeStamp});
 }
 
 /// @nodoc
@@ -68,6 +70,7 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
     Object? read = freezed,
     Object? msg = freezed,
     Object? type = freezed,
+    Object? timeStamp = freezed,
   }) {
     return _then(_value.copyWith(
       fromId: freezed == fromId
@@ -98,6 +101,10 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String?,
+      timeStamp: freezed == timeStamp
+          ? _value.timeStamp
+          : timeStamp // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -116,7 +123,8 @@ abstract class _$$MessageImplCopyWith<$Res> implements $MessageCopyWith<$Res> {
       String? updatedTime,
       String? read,
       String? msg,
-      String? type});
+      String? type,
+      String? timeStamp});
 }
 
 /// @nodoc
@@ -137,6 +145,7 @@ class __$$MessageImplCopyWithImpl<$Res>
     Object? read = freezed,
     Object? msg = freezed,
     Object? type = freezed,
+    Object? timeStamp = freezed,
   }) {
     return _then(_$MessageImpl(
       fromId: freezed == fromId
@@ -167,6 +176,10 @@ class __$$MessageImplCopyWithImpl<$Res>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String?,
+      timeStamp: freezed == timeStamp
+          ? _value.timeStamp
+          : timeStamp // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -181,7 +194,8 @@ class _$MessageImpl implements _Message {
       this.updatedTime,
       this.read,
       this.msg,
-      this.type});
+      this.type,
+      this.timeStamp});
 
   factory _$MessageImpl.fromJson(Map<String, dynamic> json) =>
       _$$MessageImplFromJson(json);
@@ -200,10 +214,12 @@ class _$MessageImpl implements _Message {
   final String? msg;
   @override
   final String? type;
+  @override
+  final String? timeStamp;
 
   @override
   String toString() {
-    return 'Message(fromId: $fromId, toId: $toId, createdTime: $createdTime, updatedTime: $updatedTime, read: $read, msg: $msg, type: $type)';
+    return 'Message(fromId: $fromId, toId: $toId, createdTime: $createdTime, updatedTime: $updatedTime, read: $read, msg: $msg, type: $type, timeStamp: $timeStamp)';
   }
 
   @override
@@ -219,13 +235,15 @@ class _$MessageImpl implements _Message {
                 other.updatedTime == updatedTime) &&
             (identical(other.read, read) || other.read == read) &&
             (identical(other.msg, msg) || other.msg == msg) &&
-            (identical(other.type, type) || other.type == type));
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.timeStamp, timeStamp) ||
+                other.timeStamp == timeStamp));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, fromId, toId, createdTime, updatedTime, read, msg, type);
+  int get hashCode => Object.hash(runtimeType, fromId, toId, createdTime,
+      updatedTime, read, msg, type, timeStamp);
 
   @JsonKey(ignore: true)
   @override
@@ -249,7 +267,8 @@ abstract class _Message implements Message {
       final String? updatedTime,
       final String? read,
       final String? msg,
-      final String? type}) = _$MessageImpl;
+      final String? type,
+      final String? timeStamp}) = _$MessageImpl;
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$MessageImpl.fromJson;
 
@@ -267,6 +286,8 @@ abstract class _Message implements Message {
   String? get msg;
   @override
   String? get type;
+  @override
+  String? get timeStamp;
   @override
   @JsonKey(ignore: true)
   _$$MessageImplCopyWith<_$MessageImpl> get copyWith =>

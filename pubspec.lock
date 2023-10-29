@@ -321,6 +321,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
+  d_bloc:
+    dependency: "direct main"
+    description:
+      path: d_bloc
+      relative: true
+    source: path
+    version: "0.0.1"
   dart_style:
     dependency: transitive
     description:
@@ -369,6 +376,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.3.3"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      sha256: c2b87cb7756efdf69892005af546c56c0b5037f54d2a88269b4f347a505e3ca2
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.5"
   fake_async:
     dependency: transitive
     description:
@@ -655,6 +670,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.6.4"
+  getwidget:
+    dependency: transitive
+    description:
+      name: getwidget
+      sha256: "91df14a8d80e21f3ec02759295b90cc8badb8a872b90d34ad4aeb4085d833b5c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.0"
   glob:
     dependency: transitive
     description:

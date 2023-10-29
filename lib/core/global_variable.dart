@@ -9,3 +9,6 @@ const double borderRadiusAvatar = 16;
 const double horizontalPadding = 20;
 const double verticalPadding = 10;
 bool isHasConnection = true;
+
+const int fastDuration = 300;
+const int longDuration = 600;

@@ -123,20 +123,34 @@ class FirebaseUtils {
   }
 
   /// Function to send message to specific user.
-  static Future<void> sendMessage(ChatUser chatUser, String msg) async {
+  static Future<Message> sendMessage(ChatUser chatUser, String msg) async {
     final messageID = DateTime.now().millisecondsSinceEpoch.toString();
     final now = DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now());
     final ref = firebaseStore.collection(
         '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/');
-    await ref.doc(messageID).set(Message(
-          toId: chatUser.id,
-          createdTime: now,
-          updatedTime: '',
-          type: MessageType.text.name,
-          read: '',
-          msg: msg,
-          fromId: user?.uid,
-        ).toJson());
+    final message = Message(
+      toId: chatUser.id,
+      createdTime: now,
+      updatedTime: '',
+      type: MessageType.text.name,
+      read: '',
+      msg: msg,
+      timeStamp: messageID,
+      fromId: user?.uid,
+    );
+    await ref.doc(messageID).set(message.toJson());
+    return message;
+  }
+
+  /// Function to get 50 newest message
+  static Future<QuerySnapshot<Map<String, dynamic>>> getNewestMessage(
+      {required ChatUser chatUser, required int amount}) async {
+    return firebaseStore
+        .collection(
+            '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
+        .orderBy('timeStamp', descending: true)
+        .limit(amount)
+        .get();
   }
 
   /// --------------- End firebase chat ---------------

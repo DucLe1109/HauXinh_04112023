@@ -1,17 +1,17 @@
-import 'dart:async';
 import 'dart:io';
 import 'dart:math' show pi;
 
-import 'package:boilerplate/animation/translation_fade_in.dart';
 import 'package:boilerplate/core/global_variable.dart';
+import 'package:boilerplate/features/personal_chat/cubit/chat_cubit.dart';
+import 'package:boilerplate/features/personal_chat/cubit/chat_state.dart';
 import 'package:boilerplate/features/personal_chat/view/message_card.dart';
-import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:d_bloc/d_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rest_client/rest_client.dart';
@@ -25,26 +25,32 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   late TextEditingController _messageEditingController;
   late FocusNode _messageFocusNode;
-
-  late List<Message> listMessage;
-  late Stream<QuerySnapshot<Map<String, dynamic>>> chatStream;
+  late List<MessageCard> listMessageView;
   late ScrollController _scrollController;
   bool isScrollable = false;
-  late StreamController _streamController;
+  late ChatCubit _cubit;
+  final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
 
   @override
   void initState() {
     super.initState();
-    chatStream = FirebaseUtils.getAllMessages(widget.chatUser);
+    _cubit = ChatCubit(widget.chatUser);
+    _cubit.getNewestMessage(chatUser: widget.chatUser, amount: 20);
+    listMessageView = [];
     _messageEditingController = TextEditingController();
     _scrollController = ScrollController();
     _messageFocusNode = FocusNode();
-    _streamController = StreamController();
+  }
 
-    _streamController.stream.listen((event) {});
+  @override
+  void dispose() {
+    for (final element in listMessageView) {
+      // element.animationController.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -122,14 +128,102 @@ class _ChatScreenState extends State<ChatScreen> {
         onTap: Utils.hideKeyboard,
         child: SafeArea(
           child: Column(
-            children: [_buildChatSection(context), _buildBottomAction(context)],
+            children: [
+              _buildChatSection(context),
+              _buildBottomSection(context)
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildBottomAction(BuildContext context) {
+  Widget _buildChatSection(BuildContext context) {
+    return Expanded(
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: BlocConsumer(
+          listenWhen: (previous, current) =>
+              current is SendMessageSuccessState ||
+              current is SendMessageLoadingState ||
+              current is NewMessageState,
+          listener: dListener(
+            otherwise: (state) {
+              if (state is SendMessageSuccessState) {
+                goTopOfList();
+                _insertAndPushNewItem(state.message);
+              }
+              if (state is NewMessageState) {
+                goTopOfList();
+                _insertAndPushNewItem(state.message);
+              }
+            },
+          ),
+          bloc: _cubit,
+          buildWhen: (previous, current) =>
+              current is LoadingState || current is SuccessState,
+          builder: dBuilder<List<Message>, DefaultException>(
+            onSuccess: (data) {
+              if (data != null) {
+                isScrollable = data.isNotEmpty;
+                listMessageView = data
+                    .map((e) => MessageCard(
+                        message: e,
+                        animationController: AnimationController(
+                            vsync: this,
+                            duration:
+                                const Duration(milliseconds: fastDuration))))
+                    .toList();
+              }
+              return AnimatedList(
+                key: listKey,
+                itemBuilder: (context, index, animation) {
+                  return SizeTransition(
+                    sizeFactor: animation,
+                    child: listMessageView[index],
+                  );
+                },
+                initialItemCount: listMessageView.length,
+                controller: _scrollController,
+                shrinkWrap: true,
+                padding: EdgeInsets.symmetric(vertical: 16.w, horizontal: 16.w),
+                reverse: true,
+              );
+            },
+            otherwise: (BlocState state) {
+              return Container();
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _insertAndPushNewItem(Message message) {
+    final newMessageCard = MessageCard(
+      message: message,
+      animationController: AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: fastDuration),
+      ),
+    );
+    listMessageView.insert(0, newMessageCard);
+    listKey.currentState!.insertItem(0,
+        duration: const Duration(milliseconds: fastDuration - 100));
+    newMessageCard.animationController.forward();
+  }
+
+  void goTopOfList() {
+    if (isScrollable) {
+      _scrollController.animateTo(
+        0,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 300),
+      );
+    }
+  }
+
+  Widget _buildBottomSection(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
           left: 10.w, right: 10.w, bottom: Platform.isIOS ? 0.w : 10.w),
@@ -167,6 +261,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  /// Sub view
   Widget _buildSendButton(BuildContext context) {
     return Card(
       elevation: 3,
@@ -177,18 +272,34 @@ class _ChatScreenState extends State<ChatScreen> {
         child: InkWell(
             onTap: () {
               if (_messageEditingController.text.isNotEmpty) {
-                FirebaseUtils.sendMessage(
-                    widget.chatUser, _messageEditingController.text);
+                // final message = MessageCard(
+                //   message: Message(
+                //       msg: _messageEditingController.text,
+                //       createdTime: "12/10/2023 11:10:00"),
+                //   animationController: AnimationController(
+                //     vsync: this,
+                //     duration: const Duration(milliseconds: fastDuration),
+                //   ),
+                // );
+                // setState(() {
+                //   _listMessageView.insert(0, message);
+                // });
+                // message.animationController.forward();
+
+                _cubit.sendMessage(
+                    chatUser: widget.chatUser,
+                    msg: _messageEditingController.text.trim());
+
                 _messageEditingController.text = '';
 
                 /// Scroll to top of last element.
-                if (isScrollable) {
-                  _scrollController.animateTo(
-                    0,
-                    curve: Curves.easeOut,
-                    duration: const Duration(milliseconds: 300),
-                  );
-                }
+                // if (isScrollable) {
+                //   _scrollController.animateTo(
+                //     0,
+                //     curve: Curves.easeOut,
+                //     duration: const Duration(milliseconds: 300),
+                //   );
+                // }
               }
             },
             customBorder: const CircleBorder(),
@@ -278,63 +389,6 @@ class _ChatScreenState extends State<ChatScreen> {
               color: Colors.blue,
             ),
           )),
-    );
-  }
-
-  Widget _buildChatSection(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.fromLTRB(15.w, 20.w, 15.w, 10.w),
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: StreamBuilder(
-          stream: chatStream,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Container();
-            } else {
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                case ConnectionState.waiting:
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.red,
-                      strokeWidth: 1.5,
-                    ),
-                  );
-                case ConnectionState.active:
-                case ConnectionState.done:
-                  final data = snapshot.data?.docs;
-                  listMessage =
-                      data?.map((e) => Message.fromJson(e.data())).toList() ??
-                          [];
-                  listMessage = listMessage.reversed.toList();
-                  isScrollable = listMessage.isNotEmpty;
-
-                  if (listMessage.isNotEmpty) {
-                    /// Nếu reversed list view thì phải align top center.
-                    return Align(
-                      alignment: Alignment.topCenter,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        reverse: true,
-                        controller: _scrollController,
-                        itemCount: listMessage.length,
-                        itemBuilder: (context, index) => MessageCard(
-                          message: listMessage[index],
-                          index: index,
-                        ),
-                      ),
-                    );
-                  } else {
-                    return Center(
-                      child: Text(S.current.say_hello),
-                    );
-                  }
-              }
-            }
-          },
-        ),
-      ),
     );
   }
 }
