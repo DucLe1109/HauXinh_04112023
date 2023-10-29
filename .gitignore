@@ -45,3 +45,4 @@ app.*.map.json
 
 # Flutter gen code
 /lib/generated
+/lib/features/personal_chat/view/test.dart

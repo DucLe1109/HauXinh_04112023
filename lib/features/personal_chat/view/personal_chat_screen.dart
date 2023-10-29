@@ -5,16 +5,14 @@ import 'dart:math' show pi;
 
 import 'package:boilerplate/core/global_variable.dart';
 import 'package:boilerplate/features/personal_chat/cubit/chat_cubit.dart';
-import 'package:boilerplate/features/personal_chat/cubit/chat_state.dart';
 import 'package:boilerplate/features/personal_chat/view/message_card.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:d_bloc/d_bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rest_client/rest_client.dart';
@@ -37,6 +35,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   late ChatCubit _cubit;
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
   late ChangeNotifier changeNotifier;
+  late Stream<QuerySnapshot<Map<String, dynamic>>> chatStream;
+  List<Message> currentMessageList = [];
 
   @override
   void initState() {
@@ -48,6 +48,22 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     _scrollController = ScrollController();
     _messageFocusNode = FocusNode();
     changeNotifier = ChangeNotifier();
+    chatStream = FirebaseUtils.getAllMessages(widget.chatUser);
+
+    chatStream.listen((newData) {
+      final List<Message> newMessage =
+          newData.docs.map((e) => Message.fromJson(e.data())).toList();
+      if (listKey.currentState != null &&
+          listKey.currentState!.widget.initialItemCount < newMessage.length) {
+        final List<Message> updateList = newMessage
+            .where((element) => !currentMessageList.contains(element))
+            .toList();
+        for (final _ in updateList) {
+          listKey.currentState!.insertItem(0);
+        }
+      }
+      currentMessageList = newMessage;
+    });
   }
 
   @override
@@ -137,65 +153,110 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildChatSection(BuildContext context) {
+    // return Expanded(
+    //   child: Align(
+    //     alignment: Alignment.topCenter,
+    //     child: BlocConsumer(
+    //       listenWhen: (previous, current) =>
+    //           current is SendMessageSuccessState ||
+    //           current is SendMessageLoadingState ||
+    //           current is NewMessageState,
+    //       listener: dListener(
+    //         otherwise: (state) {
+    //           if (state is SendMessageSuccessState) {
+    //             goTopOfList();
+    //             _insertAndPushNewItem(state.message);
+    //           }
+    //           if (state is NewMessageState) {
+    //             goTopOfList();
+    //             _insertAndPushNewItem(state.message);
+    //           }
+    //         },
+    //       ),
+    //       bloc: _cubit,
+    //       buildWhen: (previous, current) =>
+    //           current is LoadingState || current is SuccessState,
+    //       builder: dBuilder<List<Message>, DefaultException>(
+    //         onSuccess: (data) {
+    //           if (data != null) {
+    //             isScrollable = data.isNotEmpty;
+    //             listMessageView = data
+    //                 .map((e) => MessageCard(
+    //                     message: e,
+    //                     animationController: AnimationController(
+    //                         vsync: this,
+    //                         duration:
+    //                             const Duration(milliseconds: fastDuration))))
+    //                 .toList();
+    //           }
+    //           return ListenableBuilder(
+    //             listenable: changeNotifier,
+    //             builder: (context, child) => AnimatedList(
+    //               key: listKey,
+    //               itemBuilder: (context, index, animation) {
+    //                 return SizeTransition(
+    //                   sizeFactor: animation,
+    //                   child: listMessageView[index],
+    //                 );
+    //               },
+    //               initialItemCount: listMessageView.length,
+    //               controller: _scrollController,
+    //               shrinkWrap: true,
+    //               padding:
+    //                   EdgeInsets.symmetric(vertical: 16.w, horizontal: 16.w),
+    //               reverse: true,
+    //             ),
+    //           );
+    //         },
+    //         otherwise: (BlocState state) {
+    //           return Container();
+    //         },
+    //       ),
+    //     ),
+    //   ),
+    // );
     return Expanded(
       child: Align(
         alignment: Alignment.topCenter,
-        child: BlocConsumer(
-          listenWhen: (previous, current) =>
-              current is SendMessageSuccessState ||
-              current is SendMessageLoadingState ||
-              current is NewMessageState,
-          listener: dListener(
-            otherwise: (state) {
-              if (state is SendMessageSuccessState) {
-                goTopOfList();
-                _insertAndPushNewItem(state.message);
-              }
-              if (state is NewMessageState) {
-                goTopOfList();
-                _insertAndPushNewItem(state.message);
-              }
-            },
-          ),
-          bloc: _cubit,
-          buildWhen: (previous, current) =>
-              current is LoadingState || current is SuccessState,
-          builder: dBuilder<List<Message>, DefaultException>(
-            onSuccess: (data) {
-              if (data != null) {
-                isScrollable = data.isNotEmpty;
-                listMessageView = data
-                    .map((e) => MessageCard(
-                        message: e,
-                        animationController: AnimationController(
-                            vsync: this,
-                            duration:
-                                const Duration(milliseconds: fastDuration))))
-                    .toList();
-              }
-              return ListenableBuilder(
-                listenable: changeNotifier,
-                builder: (context, child) => AnimatedList(
-                  key: listKey,
-                  itemBuilder: (context, index, animation) {
-                    return SizeTransition(
-                      sizeFactor: animation,
-                      child: listMessageView[index],
-                    );
-                  },
-                  initialItemCount: listMessageView.length,
-                  controller: _scrollController,
-                  shrinkWrap: true,
-                  padding:
-                      EdgeInsets.symmetric(vertical: 16.w, horizontal: 16.w),
-                  reverse: true,
-                ),
-              );
-            },
-            otherwise: (BlocState state) {
+        child: StreamBuilder(
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
               return Container();
-            },
-          ),
+            } else {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                // TODO: Handle this case.
+                case ConnectionState.waiting:
+                // TODO: Handle this case.
+                case ConnectionState.active:
+                // TODO: Handle this case.
+                case ConnectionState.done:
+                  // listKey.currentState?.setState(() {});
+                  final data = snapshot.data?.docs
+                      .map((e) => Message.fromJson(e.data()))
+                      .toList()
+                      .reversed
+                      .toList();
+
+                  return AnimatedList(
+                    key: listKey,
+                    itemBuilder: (context, index, animation) {
+                      return SizeTransition(
+                        sizeFactor: animation,
+                        child: MessageCard(message: data![index]),
+                      );
+                    },
+                    initialItemCount: data?.length ?? 0,
+                    controller: _scrollController,
+                    shrinkWrap: true,
+                    padding:
+                        EdgeInsets.symmetric(vertical: 16.w, horizontal: 16.w),
+                    reverse: true,
+                  );
+              }
+            }
+          },
+          stream: chatStream,
         ),
       ),
     );
@@ -204,15 +265,15 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   void _insertAndPushNewItem(Message message) {
     final newMessageCard = MessageCard(
       message: message,
-      animationController: AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: fastDuration),
-      ),
+      // animationController: AnimationController(
+      //   vsync: this,
+      //   duration: const Duration(milliseconds: fastDuration),
+      // ),
     );
     listMessageView.insert(0, newMessageCard);
     listKey.currentState!.insertItem(0,
         duration: const Duration(milliseconds: fastDuration - 100));
-    newMessageCard.animationController.forward();
+    // newMessageCard.animationController.forward();
   }
 
   void goTopOfList() {
