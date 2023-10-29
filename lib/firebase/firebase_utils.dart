@@ -133,7 +133,7 @@ class FirebaseUtils {
       createdTime: now,
       updatedTime: '',
       type: MessageType.text.name,
-      read: '',
+      readAt: '',
       msg: msg,
       timeStamp: messageID,
       fromId: user?.uid,
@@ -142,7 +142,7 @@ class FirebaseUtils {
     return message;
   }
 
-  /// Function to get 50 newest message
+  /// Function to get 50 (optional) newest message
   static Future<QuerySnapshot<Map<String, dynamic>>> getNewestMessage(
       {required ChatUser chatUser, required int amount}) async {
     return firebaseStore
@@ -151,6 +151,16 @@ class FirebaseUtils {
         .orderBy('timeStamp', descending: true)
         .limit(amount)
         .get();
+  }
+
+  /// Function to update read message
+  static Future<void> readMessage(Message message) {
+    final now = DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now());
+    return firebaseStore
+        .collection(
+            '${Collections.chats.value}/${getConversationID(message.fromId ?? '')}/${Collections.messages.value}/')
+        .doc(message.timeStamp)
+        .update({'readAt': now});
   }
 
   /// --------------- End firebase chat ---------------

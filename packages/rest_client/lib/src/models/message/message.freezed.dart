@@ -24,7 +24,7 @@ mixin _$Message {
   String? get toId => throw _privateConstructorUsedError;
   String? get createdTime => throw _privateConstructorUsedError;
   String? get updatedTime => throw _privateConstructorUsedError;
-  String? get read => throw _privateConstructorUsedError;
+  String? get readAt => throw _privateConstructorUsedError;
   String? get msg => throw _privateConstructorUsedError;
   String? get type => throw _privateConstructorUsedError;
   String? get timeStamp => throw _privateConstructorUsedError;
@@ -44,7 +44,7 @@ abstract class $MessageCopyWith<$Res> {
       String? toId,
       String? createdTime,
       String? updatedTime,
-      String? read,
+      String? readAt,
       String? msg,
       String? type,
       String? timeStamp});
@@ -67,7 +67,7 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
     Object? toId = freezed,
     Object? createdTime = freezed,
     Object? updatedTime = freezed,
-    Object? read = freezed,
+    Object? readAt = freezed,
     Object? msg = freezed,
     Object? type = freezed,
     Object? timeStamp = freezed,
@@ -89,9 +89,9 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
           ? _value.updatedTime
           : updatedTime // ignore: cast_nullable_to_non_nullable
               as String?,
-      read: freezed == read
-          ? _value.read
-          : read // ignore: cast_nullable_to_non_nullable
+      readAt: freezed == readAt
+          ? _value.readAt
+          : readAt // ignore: cast_nullable_to_non_nullable
               as String?,
       msg: freezed == msg
           ? _value.msg
@@ -121,7 +121,7 @@ abstract class _$$MessageImplCopyWith<$Res> implements $MessageCopyWith<$Res> {
       String? toId,
       String? createdTime,
       String? updatedTime,
-      String? read,
+      String? readAt,
       String? msg,
       String? type,
       String? timeStamp});
@@ -142,7 +142,7 @@ class __$$MessageImplCopyWithImpl<$Res>
     Object? toId = freezed,
     Object? createdTime = freezed,
     Object? updatedTime = freezed,
-    Object? read = freezed,
+    Object? readAt = freezed,
     Object? msg = freezed,
     Object? type = freezed,
     Object? timeStamp = freezed,
@@ -164,9 +164,9 @@ class __$$MessageImplCopyWithImpl<$Res>
           ? _value.updatedTime
           : updatedTime // ignore: cast_nullable_to_non_nullable
               as String?,
-      read: freezed == read
-          ? _value.read
-          : read // ignore: cast_nullable_to_non_nullable
+      readAt: freezed == readAt
+          ? _value.readAt
+          : readAt // ignore: cast_nullable_to_non_nullable
               as String?,
       msg: freezed == msg
           ? _value.msg
@@ -192,7 +192,7 @@ class _$MessageImpl implements _Message {
       this.toId,
       this.createdTime,
       this.updatedTime,
-      this.read,
+      this.readAt,
       this.msg,
       this.type,
       this.timeStamp});
@@ -209,7 +209,7 @@ class _$MessageImpl implements _Message {
   @override
   final String? updatedTime;
   @override
-  final String? read;
+  final String? readAt;
   @override
   final String? msg;
   @override
@@ -219,7 +219,7 @@ class _$MessageImpl implements _Message {
 
   @override
   String toString() {
-    return 'Message(fromId: $fromId, toId: $toId, createdTime: $createdTime, updatedTime: $updatedTime, read: $read, msg: $msg, type: $type, timeStamp: $timeStamp)';
+    return 'Message(fromId: $fromId, toId: $toId, createdTime: $createdTime, updatedTime: $updatedTime, readAt: $readAt, msg: $msg, type: $type, timeStamp: $timeStamp)';
   }
 
   @override
@@ -233,7 +233,7 @@ class _$MessageImpl implements _Message {
                 other.createdTime == createdTime) &&
             (identical(other.updatedTime, updatedTime) ||
                 other.updatedTime == updatedTime) &&
-            (identical(other.read, read) || other.read == read) &&
+            (identical(other.readAt, readAt) || other.readAt == readAt) &&
             (identical(other.msg, msg) || other.msg == msg) &&
             (identical(other.type, type) || other.type == type) &&
             (identical(other.timeStamp, timeStamp) ||
@@ -243,7 +243,7 @@ class _$MessageImpl implements _Message {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, fromId, toId, createdTime,
-      updatedTime, read, msg, type, timeStamp);
+      updatedTime, readAt, msg, type, timeStamp);
 
   @JsonKey(ignore: true)
   @override
@@ -265,7 +265,7 @@ abstract class _Message implements Message {
       final String? toId,
       final String? createdTime,
       final String? updatedTime,
-      final String? read,
+      final String? readAt,
       final String? msg,
       final String? type,
       final String? timeStamp}) = _$MessageImpl;
@@ -281,7 +281,7 @@ abstract class _Message implements Message {
   @override
   String? get updatedTime;
   @override
-  String? get read;
+  String? get readAt;
   @override
   String? get msg;
   @override

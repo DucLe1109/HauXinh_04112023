@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_visible_for_testing_member
+
 import 'dart:io';
 import 'dart:math' show pi;
 
@@ -5,6 +7,7 @@ import 'package:boilerplate/core/global_variable.dart';
 import 'package:boilerplate/features/personal_chat/cubit/chat_cubit.dart';
 import 'package:boilerplate/features/personal_chat/cubit/chat_state.dart';
 import 'package:boilerplate/features/personal_chat/view/message_card.dart';
+import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -33,6 +36,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   bool isScrollable = false;
   late ChatCubit _cubit;
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
+  late ChangeNotifier changeNotifier;
 
   @override
   void initState() {
@@ -43,19 +47,13 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     _messageEditingController = TextEditingController();
     _scrollController = ScrollController();
     _messageFocusNode = FocusNode();
-  }
-
-  @override
-  void dispose() {
-    for (final element in listMessageView) {
-      // element.animationController.dispose();
-    }
-    super.dispose();
+    changeNotifier = ChangeNotifier();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
@@ -175,19 +173,23 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                                 const Duration(milliseconds: fastDuration))))
                     .toList();
               }
-              return AnimatedList(
-                key: listKey,
-                itemBuilder: (context, index, animation) {
-                  return SizeTransition(
-                    sizeFactor: animation,
-                    child: listMessageView[index],
-                  );
-                },
-                initialItemCount: listMessageView.length,
-                controller: _scrollController,
-                shrinkWrap: true,
-                padding: EdgeInsets.symmetric(vertical: 16.w, horizontal: 16.w),
-                reverse: true,
+              return ListenableBuilder(
+                listenable: changeNotifier,
+                builder: (context, child) => AnimatedList(
+                  key: listKey,
+                  itemBuilder: (context, index, animation) {
+                    return SizeTransition(
+                      sizeFactor: animation,
+                      child: listMessageView[index],
+                    );
+                  },
+                  initialItemCount: listMessageView.length,
+                  controller: _scrollController,
+                  shrinkWrap: true,
+                  padding:
+                      EdgeInsets.symmetric(vertical: 16.w, horizontal: 16.w),
+                  reverse: true,
+                ),
               );
             },
             otherwise: (BlocState state) {
@@ -232,7 +234,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           Expanded(
             flex: 6,
             child: Card(
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).colorScheme.inversePrimary,
               elevation: 3,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(40.w)),
@@ -267,39 +269,15 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       elevation: 3,
       shape: const CircleBorder(),
       child: Material(
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).colorScheme.inversePrimary,
         shape: const CircleBorder(),
         child: InkWell(
             onTap: () {
               if (_messageEditingController.text.isNotEmpty) {
-                // final message = MessageCard(
-                //   message: Message(
-                //       msg: _messageEditingController.text,
-                //       createdTime: "12/10/2023 11:10:00"),
-                //   animationController: AnimationController(
-                //     vsync: this,
-                //     duration: const Duration(milliseconds: fastDuration),
-                //   ),
-                // );
-                // setState(() {
-                //   _listMessageView.insert(0, message);
-                // });
-                // message.animationController.forward();
-
                 _cubit.sendMessage(
                     chatUser: widget.chatUser,
                     msg: _messageEditingController.text.trim());
-
                 _messageEditingController.text = '';
-
-                /// Scroll to top of last element.
-                // if (isScrollable) {
-                //   _scrollController.animateTo(
-                //     0,
-                //     curve: Curves.easeOut,
-                //     duration: const Duration(milliseconds: 300),
-                //   );
-                // }
               }
             },
             customBorder: const CircleBorder(),

@@ -12,6 +12,10 @@ class SendMessageSuccessState extends BlocState {
 
 class SendMessageLoadingState extends BlocState {}
 
+class ReadingMessageState extends BlocState {}
+
+class ReadMessageDoneState extends BlocState {}
+
 class NewMessageState extends BlocState {
   final Message message;
 

@@ -8,13 +8,14 @@ class ChatCubit extends DCubit {
   bool isFirstLoad = true;
   Message lastSendingMessage = const Message();
   final ChatUser chatUser;
+  final currentTotalMessage = 0;
 
   ChatCubit(this.chatUser) {
     FirebaseUtils.getAllMessages(chatUser).listen((newData) {
       if (!isFirstLoad) {
         final List<Message> list =
             newData.docs.map((e) => Message.fromJson(e.data())).toList();
-        if(list.last.fromId != FirebaseUtils.user?.uid){
+        if (list.last.fromId != FirebaseUtils.user?.uid) {
           emit(NewMessageState(message: list.last));
         }
       }

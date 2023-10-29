@@ -142,6 +142,11 @@ class AppThemes {
       ),
       searchBarTheme: _lightSearchBarThemeData,
       buttonTheme: _lightButtonTheme,
+      colorScheme: const ColorScheme.light().copyWith(
+          primary: const Color.fromARGB(255, 14, 44, 218),
+          secondary: const Color.fromARGB(255, 232, 250, 217),
+          background: const Color.fromARGB(255, 247, 247, 252),
+          inversePrimary: Colors.white),
       bottomNavigationBarTheme: _lightBottomNavigationBarThemeData);
 
   ///Dark theme
@@ -161,6 +166,11 @@ class AppThemes {
       dividerTheme: const DividerThemeData(
         color: Colors.grey,
       ),
+      colorScheme: const ColorScheme.dark().copyWith(
+          primary: const Color.fromARGB(255, 45, 78, 70),
+          secondary: const Color.fromARGB(255, 30, 43, 70),
+          background: const Color.fromARGB(255, 23, 32, 50),
+          inversePrimary: AppColors.grey800),
       searchBarTheme: _darkSearchBarThemeData,
       buttonTheme: _darkButtonTheme,
       bottomNavigationBarTheme: _darkBottomNavigationBarThemeData);

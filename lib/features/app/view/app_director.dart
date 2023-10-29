@@ -2,7 +2,6 @@ import 'package:boilerplate/features/app/bloc/app_bloc.dart';
 import 'package:boilerplate/features/authentication/login_screen.dart';
 import 'package:boilerplate/features/home/view/home_page.dart';
 import 'package:boilerplate/features/intro/intro_page.dart';
-import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

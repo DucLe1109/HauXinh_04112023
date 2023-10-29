@@ -1,18 +1,18 @@
+import 'package:boilerplate/features/personal_chat/view/in_bubble.dart';
+import 'package:boilerplate/features/personal_chat/view/out_bubble.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rest_client/rest_client.dart';
 
 class MessageCard extends StatefulWidget {
   const MessageCard(
-      {super.key,
-      required this.message,
-      required this.animationController,
-      this.isAnimated = true});
+      {super.key, required this.message, required this.animationController});
 
   final Message message;
   final AnimationController animationController;
-  final bool isAnimated;
 
   @override
   State<MessageCard> createState() => _MessageCardState();
@@ -35,66 +35,16 @@ class _MessageCardState extends State<MessageCard> {
   @override
   Widget build(BuildContext context) {
     if (FirebaseUtils.user?.uid != widget.message.fromId) {
-      if (widget.isAnimated) {
-        return _buildComingMessageWithAnimation();
-      } else {
-        return _buildComingMessage(context);
-      }
+      return _buildInBubble();
     } else {
-      if (widget.isAnimated) {
-        return _buildSendingMessageWithAnimation();
-      } else {
-        return _buildSendingMessage(context);
-      }
+      return _buildOutBubble();
     }
   }
 
-  Widget _buildComingMessage(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          constraints: BoxConstraints.loose(const Size(300, double.infinity)),
-          margin: const EdgeInsets.symmetric(vertical: 6),
-          padding: const EdgeInsets.fromLTRB(18, 12, 12, 12),
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.lightBlue),
-              color: Theme.of(context).primaryColor,
-              borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(30),
-                  topLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30))),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Flexible(
-                child: Text(
-                  widget.message.msg ?? '',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ),
-              const SizedBox(
-                width: 6,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 2),
-                child: Text(
-                  getCreatedTime(widget.message.createdTime),
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: Colors.grey[500], fontSize: 11),
-                ),
-              )
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildComingMessageWithAnimation() {
+  Widget _buildInBubble() {
+    if (widget.message.readAt?.isEmpty ?? false) {
+      FirebaseUtils.readMessage(widget.message);
+    }
     return AnimatedBuilder(
       builder: (context, child) => Transform.translate(
         offset: Offset(
@@ -104,7 +54,7 @@ class _MessageCardState extends State<MessageCard> {
         child: Opacity(
           opacity: Tween<double>(begin: 0, end: 1)
               .evaluate(widget.animationController),
-          child: _buildComingMessage(context),
+          child: InBubble(message: widget.message),
         ),
       ),
       animation: CurvedAnimation(
@@ -112,57 +62,7 @@ class _MessageCardState extends State<MessageCard> {
     );
   }
 
-  Widget _buildSendingMessage(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Container(
-          constraints: BoxConstraints.loose(const Size(300, double.infinity)),
-          margin: const EdgeInsets.symmetric(vertical: 6),
-          padding: const EdgeInsets.fromLTRB(18, 12, 12, 12),
-          decoration: BoxDecoration(
-              color: Theme.of(context).buttonTheme.getFocusColor(MaterialButton(
-                    onPressed: () {},
-                  )),
-              borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(30),
-                  topLeft: Radius.circular(30),
-                  bottomLeft: Radius.circular(30))),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Flexible(
-                child: Text(
-                  widget.message.msg ?? '',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: Colors.white),
-                ),
-              ),
-              const SizedBox(
-                width: 6,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 2),
-                child: Text(
-                  getCreatedTime(widget.message.createdTime),
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: Colors.grey[500], fontSize: 11),
-                ),
-              )
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSendingMessageWithAnimation() {
+  Widget _buildOutBubble() {
     return AnimatedBuilder(
       animation: CurvedAnimation(
           parent: widget.animationController, curve: Curves.easeOut),
@@ -174,14 +74,9 @@ class _MessageCardState extends State<MessageCard> {
         child: Opacity(
           opacity: Tween<double>(begin: 0, end: 1)
               .evaluate(widget.animationController),
-          child: _buildSendingMessage(context),
+          child: OutBubble(message: widget.message),
         ),
       ),
     );
-  }
-
-  String getCreatedTime(String? value) {
-    final datetime = DateFormat('dd/MM/yyyy HH:mm:ss').parse(value ?? '');
-    return DateFormat('HH:mm').format(datetime);
   }
 }

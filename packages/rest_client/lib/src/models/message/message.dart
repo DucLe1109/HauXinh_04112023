@@ -11,7 +11,7 @@ class Message with _$Message {
     String? toId,
     String? createdTime,
     String? updatedTime,
-    String? read,
+    String? readAt,
     String? msg,
     String? type,
     String? timeStamp,
