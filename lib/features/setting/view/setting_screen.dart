@@ -8,9 +8,11 @@ import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/injector/injector.dart';
 import 'package:boilerplate/router/app_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rest_client/rest_client.dart';
 
 class SettingScreen extends BaseStateFulWidget {
   const SettingScreen({super.key});
@@ -21,11 +23,13 @@ class SettingScreen extends BaseStateFulWidget {
 
 class _SettingScreenState extends BaseStateFulWidgetState<SettingScreen> {
   late SettingCubit cubit;
+  late Stream<DocumentSnapshot<Map<String, dynamic>>> selfStream;
 
   @override
   void initState() {
     super.initState();
     cubit = Injector.instance();
+    selfStream = FirebaseUtils.getSelfInfoStream();
   }
 
   @override
@@ -40,7 +44,7 @@ class _SettingScreenState extends BaseStateFulWidgetState<SettingScreen> {
       backgroundColor: Theme.of(context).primaryColor,
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 10),
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
           child: Column(
             children: [
               _buildSettingInfo(context),
@@ -101,46 +105,51 @@ class _SettingScreenState extends BaseStateFulWidgetState<SettingScreen> {
   }
 
   Widget _buildSettingInfo(BuildContext context) {
-    return ListTile(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius)),
-      onTap: () {
-        context.push(AppRouter.userInfoPath, extra: cubit).then((value) {
-          if (value == true) {
-            setState(() {});
-          }
-        });
+    return StreamBuilder(
+      builder: (context, snapshot) {
+        ChatUser? me;
+        if (snapshot.hasData) {
+          me = ChatUser.fromJson(snapshot.data!.data()!);
+        }
+        return ListTile(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius)),
+          onTap: () {
+            context.push(AppRouter.userInfoPath, extra: cubit);
+          },
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 10,
+          ),
+          leading: ClipRRect(
+            borderRadius: BorderRadius.circular(100),
+            child: CachedNetworkImage(
+              imageUrl: me?.avatar ?? FirebaseUtils.me.avatar,
+              fit: BoxFit.cover,
+              width: 50,
+              height: 50,
+            ),
+          ),
+          title: Text(
+            me?.fullName ?? FirebaseUtils.me.fullName,
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w600),
+          ),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Text(
+              me?.email ?? FirebaseUtils.me.email,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
+          trailing: const Icon(
+            Icons.keyboard_arrow_right_rounded,
+            size: 30,
+          ),
+        );
       },
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 10,
-      ),
-      leading: ClipRRect(
-        borderRadius: BorderRadius.circular(100),
-        child: CachedNetworkImage(
-          imageUrl: FirebaseUtils.me.avatar,
-          fit: BoxFit.cover,
-          width: 50,
-          height: 50,
-        ),
-      ),
-      title: Text(
-        FirebaseUtils.me.fullName,
-        style: Theme.of(context)
-            .textTheme
-            .bodyMedium
-            ?.copyWith(fontWeight: FontWeight.w600),
-      ),
-      subtitle: Padding(
-        padding: const EdgeInsets.only(top: 10),
-        child: Text(
-          FirebaseUtils.me.email,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-      ),
-      trailing: const Icon(
-        Icons.keyboard_arrow_right_rounded,
-        size: 30,
-      ),
+      stream: selfStream,
     );
   }
 

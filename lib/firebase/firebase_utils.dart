@@ -67,6 +67,13 @@ class FirebaseUtils {
     });
   }
 
+  static Stream<DocumentSnapshot<Map<String, dynamic>>> getSelfInfoStream() {
+    return firebaseStore
+        .collection(Collections.chatUser.value)
+        .doc(user?.uid)
+        .snapshots();
+  }
+
   static Future<void> updateUserInfo(
       String fullName, String about, String birthday) async {
     await firebaseStore
@@ -135,7 +142,7 @@ class FirebaseUtils {
       toId: chatUser.id,
       createdTime: now,
       updatedTime: '',
-      type: MessageType.text.name,
+      type: messageType.name,
       readAt: '',
       msg: msg,
       timeStamp: messageID,
@@ -145,7 +152,8 @@ class FirebaseUtils {
     return message;
   }
 
-  static Future<void> sendFile({required ChatUser chatUser, required File file}) async {
+  static Future<void> sendFile(
+      {required ChatUser chatUser, required File file}) async {
     final extension = file.path.split('.')[1];
 
     final ref = firebaseStorage.ref().child(

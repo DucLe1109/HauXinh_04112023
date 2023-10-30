@@ -146,7 +146,7 @@ class AppThemes {
           primary: const Color.fromARGB(255, 232, 250, 217),
           secondary: const Color.fromARGB(255, 241, 241, 241),
           background: const Color.fromARGB(255, 255, 255, 235),
-          onPrimary: AppColors.blue300,
+          onPrimary: AppColors.blue200,
           inversePrimary: Colors.grey[800]),
       bottomNavigationBarTheme: _lightBottomNavigationBarThemeData);
 
@@ -171,7 +171,7 @@ class AppThemes {
           primary: const Color.fromARGB(255, 45, 78, 70),
           secondary: const Color.fromARGB(255, 30, 43, 70),
           background: const Color.fromARGB(255, 23, 32, 50),
-          onPrimary: Colors.white,
+          onPrimary: AppColors.blue200,
           inversePrimary: Colors.white30),
       searchBarTheme: _darkSearchBarThemeData,
       buttonTheme: _darkButtonTheme,

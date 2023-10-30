@@ -14,6 +14,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -55,92 +56,84 @@ class _InformationScreenState
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        context.pop(isUpdateSuccessfully);
-        return Future.value(true);
-      },
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
+      appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).primaryColor,
-          elevation: 0,
-          centerTitle: true,
-          title: Text(S.current.user_info,
-              style: Theme.of(context).textTheme.bodyLarge),
-          leading: IconButton(
-              onPressed: () => context.pop(),
-              icon: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 20,
-              )),
-        ),
-        body: BlocListener<SettingCubit, SettingState>(
-          listener: (context, state) {
-            switch (state.status) {
-              case UILoading():
-                {
-                  showLoading(
-                      context: context,
-                      loadingWidget: const BaseLoadingDialog());
-                  break;
-                }
-              case UILoadSuccess():
-                {
-                  context.pop();
-                  showToast(
-                      toastType: ToastType.success,
-                      context: context,
-                      title: S.current.successfully,
-                      description: S.current.data_is_updated);
-                  FirebaseUtils.getSelfInfo();
-                  isUpdateSuccessfully = true;
-                  break;
-                }
-              case UILoadFailed():
-                {
-                  context.pop();
-                  showToast(
-                      toastType: ToastType.error,
-                      context: context,
-                      title: S.current.update_fail,
-                      description: (state.status as UILoadFailed).message);
-                  isUpdateSuccessfully = false;
-                }
-            }
-          },
-          bloc: cubit,
-          child: GestureDetector(
-            onTap: Utils.hideKeyboard,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _buildCircleAvatar(context),
-                    const SizedBox(
-                      height: 26,
-                    ),
-                    _buildEmailField(context),
-                    const SizedBox(
-                      height: 26,
-                    ),
-                    _buildFullNameField(context),
-                    const SizedBox(
-                      height: 26,
-                    ),
-                    _buildAboutField(context),
-                    const SizedBox(
-                      height: 26,
-                    ),
-                    _buildBirthdayField(context),
-                    const SizedBox(
-                      height: 26,
-                    ),
-                    _buildUpdateButton(context)
-                  ],
-                ),
+        elevation: 0,
+        centerTitle: true,
+        title: Text(S.current.user_info,
+            style: Theme.of(context).textTheme.bodyLarge),
+        leading: IconButton(
+            onPressed: () => context.pop(),
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 18.w,
+            )),
+      ),
+      body: BlocListener<SettingCubit, SettingState>(
+        listener: (context, state) {
+          switch (state.status) {
+            case UILoading():
+              {
+                showLoading(
+                    context: context, loadingWidget: const BaseLoadingDialog());
+                break;
+              }
+            case UILoadSuccess():
+              {
+                context.pop();
+                showToast(
+                    toastType: ToastType.success,
+                    context: context,
+                    title: S.current.successfully,
+                    description: S.current.data_is_updated);
+                FirebaseUtils.getSelfInfo();
+                break;
+              }
+            case UILoadFailed():
+              {
+                context.pop();
+                showToast(
+                    toastType: ToastType.error,
+                    context: context,
+                    title: S.current.update_fail,
+                    description: (state.status as UILoadFailed).message);
+                isUpdateSuccessfully = false;
+              }
+          }
+        },
+        bloc: cubit,
+        child: GestureDetector(
+          onTap: Utils.hideKeyboard,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildCircleAvatar(context),
+                  const SizedBox(
+                    height: 26,
+                  ),
+                  _buildEmailField(context),
+                  const SizedBox(
+                    height: 26,
+                  ),
+                  _buildFullNameField(context),
+                  const SizedBox(
+                    height: 26,
+                  ),
+                  _buildAboutField(context),
+                  const SizedBox(
+                    height: 26,
+                  ),
+                  _buildBirthdayField(context),
+                  const SizedBox(
+                    height: 26,
+                  ),
+                  _buildUpdateButton(context)
+                ],
               ),
             ),
           ),
@@ -165,7 +158,8 @@ class _InformationScreenState
         style: FilledButton.styleFrom(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(borderRadius))),
-        child: Text(S.current.update),
+        child: Text(S.current.update,
+            style: Theme.of(context).textTheme.bodyMedium),
       ),
     );
   }

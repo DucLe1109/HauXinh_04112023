@@ -1,4 +1,6 @@
+import 'package:boilerplate/features/personal_chat/message_type.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
+import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +43,7 @@ class Chatting extends StatelessWidget {
                                 BorderRadius.circular(borderRadiusContainer)),
                         child: SizedBox(
                           width: imageWidth,
+                          height: 38.w,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(
                                 borderRadiusContainer - 2),
@@ -62,6 +65,7 @@ class Chatting extends StatelessWidget {
                         ),
                         child: SizedBox(
                           width: imageWidth + 4,
+                          height: 42.w,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(
                                 borderRadiusContainer - 2),
@@ -110,15 +114,23 @@ class Chatting extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        message?.msg ?? '',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.color
-                                ?.withOpacity(0.6)),
-                        maxLines: 2,
+                      Flexible(
+                        child: Text(
+                          getMessage(message),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color
+                                      ?.withOpacity(0.6)),
+                          maxLines: 2,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20.w,
                       ),
                       isNotReadMessageYet(message)
                           ? Container(
@@ -154,6 +166,15 @@ class Chatting extends StatelessWidget {
             : Container()
       ],
     );
+  }
+
+  String getMessage(Message? message) {
+    if (message?.type == MessageType.text.name) {
+      return message?.msg ?? '';
+    } else if (message?.type == MessageType.image.name) {
+      return S.current.image;
+    }
+    return '';
   }
 
   bool isNotReadMessageYet(Message? message) =>
