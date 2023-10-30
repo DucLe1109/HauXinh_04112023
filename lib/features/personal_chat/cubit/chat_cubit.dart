@@ -1,4 +1,5 @@
 import 'package:boilerplate/features/personal_chat/cubit/chat_state.dart';
+import 'package:boilerplate/features/personal_chat/message_type.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:d_bloc/d_bloc.dart';
@@ -45,7 +46,8 @@ class ChatCubit extends DCubit {
       {required ChatUser chatUser, required String msg}) async {
     try {
       emit(SendMessageLoadingState());
-      lastSendingMessage = await FirebaseUtils.sendMessage(chatUser, msg);
+      lastSendingMessage = await FirebaseUtils.sendMessage(
+          msg: msg, chatUser: chatUser, messageType: MessageType.text);
       if (isFirstLoad) isFirstLoad = false;
       emit(SendMessageSuccessState(
         message: lastSendingMessage,

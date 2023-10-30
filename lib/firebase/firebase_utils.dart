@@ -123,7 +123,10 @@ class FirebaseUtils {
   }
 
   /// Function to send message to specific user.
-  static Future<Message> sendMessage(ChatUser chatUser, String msg) async {
+  static Future<Message> sendMessage(
+      {required ChatUser chatUser,
+      required String msg,
+      required MessageType messageType}) async {
     final messageID = DateTime.now().millisecondsSinceEpoch.toString();
     final now = DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now());
     final ref = firebaseStore.collection(
@@ -140,6 +143,19 @@ class FirebaseUtils {
     );
     await ref.doc(messageID).set(message.toJson());
     return message;
+  }
+
+  static Future<void> sendFile({required ChatUser chatUser, required File file}) async {
+    final extension = file.path.split('.')[1];
+
+    final ref = firebaseStorage.ref().child(
+        'chat_image/${getConversationID(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$extension');
+    await ref.putFile(file, SettableMetadata(contentType: 'image/$extension'));
+
+    final imageUrl = await ref.getDownloadURL();
+
+    await sendMessage(
+        messageType: MessageType.image, chatUser: chatUser, msg: imageUrl);
   }
 
   /// Function to get 50 (optional) newest message
@@ -161,6 +177,17 @@ class FirebaseUtils {
             '${Collections.chats.value}/${getConversationID(message.fromId ?? '')}/${Collections.messages.value}/')
         .doc(message.timeStamp)
         .update({'readAt': now});
+  }
+
+  /// Function to get latest message of specific user
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getLatestMessage(
+      ChatUser chatUser) {
+    return firebaseStore
+        .collection(
+            '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
+        .orderBy('timeStamp', descending: true)
+        .limit(1)
+        .snapshots();
   }
 
   /// --------------- End firebase chat ---------------

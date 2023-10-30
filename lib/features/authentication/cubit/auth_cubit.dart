@@ -142,7 +142,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   void setLoginSessionDuration() {
-    final String nowString = Utils.getDateTimeNow();
+    final String nowString = Utils.getNow();
     _authService.setAuthProperty(
       property: AuthProperty.loginStartTime,
       value: nowString,

@@ -11,10 +11,14 @@ import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:d_bloc/default_widget/default_loading_widget.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:rest_client/rest_client.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -37,16 +41,23 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   late ChangeNotifier changeNotifier;
   late Stream<QuerySnapshot<Map<String, dynamic>>> chatStream;
   List<Message> currentMessageList = [];
+  late ValueNotifier<bool> isShowEmoji;
 
   @override
   void initState() {
     super.initState();
+    isShowEmoji = ValueNotifier(false);
     _cubit = ChatCubit(widget.chatUser);
     _cubit.getNewestMessage(chatUser: widget.chatUser, amount: 20);
     listMessageView = [];
     _messageEditingController = TextEditingController();
     _scrollController = ScrollController();
     _messageFocusNode = FocusNode();
+    _messageFocusNode.addListener(() {
+      if (_messageFocusNode.hasFocus) {
+        isShowEmoji.value = false;
+      }
+    });
     changeNotifier = ChangeNotifier();
     chatStream = FirebaseUtils.getAllMessages(widget.chatUser);
 
@@ -68,84 +79,114 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: () {
+        if (isShowEmoji.value) {
+          isShowEmoji.value = false;
+          return Future.value(false);
+        } else {
+          return Future.value(true);
+        }
+      },
+      child: Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
-        elevation: 0,
-        leading: IconButton(
-            onPressed: () => context.pop(),
-            icon: const Icon(
-              Icons.arrow_back_ios_rounded,
-              size: 20,
-            )),
-        titleSpacing: 0,
-        title: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(100.w),
-              child: CachedNetworkImage(
-                imageUrl: widget.chatUser.avatar,
-                width: 36.w,
-                height: 36.w,
-                fit: BoxFit.cover,
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          elevation: 0,
+          leading: IconButton(
+              onPressed: () => context.pop(),
+              icon: const Icon(
+                Icons.arrow_back_ios_rounded,
+                size: 20,
+              )),
+          titleSpacing: 0,
+          title: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(100.w),
+                child: CachedNetworkImage(
+                  imageUrl: widget.chatUser.avatar,
+                  width: 36.w,
+                  height: 36.w,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            SizedBox(
-              width: 10.w,
-            ),
-            Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.chatUser.fullName,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
-                        ?.copyWith(fontWeight: FontWeight.w500),
-                  ),
-                  Text('Last seen on 1 Dec 8:28 am',
-                      style: Theme.of(context).textTheme.bodySmall)
-                ],
+              SizedBox(
+                width: 10.w,
               ),
-            ),
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.chatUser.fullName,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.w500),
+                    ),
+                    Text('Last seen on 1 Dec 8:28 am',
+                        style: Theme.of(context).textTheme.bodySmall)
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: 20.w,
+              ),
+            ],
+          ),
+          actions: [
             SizedBox(
-              width: 20.w,
+              width: 30.w,
+              child: IconButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    ///TODO
+                  },
+                  icon: Icon(
+                    CupertinoIcons.search,
+                    size: 20.w,
+                  )),
             ),
-          ],
-        ),
-        actions: [
-          SizedBox(
-            width: 30.w,
-            child: IconButton(
-                padding: EdgeInsets.zero,
+            IconButton(
                 onPressed: () {
                   ///TODO
                 },
                 icon: Icon(
-                  CupertinoIcons.search,
+                  Icons.menu,
                   size: 20.w,
-                )),
-          ),
-          IconButton(
-              onPressed: () {
-                ///TODO
-              },
-              icon: Icon(
-                Icons.menu,
-                size: 20.w,
-              ))
-        ],
-      ),
-      body: GestureDetector(
-        onTap: Utils.hideKeyboard,
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildChatSection(context),
-              _buildBottomSection(context)
-            ],
+                ))
+          ],
+        ),
+        body: GestureDetector(
+          onTap: Utils.hideKeyboard,
+          child: SafeArea(
+            child: Column(
+              children: [
+                _buildChatSection(context),
+                _buildBottomSection(context),
+                ValueListenableBuilder(
+                  valueListenable: isShowEmoji,
+                  builder: (context, value, child) => Visibility(
+                      visible: value,
+                      child: SizedBox(
+                        height: 300.w,
+                        child: EmojiPicker(
+                          textEditingController: _messageEditingController,
+                          config: Config(
+                            buttonMode: ButtonMode.CUPERTINO,
+                            emojiSizeMax: 30.w *
+                                (foundation.defaultTargetPlatform ==
+                                        TargetPlatform.iOS
+                                    ? 1
+                                    : 0.7),
+                            bgColor: const Color(0xFFF2F2F2),
+                          ),
+                        ),
+                      )),
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -153,68 +194,6 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildChatSection(BuildContext context) {
-    // return Expanded(
-    //   child: Align(
-    //     alignment: Alignment.topCenter,
-    //     child: BlocConsumer(
-    //       listenWhen: (previous, current) =>
-    //           current is SendMessageSuccessState ||
-    //           current is SendMessageLoadingState ||
-    //           current is NewMessageState,
-    //       listener: dListener(
-    //         otherwise: (state) {
-    //           if (state is SendMessageSuccessState) {
-    //             goTopOfList();
-    //             _insertAndPushNewItem(state.message);
-    //           }
-    //           if (state is NewMessageState) {
-    //             goTopOfList();
-    //             _insertAndPushNewItem(state.message);
-    //           }
-    //         },
-    //       ),
-    //       bloc: _cubit,
-    //       buildWhen: (previous, current) =>
-    //           current is LoadingState || current is SuccessState,
-    //       builder: dBuilder<List<Message>, DefaultException>(
-    //         onSuccess: (data) {
-    //           if (data != null) {
-    //             isScrollable = data.isNotEmpty;
-    //             listMessageView = data
-    //                 .map((e) => MessageCard(
-    //                     message: e,
-    //                     animationController: AnimationController(
-    //                         vsync: this,
-    //                         duration:
-    //                             const Duration(milliseconds: fastDuration))))
-    //                 .toList();
-    //           }
-    //           return ListenableBuilder(
-    //             listenable: changeNotifier,
-    //             builder: (context, child) => AnimatedList(
-    //               key: listKey,
-    //               itemBuilder: (context, index, animation) {
-    //                 return SizeTransition(
-    //                   sizeFactor: animation,
-    //                   child: listMessageView[index],
-    //                 );
-    //               },
-    //               initialItemCount: listMessageView.length,
-    //               controller: _scrollController,
-    //               shrinkWrap: true,
-    //               padding:
-    //                   EdgeInsets.symmetric(vertical: 16.w, horizontal: 16.w),
-    //               reverse: true,
-    //             ),
-    //           );
-    //         },
-    //         otherwise: (BlocState state) {
-    //           return Container();
-    //         },
-    //       ),
-    //     ),
-    //   ),
-    // );
     return Expanded(
       child: Align(
         alignment: Alignment.topCenter,
@@ -227,11 +206,10 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 case ConnectionState.none:
                 // TODO: Handle this case.
                 case ConnectionState.waiting:
-                // TODO: Handle this case.
+                  return const DefaultLoadingWidget();
                 case ConnectionState.active:
                 // TODO: Handle this case.
                 case ConnectionState.done:
-                  // listKey.currentState?.setState(() {});
                   final data = snapshot.data?.docs
                       .map((e) => Message.fromJson(e.data()))
                       .toList()
@@ -262,20 +240,6 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     );
   }
 
-  void _insertAndPushNewItem(Message message) {
-    final newMessageCard = MessageCard(
-      message: message,
-      // animationController: AnimationController(
-      //   vsync: this,
-      //   duration: const Duration(milliseconds: fastDuration),
-      // ),
-    );
-    listMessageView.insert(0, newMessageCard);
-    listKey.currentState!.insertItem(0,
-        duration: const Duration(milliseconds: fastDuration - 100));
-    // newMessageCard.animationController.forward();
-  }
-
   void goTopOfList() {
     if (isScrollable) {
       _scrollController.animateTo(
@@ -295,7 +259,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           Expanded(
             flex: 6,
             child: Card(
-              color: Theme.of(context).colorScheme.inversePrimary,
+              color: Theme.of(context).colorScheme.secondary,
               elevation: 3,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(40.w)),
@@ -330,7 +294,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       elevation: 3,
       shape: const CircleBorder(),
       child: Material(
-        color: Theme.of(context).colorScheme.inversePrimary,
+        color: Theme.of(context).colorScheme.secondary,
         shape: const CircleBorder(),
         child: InkWell(
             onTap: () {
@@ -343,7 +307,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             },
             customBorder: const CircleBorder(),
             child: Padding(
-              padding: const EdgeInsets.all(10),
+              padding: EdgeInsets.all(9.w),
               child: Transform.rotate(
                 angle: -pi / 4,
                 child: Icon(
@@ -362,6 +326,15 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(100),
       child: InkWell(
+          onTap: () async {
+            final ImagePicker picker = ImagePicker();
+            final XFile? photo = await picker.pickImage(
+                source: ImageSource.gallery, imageQuality: 60);
+            if (photo != null) {
+              await FirebaseUtils.sendFile(
+                  chatUser: widget.chatUser, file: File(photo.path));
+            }
+          },
           borderRadius: BorderRadius.circular(100),
           child: Padding(
             padding: EdgeInsets.all(8.w),
@@ -381,7 +354,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       child: InkWell(
           borderRadius: BorderRadius.circular(100),
           child: Padding(
-            padding: EdgeInsets.all(8.w),
+            padding: EdgeInsets.fromLTRB(8.w, 6.w, 8.w, 7.w),
             child: Icon(
               CupertinoIcons.photo_camera_solid,
               size: 19.w,
@@ -394,6 +367,10 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   Widget _buildChatTextField(BuildContext context) {
     return Expanded(
       child: TextField(
+        maxLines: 2,
+        minLines: 1,
+        style: Theme.of(context).textTheme.bodyMedium,
+        cursorColor: Theme.of(context).textTheme.bodyMedium?.color,
         onChanged: (value) {},
         onEditingComplete: Utils.hideKeyboard,
         controller: _messageEditingController,
@@ -407,7 +384,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
               borderSide: const BorderSide(color: Colors.transparent, width: 0),
               borderRadius: BorderRadius.circular(borderRadius)),
           hintText: S.current.type_something_here,
-          contentPadding: EdgeInsets.symmetric(horizontal: 5.w),
+          contentPadding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 12.w),
           border: InputBorder.none,
         ),
       ),
@@ -419,12 +396,16 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       borderRadius: BorderRadius.circular(100),
       color: Colors.transparent,
       child: InkWell(
+          onTap: () {
+            Utils.hideKeyboard();
+            isShowEmoji.value = !isShowEmoji.value;
+          },
           borderRadius: BorderRadius.circular(100),
-          child: const Padding(
-            padding: EdgeInsets.all(8),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(8.w, 6.w, 8.w, 8.w),
             child: Icon(
               CupertinoIcons.smiley_fill,
-              size: 25,
+              size: 20.w,
               color: Colors.blue,
             ),
           )),
