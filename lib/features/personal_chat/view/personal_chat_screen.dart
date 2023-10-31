@@ -11,6 +11,7 @@ import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/assets.gen.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/utils/utils.dart';
+import 'package:boilerplate/widgets/app_bar_leading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:d_bloc/default_widget/default_loading_widget.dart';
@@ -19,7 +20,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:rest_client/rest_client.dart';
@@ -99,12 +99,7 @@ class _ChatScreenState extends State<ChatScreen>
             height: 0.6.w,
           ),
         ),
-        leading: IconButton(
-            onPressed: () => context.pop(),
-            icon: Icon(
-              Icons.arrow_back_ios_rounded,
-              size: 18.w,
-            )),
+        leading: const AppBarLeading(),
         titleSpacing: 0,
         title: Row(
           children: [
@@ -504,3 +499,4 @@ class _ChatScreenState extends State<ChatScreen>
     }
   }
 }
+

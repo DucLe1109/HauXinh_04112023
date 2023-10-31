@@ -2,10 +2,10 @@ import 'package:boilerplate/features/personal_chat/message_type.dart';
 import 'package:boilerplate/generated/assets.gen.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/utils/utils.dart';
+import 'package:boilerplate/widgets/app_bar_leading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:rest_client/rest_client.dart';
 
@@ -56,14 +56,7 @@ class OutBubble extends StatelessWidget {
                               .replaceAll('[', '')
                               .replaceAll(']', '')),
                           backgroundColor: Theme.of(context).primaryColor,
-                          leading: InkWell(
-                              hoverColor: Colors.transparent,
-                              splashColor: Colors.transparent,
-                              onTap: context.pop,
-                              child: Icon(
-                                Icons.arrow_back_ios_rounded,
-                                size: 18.w,
-                              )),
+                          leading: const AppBarLeading(),
                         ),
                         backgroundColor: Theme.of(context).primaryColor,
                         body: Padding(

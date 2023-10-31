@@ -9,12 +9,12 @@ import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/assets.gen.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/utils/utils.dart';
+import 'package:boilerplate/widgets/app_bar_leading.dart';
 import 'package:boilerplate/widgets/base_outline_text_field.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -64,12 +64,7 @@ class _InformationScreenState
         centerTitle: true,
         title: Text(S.current.user_info,
             style: Theme.of(context).textTheme.bodyLarge),
-        leading: IconButton(
-            onPressed: () => context.pop(),
-            icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 18.w,
-            )),
+        leading: const AppBarLeading(),
       ),
       body: BlocListener<SettingCubit, SettingState>(
         listener: (context, state) {

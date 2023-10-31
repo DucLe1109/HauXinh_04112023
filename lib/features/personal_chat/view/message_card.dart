@@ -20,10 +20,6 @@ class MessageCard extends StatefulWidget {
 class _MessageCardState extends State<MessageCard> with AutomaticKeepAliveClientMixin {
   final translationDistance = 90.0;
 
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void dispose() {
