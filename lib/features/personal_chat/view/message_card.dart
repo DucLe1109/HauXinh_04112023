@@ -17,7 +17,7 @@ class MessageCard extends StatefulWidget {
   State<MessageCard> createState() => _MessageCardState();
 }
 
-class _MessageCardState extends State<MessageCard> {
+class _MessageCardState extends State<MessageCard> with AutomaticKeepAliveClientMixin {
   final translationDistance = 90.0;
 
   @override
@@ -49,4 +49,8 @@ class _MessageCardState extends State<MessageCard> {
   Widget _buildOutBubble() {
     return OutBubble(message: widget.message);
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

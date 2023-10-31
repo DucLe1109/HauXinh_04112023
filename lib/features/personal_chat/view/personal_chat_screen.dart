@@ -19,9 +19,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:rest_client/rest_client.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -42,7 +42,6 @@ class _ChatScreenState extends State<ChatScreen>
   bool isScrollable = false;
   late ChatCubit _cubit;
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
-  late ChangeNotifier changeNotifier;
   late Stream<QuerySnapshot<Map<String, dynamic>>> chatStream;
   List<Message> currentMessageList = [];
   late ValueNotifier<bool> isShowEmoji;
@@ -65,7 +64,6 @@ class _ChatScreenState extends State<ChatScreen>
         isShowEmoji.value = false;
       }
     });
-    changeNotifier = ChangeNotifier();
     chatStream = FirebaseUtils.getAllMessages(widget.chatUser);
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: fastDuration));
@@ -225,9 +223,10 @@ class _ChatScreenState extends State<ChatScreen>
                         .toList();
                   }
 
-                  isScrollable = currentMessageList.isNotEmpty ?? false;
+                  isScrollable = currentMessageList.isNotEmpty;
 
                   return AnimatedList(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     key: listKey,
                     itemBuilder: (context, index, animation) {
                       return SizeTransition(
@@ -391,9 +390,17 @@ class _ChatScreenState extends State<ChatScreen>
             onTap: () {
               if (photos.isNotEmpty) {
                 for (final e in photos) {
-                  // FirebaseUtils.sendFile(
-                  //     chatUser: widget.chatUser, file: File(e.path));
+                  currentMessageList.insert(
+                      0,
+                      Message(
+                          type: MessageType.image.name,
+                          createdTime: DateFormat('dd/MM/yyyy HH:mm:ss')
+                              .format(DateTime.now()),
+                          msg:
+                              'https://firebasestorage.googleapis.com/v0/b/hauxinh0411-69b89.appspot.com/o/avatar%2F4P0kPBHo4YekHbFNwVO053PThpu2.jpg?alt=media&token=8c86d54b-3de5-41c7-9c6a-f5f6b35992eb'));
                   listKey.currentState?.insertItem(0);
+                  FirebaseUtils.sendFile(
+                      chatUser: widget.chatUser, file: File(e.path));
                 }
                 photos.clear();
                 _animationController.reset();
