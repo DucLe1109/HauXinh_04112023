@@ -33,7 +33,8 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen>
+    with SingleTickerProviderStateMixin {
   late TextEditingController _messageEditingController;
   late FocusNode _messageFocusNode;
   late List<MessageCard> listMessageView;
@@ -45,6 +46,9 @@ class _ChatScreenState extends State<ChatScreen> {
   late Stream<QuerySnapshot<Map<String, dynamic>>> chatStream;
   List<Message> currentMessageList = [];
   late ValueNotifier<bool> isShowEmoji;
+  late AnimationController _animationController;
+  late Animation<double> animation;
+  List<XFile> photos = [];
 
   @override
   void initState() {
@@ -63,7 +67,10 @@ class _ChatScreenState extends State<ChatScreen> {
     });
     changeNotifier = ChangeNotifier();
     chatStream = FirebaseUtils.getAllMessages(widget.chatUser);
-
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: fastDuration));
+    animation =
+        CurvedAnimation(parent: _animationController, curve: Curves.easeOut);
     chatStream.listen((newData) {
       final List<Message> newMessage =
           newData.docs.map((e) => Message.fromJson(e.data())).toList();
@@ -76,7 +83,6 @@ class _ChatScreenState extends State<ChatScreen> {
           listKey.currentState!.insertItem(0);
         }
       }
-      currentMessageList = newMessage;
     });
   }
 
@@ -211,23 +217,36 @@ class _ChatScreenState extends State<ChatScreen> {
                 case ConnectionState.active:
                 // TODO: Handle this case.
                 case ConnectionState.done:
-                  final data = snapshot.data?.docs
-                      .map((e) => Message.fromJson(e.data()))
-                      .toList()
-                      .reversed
-                      .toList();
+                  if (snapshot.hasData) {
+                    currentMessageList = snapshot.data!.docs
+                        .map((e) => Message.fromJson(e.data()))
+                        .toList()
+                        .reversed
+                        .toList();
+                  }
 
-                  isScrollable = data?.isNotEmpty ?? false;
+                  isScrollable = currentMessageList.isNotEmpty ?? false;
 
                   return AnimatedList(
                     key: listKey,
                     itemBuilder: (context, index, animation) {
                       return SizeTransition(
                         sizeFactor: animation,
-                        child: MessageCard(message: data![index]),
+                        child: FadeTransition(
+                          opacity: animation.drive(
+                              Tween<double>(begin: 0, end: 1)
+                                  .chain(CurveTween(curve: Curves.ease))),
+                          child: SlideTransition(
+                              position: animation.drive(Tween(
+                                      begin: const Offset(0, 50),
+                                      end: Offset.zero)
+                                  .chain(CurveTween(curve: Curves.ease))),
+                              child: MessageCard(
+                                  message: currentMessageList[index])),
+                        ),
                       );
                     },
-                    initialItemCount: data?.length ?? 0,
+                    initialItemCount: currentMessageList.length,
                     controller: _scrollController,
                     shrinkWrap: true,
                     padding:
@@ -279,14 +298,68 @@ class _ChatScreenState extends State<ChatScreen> {
             decoration: InputDecoration(
               hintText: S.current.type_something_here,
               hintStyle: Theme.of(context).textTheme.bodySmall,
-              contentPadding: EdgeInsets.fromLTRB(8.w, 6.w, 0, 16.w),
+              contentPadding: EdgeInsets.fromLTRB(8.w, 6.w, 0, 12.w),
               isDense: true,
               border: InputBorder.none,
+            ),
+          ),
+          SizeTransition(
+            sizeFactor: animation,
+            child: Container(
+              padding: EdgeInsets.only(
+                bottom: 12.w,
+              ),
+              height: 150.w,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: photos.map(_buildPickedImage).toList(),
+                ),
+              ),
             ),
           ),
           _buildActionButton()
         ],
       ),
+    );
+  }
+
+  Widget _buildPickedImage(XFile e) {
+    return Stack(
+      children: [
+        Container(
+            margin: EdgeInsets.only(left: 12.w, right: 13.w, top: 4.w),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(10.w),
+                child: Image.file(File(e.path)))),
+        Positioned.fill(
+          top: 0.w,
+          right: 8.w,
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Material(
+              shape: const CircleBorder(),
+              color: Colors.redAccent.withOpacity(0.8),
+              child: InkWell(
+                  borderRadius: BorderRadius.circular(100.w),
+                  onTap: () {
+                    setState(() {
+                      photos.remove(e);
+                    });
+                    if (photos.isEmpty) {
+                      _animationController.reset();
+                    }
+                  },
+                  child: Padding(
+                      padding: EdgeInsets.all(2.w),
+                      child: Icon(
+                        Icons.clear,
+                        size: 12.w,
+                      ))),
+            ),
+          ),
+        )
+      ],
     );
   }
 
@@ -316,6 +389,15 @@ class _ChatScreenState extends State<ChatScreen> {
         shape: const CircleBorder(),
         child: InkWell(
             onTap: () {
+              if (photos.isNotEmpty) {
+                for (final e in photos) {
+                  // FirebaseUtils.sendFile(
+                  //     chatUser: widget.chatUser, file: File(e.path));
+                  listKey.currentState?.insertItem(0);
+                }
+                photos.clear();
+                _animationController.reset();
+              }
               if (_messageEditingController.text.isNotEmpty) {
                 FirebaseUtils.sendMessage(
                     messageType: MessageType.text,
@@ -348,12 +430,9 @@ class _ChatScreenState extends State<ChatScreen> {
       child: InkWell(
           onTap: () async {
             final ImagePicker picker = ImagePicker();
-            final XFile? photo = await picker.pickImage(
-                source: ImageSource.gallery, imageQuality: 60);
-            if (photo != null) {
-              await FirebaseUtils.sendFile(
-                  chatUser: widget.chatUser, file: File(photo.path));
-            }
+            photos = await picker.pickMultiImage(imageQuality: 60);
+            setState(() {});
+            await _animationController.forward();
           },
           borderRadius: BorderRadius.circular(100),
           child: Assets.icons.icImage.image(
