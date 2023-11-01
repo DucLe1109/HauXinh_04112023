@@ -78,7 +78,8 @@ class _ChatScreenState extends State<ChatScreen>
             .where((element) => !currentMessageList.contains(element))
             .toList();
         for (final _ in updateList) {
-          listKey.currentState!.insertItem(0);
+          listKey.currentState!
+              .insertItem(0, duration: const Duration(milliseconds: 600));
         }
       }
     });
@@ -224,19 +225,16 @@ class _ChatScreenState extends State<ChatScreen>
                     physics: const AlwaysScrollableScrollPhysics(),
                     key: listKey,
                     itemBuilder: (context, index, animation) {
-                      return SizeTransition(
-                        sizeFactor: animation,
-                        child: FadeTransition(
-                          opacity: animation.drive(
+                      return SlideTransition(
+                        position: animation.drive(
+                            Tween(begin: Offset(-5.w, 5.w), end: Offset.zero)
+                                .chain(CurveTween(curve: Curves.ease))),
+                        child: SizeTransition(
+                          sizeFactor: animation.drive(
                               Tween<double>(begin: 0, end: 1)
                                   .chain(CurveTween(curve: Curves.ease))),
-                          child: SlideTransition(
-                              position: animation.drive(Tween(
-                                      begin: const Offset(0, 50),
-                                      end: Offset.zero)
-                                  .chain(CurveTween(curve: Curves.ease))),
-                              child: MessageCard(
-                                  message: currentMessageList[index])),
+                          child:
+                              MessageCard(message: currentMessageList[index]),
                         ),
                       );
                     },
@@ -499,4 +497,3 @@ class _ChatScreenState extends State<ChatScreen>
     }
   }
 }
-

@@ -80,10 +80,7 @@ class IntroPage extends StatelessWidget {
                               .read<AppBloc>()
                               .add(const AppEvent.disableFirstUse());
                         },
-                        style: FilledButton.styleFrom(
-                          textStyle: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        child: Text(S.current.start_messaging),
+                        child: Text(S.current.start_messaging, style: Theme.of(context).textTheme.bodyMedium),
                       ),
                     ),
                   ),
