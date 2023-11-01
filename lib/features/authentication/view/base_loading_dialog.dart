@@ -1,9 +1,26 @@
 import 'package:boilerplate/generated/assets.gen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nuts_activity_indicator/nuts_activity_indicator.dart';
 
 class BaseLoadingDialog extends StatelessWidget {
-  const BaseLoadingDialog({super.key});
+  const BaseLoadingDialog(
+      {super.key,
+      this.activeColor,
+      this.inactiveColor,
+      this.relativeWidth,
+      this.iconWidth,
+      this.iconHeight,
+      this.radius,
+      this.isShowIcon = true});
+
+  final Color? activeColor;
+  final Color? inactiveColor;
+  final double? relativeWidth;
+  final double? iconWidth;
+  final double? iconHeight;
+  final double? radius;
+  final bool isShowIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -12,17 +29,20 @@ class BaseLoadingDialog extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          const NutsActivityIndicator(
+          NutsActivityIndicator(
             endRatio: 0.85,
-            animationDuration: Duration(milliseconds: 500),
-            activeColor: Colors.blue,
-            inactiveColor: Colors.white,
+            animationDuration: const Duration(milliseconds: 500),
+            activeColor: activeColor ?? Colors.blue,
+            inactiveColor: inactiveColor ?? Colors.white,
             tickCount: 24,
-            relativeWidth: 0.1,
-            radius: 38,
+            relativeWidth: relativeWidth ?? 0.1,
+            radius: radius ?? 38,
             startRatio: 0.7,
           ),
-          Assets.icons.iconMessage.image(width: 40, height: 40),
+          isShowIcon
+              ? Assets.icons.iconMessage
+                  .image(width: iconWidth ?? 35.w, height: iconHeight ?? 35.w)
+              : Container(),
         ],
       ),
     );

@@ -331,7 +331,7 @@ class _ChatScreenState extends State<ChatScreen>
             alignment: Alignment.topRight,
             child: Material(
               shape: const CircleBorder(),
-              color: Colors.redAccent.withOpacity(0.8),
+              color: Colors.redAccent,
               child: InkWell(
                   borderRadius: BorderRadius.circular(100.w),
                   onTap: () {
@@ -386,14 +386,15 @@ class _ChatScreenState extends State<ChatScreen>
                   currentMessageList.insert(
                       0,
                       Message(
-                          type: MessageType.image.name,
+                          fromId: FirebaseUtils.user?.uid,
+                          toId: widget.chatUser.id,
+                          type: MessageType.temp.name,
                           createdTime: DateFormat('dd/MM/yyyy HH:mm:ss')
                               .format(DateTime.now()),
-                          msg:
-                              'https://firebasestorage.googleapis.com/v0/b/hauxinh0411-69b89.appspot.com/o/avatar%2F4P0kPBHo4YekHbFNwVO053PThpu2.jpg?alt=media&token=8c86d54b-3de5-41c7-9c6a-f5f6b35992eb'));
+                          msg: e.path));
                   listKey.currentState?.insertItem(0);
-                  FirebaseUtils.sendFile(
-                      chatUser: widget.chatUser, file: File(e.path));
+                  // FirebaseUtils.sendFile(
+                  //     chatUser: widget.chatUser, file: File(e.path));
                 }
                 photos.clear();
                 _animationController.reset();

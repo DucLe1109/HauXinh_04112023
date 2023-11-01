@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:boilerplate/features/authentication/view/base_loading_dialog.dart';
 import 'package:boilerplate/features/personal_chat/message_type.dart';
 import 'package:boilerplate/generated/assets.gen.dart';
 import 'package:boilerplate/generated/l10n.dart';
@@ -39,7 +42,7 @@ class OutBubble extends StatelessWidget {
                 message.msg ?? '',
                 style: Theme.of(context).textTheme.bodyMedium,
               )
-            else
+            else if (message.type == MessageType.image.name)
               GestureDetector(
                 onTap: () {
                   showGeneralDialog(
@@ -48,31 +51,7 @@ class OutBubble extends StatelessWidget {
                         Container(),
                     transitionBuilder:
                         (context, animation, secondaryAnimation, child) {
-                      return Scaffold(
-                        appBar: AppBar(
-                          elevation: 0,
-                          centerTitle: true,
-                          title: Text(S.current.image
-                              .replaceAll('[', '')
-                              .replaceAll(']', '')),
-                          backgroundColor: Theme.of(context).primaryColor,
-                          leading: const AppBarLeading(),
-                        ),
-                        backgroundColor: Theme.of(context).primaryColor,
-                        body: Padding(
-                          padding: EdgeInsets.only(bottom: 80.w),
-                          child: ClipRRect(
-                            child: PhotoView(
-                                backgroundDecoration: BoxDecoration(
-                                    color: Theme.of(context).primaryColor),
-                                minScale: PhotoViewComputedScale.contained * 1,
-                                maxScale: PhotoViewComputedScale.contained * 1.4,
-                                initialScale: PhotoViewComputedScale.contained,
-                                imageProvider:
-                                    CachedNetworkImageProvider(message.msg ?? '')),
-                          ),
-                        ),
-                      );
+                      return ImageScreen(context);
                     },
                   );
                 },
@@ -82,7 +61,9 @@ class OutBubble extends StatelessWidget {
                       topLeft: Radius.circular(16.w),
                     ),
                     child: CachedNetworkImage(imageUrl: message.msg ?? '')),
-              ),
+              )
+            else
+              _buildTempImage(context),
             SizedBox(
               height: 8.w,
             ),
@@ -111,6 +92,68 @@ class OutBubble extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Stack _buildTempImage(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        ClipRRect(
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(16.w),
+              topLeft: Radius.circular(16.w),
+            ),
+            child: Image.file(
+              File(message.msg ?? ''),
+              fit: BoxFit.cover,
+            )),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+                color: Theme.of(context)
+                    .colorScheme
+                    .inversePrimary
+                    .withOpacity(0.5),
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(16.w),
+                  topLeft: Radius.circular(16.w),
+                )),
+          ),
+        ),
+        BaseLoadingDialog(
+          activeColor: Colors.blueAccent,
+          inactiveColor: Colors.redAccent,
+          radius: 23.w,
+          isShowIcon: false,
+          relativeWidth: 1,
+        )
+      ],
+    );
+  }
+
+  Scaffold ImageScreen(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        title: Text(S.current.image.replaceAll('[', '').replaceAll(']', '')),
+        backgroundColor: Theme.of(context).primaryColor,
+        leading: const AppBarLeading(),
+      ),
+      backgroundColor: Theme.of(context).primaryColor,
+      body: Padding(
+        padding: EdgeInsets.only(bottom: 80.w),
+        child: ClipRRect(
+          child: PhotoView(
+              backgroundDecoration:
+                  BoxDecoration(color: Theme.of(context).primaryColor),
+              minScale: PhotoViewComputedScale.contained * 1,
+              maxScale: PhotoViewComputedScale.contained * 1.4,
+              initialScale: PhotoViewComputedScale.contained,
+              imageProvider: CachedNetworkImageProvider(message.msg ?? '')),
         ),
       ),
     );

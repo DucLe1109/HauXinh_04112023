@@ -17,9 +17,9 @@ class MessageCard extends StatefulWidget {
   State<MessageCard> createState() => _MessageCardState();
 }
 
-class _MessageCardState extends State<MessageCard> with AutomaticKeepAliveClientMixin {
+class _MessageCardState extends State<MessageCard>
+    with AutomaticKeepAliveClientMixin {
   final translationDistance = 90.0;
-
 
   @override
   void dispose() {
@@ -28,6 +28,7 @@ class _MessageCardState extends State<MessageCard> with AutomaticKeepAliveClient
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     if (FirebaseUtils.user?.uid != widget.message.fromId) {
       return _buildInBubble();
     } else {

@@ -7,7 +7,7 @@ import 'package:rest_client/rest_client.dart';
 
 class ChatCubit extends DCubit {
   bool isFirstLoad = true;
-  Message lastSendingMessage = const Message();
+  Message lastSendingMessage = Message();
   final ChatUser chatUser;
   final currentTotalMessage = 0;
 
