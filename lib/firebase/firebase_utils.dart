@@ -104,6 +104,21 @@ class FirebaseUtils {
         .update(me.copyWith(avatar: avatarPath).toJson());
   }
 
+  static void updateUserStatus({required bool isOnline}) {
+    firebaseStore.collection(Collections.chatUser.value).doc(user?.uid).update({
+      'lastActive': DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now()),
+      'isOnline': isOnline,
+    });
+  }
+
+  static Stream<DocumentSnapshot<Map<String, dynamic>>> getUserInfo(
+      ChatUser user) {
+    return firebaseStore
+        .collection(Collections.chatUser.value)
+        .doc(user.id)
+        .snapshots();
+  }
+
   /// --------------- End user information ---------------
 
   /// --------------- Firebase chat ---------------

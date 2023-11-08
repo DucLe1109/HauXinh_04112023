@@ -33,71 +33,103 @@ class InBubble extends StatelessWidget {
                 topRight: Radius.circular(16.w),
                 bottomLeft: Radius.circular(16.w),
                 bottomRight: Radius.circular(16.w))),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (message.type == MessageType.text.name)
-              Text(
-                message.msg ?? '',
-                style: Theme.of(context).textTheme.bodyMedium,
+        child: message.msg!.length >= 15
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (message.type == MessageType.text.name)
+                    Text(
+                      message.msg ?? '',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    )
+                  else
+                    GestureDetector(
+                      onTap: () {
+                        showGeneralDialog(
+                          context: context,
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  Container(),
+                          transitionBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            return Scaffold(
+                              appBar: AppBar(
+                                elevation: 0,
+                                centerTitle: true,
+                                title: Text(S.current.image
+                                    .replaceAll('[', '')
+                                    .replaceAll(']', '')),
+                                backgroundColor: Theme.of(context).primaryColor,
+                                leading: const AppBarLeading(),
+                              ),
+                              backgroundColor: Theme.of(context).primaryColor,
+                              body: Opacity(
+                                opacity: animation.value,
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: 40.w),
+                                  child: PhotoView(
+                                      backgroundDecoration: BoxDecoration(
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                      minScale:
+                                          PhotoViewComputedScale.contained * 1,
+                                      maxScale:
+                                          PhotoViewComputedScale.contained *
+                                              1.4,
+                                      initialScale:
+                                          PhotoViewComputedScale.contained,
+                                      imageProvider: CachedNetworkImageProvider(
+                                          message.msg ?? '')),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(16.w),
+                          ),
+                          child:
+                              CachedNetworkImage(imageUrl: message.msg ?? '')),
+                    ),
+                  SizedBox(
+                    height: 8.w,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left:
+                            message.type == MessageType.text.name ? 0.w : 14.w),
+                    child: Text(
+                      Utils.formatToLastMessageTime(message.createdTime),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontSize: 11,
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                          ),
+                    ),
+                  )
+                ],
               )
-            else
-              GestureDetector(
-                onTap: () {
-                  showGeneralDialog(
-                    context: context,
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        Container(),
-                    transitionBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                      return Scaffold(
-                        appBar: AppBar(
-                          elevation: 0,
-                          centerTitle: true,
-                          title: Text(S.current.image
-                              .replaceAll('[', '')
-                              .replaceAll(']', '')),
-                          backgroundColor: Theme.of(context).primaryColor,
-                          leading: const AppBarLeading(),
-                        ),
-                        backgroundColor: Theme.of(context).primaryColor,
-                        body: Padding(
-                          padding: EdgeInsets.only(bottom: 40.w),
-                          child: PhotoView(
-                              backgroundDecoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColor),
-                              minScale: PhotoViewComputedScale.contained * 1,
-                              maxScale: PhotoViewComputedScale.contained * 1.4,
-                              initialScale: PhotoViewComputedScale.contained,
-                              imageProvider: CachedNetworkImageProvider(
-                                  message.msg ?? '')),
-                        ),
-                      );
-                    },
-                  );
-                },
-                child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(16.w),
-                    ),
-                    child: CachedNetworkImage(imageUrl: message.msg ?? '')),
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    message.msg ?? '',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  SizedBox(
+                    width: 8.w,
+                  ),
+                  Text(
+                    Utils.formatToLastMessageTime(message.createdTime),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.inversePrimary,
+                        fontSize: 11),
+                  ),
+                ],
               ),
-            SizedBox(
-              height: 8.w,
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  left: message.type == MessageType.text.name ? 0.w : 14.w),
-              child: Text(
-                Utils.formatToTime(message.createdTime),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: 11,
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                    ),
-              ),
-            )
-          ],
-        ),
       ),
     );
   }

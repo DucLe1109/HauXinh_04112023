@@ -14,12 +14,11 @@ class Chatting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double imageWidth = 45;
-    const double badgeLeftPosition = imageWidth + 12;
+    final double imageWidth = 42.w;
+    final double badgeLeftPosition = imageWidth + 12;
     const double badgeTopPosition = 6;
     const double badgeWidth = 14;
     const double badgeHeight = 14;
-    const double borderRadiusContainer = 16;
 
     return Stack(
       children: [
@@ -36,49 +35,42 @@ class Chatting extends StatelessWidget {
               return ListTile(
                 leading: chatUser.isHasStory
                     ? Container(
-                        padding: const EdgeInsets.all(1.3),
+                        padding: EdgeInsets.all(1.w),
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.blue, width: 2),
-                            borderRadius:
-                                BorderRadius.circular(borderRadiusContainer)),
-                        child: SizedBox(
-                          width: imageWidth,
-                          height: 38.w,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(
-                                borderRadiusContainer - 2),
-                            child: CachedNetworkImage(
-                              fit: BoxFit.cover,
-                              imageUrl: chatUser.avatar,
-                              placeholder: (context, url) =>
-                                  const CircleAvatar(child: Icon(Icons.person)),
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.error),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.blue, width: 1.w)),
+                        child: CachedNetworkImage(
+                          imageBuilder: (context, imageProvider) => Container(
+                            width: imageWidth,
+                            height: imageWidth,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  image: imageProvider, fit: BoxFit.cover),
                             ),
                           ),
+                          imageUrl: chatUser.avatar,
+                          placeholder: (context, url) =>
+                              const CircleAvatar(child: Icon(Icons.person)),
+                          errorWidget: (context, url, error) =>
+                              const CircleAvatar(child: Icon(Icons.person)),
                         ),
                       )
-                    : DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.circular(borderRadiusContainer),
-                        ),
-                        child: SizedBox(
-                          width: imageWidth + 4,
-                          height: 42.w,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(
-                                borderRadiusContainer - 2),
-                            child: CachedNetworkImage(
-                              fit: BoxFit.cover,
-                              imageUrl: chatUser.avatar,
-                              placeholder: (context, url) =>
-                                  const CircleAvatar(child: Icon(Icons.person)),
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.error),
-                            ),
+                    : CachedNetworkImage(
+                        imageBuilder: (context, imageProvider) => Container(
+                          width: imageWidth + 2.w,
+                          height: imageWidth + 2.w,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                image: imageProvider, fit: BoxFit.cover),
                           ),
                         ),
+                        imageUrl: chatUser.avatar,
+                        placeholder: (context, url) =>
+                            const CircleAvatar(child: Icon(Icons.person)),
+                        errorWidget: (context, url, error) =>
+                            const CircleAvatar(child: Icon(Icons.person)),
                       ),
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -99,7 +91,7 @@ class Chatting extends StatelessWidget {
                     Flexible(
                       flex: 2,
                       child: Text(
-                        Utils.formatToTime(message?.createdTime),
+                        Utils.formatToLastMessageTime(message?.createdTime),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Theme.of(context)
                                 .textTheme

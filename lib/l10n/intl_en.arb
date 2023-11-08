@@ -82,5 +82,14 @@
   "say_hello": "Say hello",
   "file": "[File]",
   "image": "[Image]",
-  "error_code_resource_exhausted": "The database has reached a resource limit, such as the maximum number of queries allowed"
+  "error_code_resource_exhausted": "The database has reached a resource limit, such as the maximum number of queries allowed",
+  "online" : "Online",
+  "active" : "Active",
+  "minute" : "minute",
+  "minutes" : "minutes",
+  "hour" : "hour",
+  "hours" : "hours",
+  "day" : "day",
+  "days" : "days",
+  "ago": "ago"
 }

@@ -48,6 +48,7 @@ class _ChatScreenState extends State<ChatScreen>
   late AnimationController _animationController;
   late Animation<double> animation;
   List<XFile> photos = [];
+  late Stream<DocumentSnapshot<Map<String, dynamic>>> chatUserStream;
 
   @override
   void initState() {
@@ -83,6 +84,7 @@ class _ChatScreenState extends State<ChatScreen>
         }
       }
     });
+    chatUserStream = FirebaseUtils.getUserInfo(widget.chatUser);
   }
 
   @override
@@ -102,40 +104,49 @@ class _ChatScreenState extends State<ChatScreen>
         ),
         leading: const AppBarLeading(),
         titleSpacing: 0,
-        title: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(100.w),
-              child: CachedNetworkImage(
-                imageUrl: widget.chatUser.avatar,
-                width: 36.w,
-                height: 36.w,
-                fit: BoxFit.cover,
-              ),
-            ),
-            SizedBox(
-              width: 10.w,
-            ),
-            Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.chatUser.fullName,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
-                        ?.copyWith(fontWeight: FontWeight.w500),
+        title: StreamBuilder(
+          builder: (context, snapshot) {
+            ChatUser? chatUser;
+            if (snapshot.hasData) {
+              chatUser = ChatUser.fromJson(snapshot.data!.data()!);
+            }
+            return Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(100.w),
+                  child: CachedNetworkImage(
+                    imageUrl: chatUser?.avatar ?? widget.chatUser.avatar,
+                    width: 36.w,
+                    height: 36.w,
+                    fit: BoxFit.cover,
                   ),
-                  Text('Last seen on 1 Dec 8:28 am',
-                      style: Theme.of(context).textTheme.bodySmall)
-                ],
-              ),
-            ),
-            SizedBox(
-              width: 20.w,
-            ),
-          ],
+                ),
+                SizedBox(
+                  width: 10.w,
+                ),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        chatUser?.fullName ?? widget.chatUser.fullName,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.copyWith(fontWeight: FontWeight.w500),
+                      ),
+                      Text(getCurrentStatus(chatUser),
+                          style: Theme.of(context).textTheme.bodySmall)
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: 20.w,
+                ),
+              ],
+            );
+          },
+          stream: chatUserStream,
         ),
         actions: [
           SizedBox(
@@ -192,6 +203,12 @@ class _ChatScreenState extends State<ChatScreen>
         ),
       ),
     );
+  }
+
+  String getCurrentStatus(ChatUser? chatUser) {
+    return (chatUser?.isOnline ?? false)
+        ? S.current.online
+        : Utils.formatToLastStatusTime(chatUser?.lastActive);
   }
 
   Widget _buildChatSection(BuildContext context) {
@@ -397,6 +414,7 @@ class _ChatScreenState extends State<ChatScreen>
                   //     chatUser: widget.chatUser, file: File(e.path));
                 }
                 photos.clear();
+                goTopOfList();
                 _animationController.reset();
               }
               if (_messageEditingController.text.isNotEmpty) {

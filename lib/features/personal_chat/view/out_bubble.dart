@@ -34,65 +34,107 @@ class OutBubble extends StatelessWidget {
                 topRight: Radius.circular(16.w),
                 topLeft: Radius.circular(16.w),
                 bottomLeft: Radius.circular(16.w))),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            if (message.type == MessageType.text.name)
-              Text(
-                message.msg ?? '',
-                style: Theme.of(context).textTheme.bodyMedium,
-              )
-            else if (message.type == MessageType.image.name)
-              GestureDetector(
-                onTap: () {
-                  showGeneralDialog(
-                    context: context,
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        Container(),
-                    transitionBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                      return ImageScreen(context);
-                    },
-                  );
-                },
-                child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(16.w),
-                      topLeft: Radius.circular(16.w),
+        child: message.msg!.length >= 15
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (message.type == MessageType.text.name)
+                    Text(
+                      message.msg ?? '',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    )
+                  else if (message.type == MessageType.image.name)
+                    GestureDetector(
+                      onTap: () {
+                        showGeneralDialog(
+                          context: context,
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  Container(),
+                          transitionBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            return _buildImageScreen(context, animation);
+                          },
+                        );
+                      },
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(16.w),
+                            topLeft: Radius.circular(16.w),
+                          ),
+                          child:
+                              CachedNetworkImage(imageUrl: message.msg ?? '')),
+                    )
+                  else
+                    _buildTempImage(context),
+                  SizedBox(
+                    height: 8.w,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        right:
+                            message.type == MessageType.text.name ? 0.w : 14.w),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          Utils.formatToLastMessageTime(message.createdTime),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary,
+                                  fontSize: 11),
+                        ),
+                        SizedBox(
+                          width: 6.w,
+                        ),
+                        Assets.icons.icDoubleCheck.image(
+                            scale: 40,
+                            color: (message.readAt?.isNotEmpty ?? false)
+                                ? Theme.of(context).colorScheme.onPrimary
+                                : Colors.grey[400])
+                      ],
                     ),
-                    child: CachedNetworkImage(imageUrl: message.msg ?? '')),
+                  ),
+                ],
               )
-            else
-              _buildTempImage(context),
-            SizedBox(
-              height: 8.w,
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  right: message.type == MessageType.text.name ? 0.w : 14.w),
-              child: Row(
+            : Row(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    Utils.formatToTime(message.createdTime),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.inversePrimary,
-                        fontSize: 11),
+                    message.msg ?? '',
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   SizedBox(
-                    width: 6.w,
+                    width: 8.w,
                   ),
-                  Assets.icons.icDoubleCheck.image(
-                      scale: 40,
-                      color: (message.readAt?.isNotEmpty ?? false)
-                          ? Theme.of(context).colorScheme.onPrimary
-                          : Colors.grey[400])
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        Utils.formatToLastMessageTime(message.createdTime),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                            fontSize: 11),
+                      ),
+                      SizedBox(
+                        width: 6.w,
+                      ),
+                      Assets.icons.icDoubleCheck.image(
+                          scale: 40,
+                          color: (message.readAt?.isNotEmpty ?? false)
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Colors.grey[400])
+                    ],
+                  ),
                 ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -134,7 +176,8 @@ class OutBubble extends StatelessWidget {
     );
   }
 
-  Scaffold ImageScreen(BuildContext context) {
+  Scaffold _buildImageScreen(
+      BuildContext context, Animation<double> animation) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -144,16 +187,19 @@ class OutBubble extends StatelessWidget {
         leading: const AppBarLeading(),
       ),
       backgroundColor: Theme.of(context).primaryColor,
-      body: Padding(
-        padding: EdgeInsets.only(bottom: 80.w),
-        child: ClipRRect(
-          child: PhotoView(
-              backgroundDecoration:
-                  BoxDecoration(color: Theme.of(context).primaryColor),
-              minScale: PhotoViewComputedScale.contained * 1,
-              maxScale: PhotoViewComputedScale.contained * 1.4,
-              initialScale: PhotoViewComputedScale.contained,
-              imageProvider: CachedNetworkImageProvider(message.msg ?? '')),
+      body: Opacity(
+        opacity: animation.value,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 80.w),
+          child: ClipRRect(
+            child: PhotoView(
+                backgroundDecoration:
+                    BoxDecoration(color: Theme.of(context).primaryColor),
+                minScale: PhotoViewComputedScale.contained * 1,
+                maxScale: PhotoViewComputedScale.contained * 1.4,
+                initialScale: PhotoViewComputedScale.contained,
+                imageProvider: CachedNetworkImageProvider(message.msg ?? '')),
+          ),
         ),
       ),
     );

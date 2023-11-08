@@ -8,6 +8,7 @@ import 'package:boilerplate/core/widget_core.dart';
 import 'package:boilerplate/features/home/cubit/home_cubit.dart';
 import 'package:boilerplate/features/list_chat/view/list_chat_screen.dart';
 import 'package:boilerplate/features/setting/view/setting_screen.dart';
+import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/injector/injector.dart';
 import 'package:boilerplate/router/app_router.dart';
@@ -27,18 +28,27 @@ class HomePage extends BaseStateFulWidget {
 class _HomePageState extends BaseStateFulWidgetState<HomePage> {
   late PersistentTabController _controller;
   late HomeCubit homeCubit;
+
   // late StreamSubscription subscription;
 
   @override
   void initState() {
     super.initState();
+    FirebaseUtils.updateUserStatus(isOnline: true);
     _controller = PersistentTabController(initialIndex: 1);
     homeCubit = Injector.instance();
     Future.delayed(
       const Duration(seconds: 2),
       () => homeCubit.checkAuthentication(),
     );
-
+    AppLifecycleListener(
+      onResume: () {
+        FirebaseUtils.updateUserStatus(isOnline: true);
+      },
+      onPause: () {
+        FirebaseUtils.updateUserStatus(isOnline: false);
+      },
+    );
     // Connectivity().checkConnectivity().then((value) {
     //   if (value == ConnectivityResult.none) {
     //     isHasConnection = false;

@@ -62,8 +62,8 @@
   "successfully": "Thành công",
   "data_is_updated": "Dữ liệu của bạn đã được cập nhật",
   "update_successfully": "Cập nhật thành công",
-  "pick_profile_picture": "Chọn ảnh đại diện",
   "error_code_cancelled": "Đối tượng đã bị xóa hoặc truy vấn không không hợp lý",
+  "pick_profile_picture": "Chọn ảnh đại diện",
   "error_code_unknown": "Lỗi không mong muốn. Vui lòng liên hệ nhà phát triển",
   "error_code_invalid_argument": "Tham số không chính xác",
   "error_code_not_found": "Dữ liệu không được tìm thấy",
@@ -82,5 +82,13 @@
   "type_something_here": "Aa...",
   "say_hello": "Hãy gửi lời chào!",
   "file": "[Tệp đính kèm]",
-  "image": "[Hình ảnh]"
+  "image": "[Hình ảnh]",
+  "online" : "Đang hoạt động",
+  "active" : "Hoạt động",
+  "minute" : "phút",
+  "hour" : "giờ",
+  "day" : "ngày",
+  "ago": "trước"
+
+
 }
