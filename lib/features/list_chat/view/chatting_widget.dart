@@ -15,10 +15,10 @@ class Chatting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double imageWidth = 42.w;
-    final double badgeLeftPosition = imageWidth + 12;
-    const double badgeTopPosition = 6;
-    const double badgeWidth = 14;
-    const double badgeHeight = 14;
+    final double badgeLeftPosition = imageWidth + 8.w;
+    final double badgeTopPosition = 10.w;
+    final double badgeWidth = 14.w;
+    final double badgeHeight = 14.w;
 
     return Stack(
       children: [
@@ -124,16 +124,42 @@ class Chatting extends StatelessWidget {
                       SizedBox(
                         width: 20.w,
                       ),
-                      isNotReadMessageYet(message)
-                          ? Container(
-                              width: 8.w,
-                              height: 8.w,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(0xFFD2D5F9),
-                              ),
-                            )
-                          : Container()
+                      // isNotReadMessageYet(message)
+                      //     ? Container(
+                      //         width: 8.w,
+                      //         height: 8.w,
+                      //         decoration: const BoxDecoration(
+                      //           shape: BoxShape.circle,
+                      //           color: Color(0xFFD2D5F9),
+                      //         ),
+                      //       )
+                      //     : Container()
+                      FutureBuilder(
+                        future: FirebaseUtils.getAllUnreadMessage(chatUser),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return (snapshot.data?.docs.isNotEmpty ?? false)
+                                ? Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 3.w, horizontal: 5.w),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.w),
+                                      color: const Color(0xFFD2D5F9),
+                                    ),
+                                    child: Text(
+                                      snapshot.data?.docs.length.toString() ??
+                                          '',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(fontSize: 10),
+                                    ),
+                                  )
+                                : Container();
+                          }
+                          return Container();
+                        },
+                      )
                     ],
                   ),
                 ),

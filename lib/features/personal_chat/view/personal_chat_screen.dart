@@ -79,8 +79,7 @@ class _ChatScreenState extends State<ChatScreen>
             .where((element) => !currentMessageList.contains(element))
             .toList();
         for (final _ in updateList) {
-          listKey.currentState!
-              .insertItem(0, duration: const Duration(milliseconds: 600));
+          listKey.currentState!.insertItem(0);
         }
       }
     });
@@ -243,13 +242,14 @@ class _ChatScreenState extends State<ChatScreen>
                     key: listKey,
                     itemBuilder: (context, index, animation) {
                       return SlideTransition(
-                        position: animation.drive(
-                            Tween(begin: Offset(-5.w, 5.w), end: Offset.zero)
-                                .chain(CurveTween(curve: Curves.ease))),
+                        position:
+                            Tween(begin: Offset(0.w, 5.w), end: Offset.zero)
+                                .animate(CurvedAnimation(
+                                    parent: animation, curve: Curves.easeOut)),
                         child: SizeTransition(
-                          sizeFactor: animation.drive(
-                              Tween<double>(begin: 0, end: 1)
-                                  .chain(CurveTween(curve: Curves.ease))),
+                          sizeFactor: Tween<double>(begin: 0, end: 1).animate(
+                              CurvedAnimation(
+                                  parent: animation, curve: Curves.easeOut)),
                           child:
                               MessageCard(message: currentMessageList[index]),
                         ),
@@ -299,6 +299,7 @@ class _ChatScreenState extends State<ChatScreen>
       child: Column(
         children: [
           TextField(
+            cursorColor: Theme.of(context).textTheme.bodyMedium?.color,
             focusNode: _messageFocusNode,
             style: Theme.of(context).textTheme.bodyMedium,
             minLines: 1,

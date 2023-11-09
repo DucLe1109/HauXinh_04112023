@@ -5,6 +5,7 @@ import 'package:boilerplate/firebase/firebase_firestore_exception.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
@@ -20,7 +21,21 @@ class FirebaseUtils {
 
   static FirebaseStorage get firebaseStorage => FirebaseStorage.instance;
 
+  static FirebaseMessaging get firebaseMessaging => FirebaseMessaging.instance;
+
   static User? get user => firebaseAuth.currentUser;
+
+  /// Firebase messaging
+  static Future<void> getFCMToken() async {
+    await FirebaseMessaging.instance.requestPermission(provisional: true);
+    await firebaseMessaging.getToken().then((value) {
+      if (value != null) {
+        updateUserToken(value);
+      }
+    });
+  }
+
+  /// End firebase messagin
 
   /// --------------- End get firebase instance ---------------
 
@@ -43,6 +58,13 @@ class FirebaseUtils {
         .collection(Collections.chatUser.value)
         .doc(user?.uid)
         .set(chatUser.toJson());
+  }
+
+  static void updateUserToken(String pushToken) {
+    firebaseStore
+        .collection(Collections.chatUser.value)
+        .doc(user?.uid)
+        .update({'pushToken': pushToken});
   }
 
   static Future<bool> isExistUser() async {
@@ -211,6 +233,17 @@ class FirebaseUtils {
         .orderBy('timeStamp', descending: true)
         .limit(1)
         .snapshots();
+  }
+
+  /// Function to get all unread message by user
+  static Future<QuerySnapshot<Map<String, dynamic>>> getAllUnreadMessage(
+      ChatUser chatUser) {
+    return firebaseStore
+        .collection(
+            '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
+        .where('fromId', isEqualTo: chatUser.id)
+        .where('readAt', isEqualTo: '')
+        .get();
   }
 
   /// --------------- End firebase chat ---------------

@@ -225,7 +225,7 @@ class _InformationScreenState
       style: Theme.of(context)
           .textTheme
           .bodyLarge
-          ?.copyWith(fontWeight: FontWeight.w300),
+          ?.copyWith(fontWeight: FontWeight.w400),
     );
   }
 

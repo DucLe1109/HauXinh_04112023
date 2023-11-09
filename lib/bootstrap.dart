@@ -4,6 +4,7 @@ import 'package:boilerplate/features/app/view/app.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/injector/injector.dart';
 import 'package:boilerplate/services/crashlytics_service/crashlytics_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

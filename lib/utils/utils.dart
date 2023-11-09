@@ -17,20 +17,23 @@ class Utils {
   }
 
   static String formatToLastMessageTime(String? value) {
-    try {
-      final datetime = DateFormat('dd/MM/yyyy HH:mm:ss').parse(value ?? '');
-      final now = DateTime.now();
-      if (datetime.day == now.day &&
-          datetime.month == now.month &&
-          datetime.year == now.year) {
-        return DateFormat('HH:mm').format(datetime);
-      } else {
-        return DateFormat('dd/MM/yyyy').format(datetime);
+    if(value != null){
+      try {
+        final datetime = DateFormat('dd/MM/yyyy HH:mm:ss').parse(value);
+        final now = DateTime.now();
+        if (datetime.day == now.day &&
+            datetime.month == now.month &&
+            datetime.year == now.year) {
+          return DateFormat('HH:mm').format(datetime);
+        } else {
+          return DateFormat('dd/MM/yyyy').format(datetime);
+        }
+      } catch (e) {
+        debugPrint(e.toString());
+        return '';
       }
-    } catch (e) {
-      debugPrint(e.toString());
-      return '';
     }
+    return '';
   }
 
   static String formatToLastStatusTime(String? value) {

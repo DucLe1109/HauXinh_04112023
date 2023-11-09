@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_positional_boolean_parameters, depend_on_referenced_packages, lines_longer_than_80_chars
 
+import 'dart:io';
+
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
@@ -7,12 +9,15 @@ import 'package:boilerplate/services/auth_service/auth_service.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 
 part 'auth_cubit.freezed.dart';
+
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
@@ -100,6 +105,9 @@ class AuthCubit extends Cubit<AuthState> {
       final UserCredential userCredential =
           await _auth.signInWithCredential(credential);
       if (userCredential.user != null) {
+        if (Platform.isAndroid) {
+          createNotificationChannel();
+        }
         setLoginSessionDuration();
         setRememberAccount(isRememberAccount);
         isRememberAccount
@@ -110,6 +118,8 @@ class AuthCubit extends Cubit<AuthState> {
           await FirebaseUtils.createUser();
         }
         await FirebaseUtils.getSelfInfo();
+        await FirebaseUtils.getFCMToken();
+
         emit(
           state.copyWith(
             status: const UIStatus.loadSuccess(message: ''),
@@ -179,5 +189,21 @@ class AuthCubit extends Cubit<AuthState> {
 
   String getPasswordForBiometric() {
     return _authService.password;
+  }
+
+  void createNotificationChannel() {
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      importance: Importance.max,
+    );
+
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
   }
 }
