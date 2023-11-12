@@ -25,7 +25,10 @@ class FirebaseUtils {
 
   static User? get user => firebaseAuth.currentUser;
 
-  /// Firebase messaging
+  /// --------------- End get firebase instance ---------------
+
+  /// Firebase Notification
+
   static Future<void> getFCMToken() async {
     await FirebaseMessaging.instance.requestPermission(provisional: true);
     await firebaseMessaging.getToken().then((value) {
@@ -35,9 +38,7 @@ class FirebaseUtils {
     });
   }
 
-  /// End firebase messagin
-
-  /// --------------- End get firebase instance ---------------
+  /// End firebase Notification
 
   /// --------------- User information ---------------
   static Future<void> createUser() async {
@@ -126,11 +127,16 @@ class FirebaseUtils {
         .update(me.copyWith(avatar: avatarPath).toJson());
   }
 
-  static void updateUserStatus({required bool isOnline}) {
-    firebaseStore.collection(Collections.chatUser.value).doc(user?.uid).update({
-      'lastActive': DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now()),
-      'isOnline': isOnline,
-    });
+  static Future<void> updateUserStatus({required bool isOnline}) async {
+    if (user != null) {
+      await firebaseStore
+          .collection(Collections.chatUser.value)
+          .doc(user!.uid)
+          .update({
+        'lastActive': DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now()),
+        'isOnline': isOnline,
+      });
+    }
   }
 
   static Stream<DocumentSnapshot<Map<String, dynamic>>> getUserInfo(
@@ -163,6 +169,17 @@ class FirebaseUtils {
     return firebaseStore
         .collection(
             '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
+        .snapshots();
+  }
+
+  /// Function to get message of myself with specific user.
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getMessages(
+      {required ChatUser chatUser, required int numberOfMessage}) {
+    return firebaseStore
+        .collection(
+            '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
+        .orderBy('timeStamp', descending: true)
+        .limit(numberOfMessage)
         .snapshots();
   }
 

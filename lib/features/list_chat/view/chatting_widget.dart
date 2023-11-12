@@ -3,6 +3,7 @@ import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rest_client/rest_client.dart';
@@ -19,11 +20,15 @@ class Chatting extends StatelessWidget {
     final double badgeTopPosition = 10.w;
     final double badgeWidth = 14.w;
     final double badgeHeight = 14.w;
+    final Stream<QuerySnapshot<Map<String, dynamic>>> latestMessageStream =
+        FirebaseUtils.getLatestMessage(chatUser);
+    final Future<QuerySnapshot<Map<String, dynamic>>> getAllUnreadMessage =
+        FirebaseUtils.getAllUnreadMessage(chatUser);
 
     return Stack(
       children: [
         StreamBuilder(
-            stream: FirebaseUtils.getLatestMessage(chatUser),
+            stream: latestMessageStream,
             builder: (context, snapshot) {
               Message? message;
               if (snapshot.hasData) {
@@ -135,11 +140,12 @@ class Chatting extends StatelessWidget {
                       //       )
                       //     : Container()
                       FutureBuilder(
-                        future: FirebaseUtils.getAllUnreadMessage(chatUser),
+                        future: getAllUnreadMessage,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return (snapshot.data?.docs.isNotEmpty ?? false)
                                 ? Container(
+                                    alignment: Alignment.center,
                                     padding: EdgeInsets.symmetric(
                                         vertical: 3.w, horizontal: 5.w),
                                     decoration: BoxDecoration(

@@ -67,6 +67,7 @@ class _InformationScreenState
         leading: const AppBarLeading(),
       ),
       body: BlocListener<SettingCubit, SettingState>(
+        listenWhen: (previous, current) => current.isLogout == false,
         listener: (context, state) {
           switch (state.status) {
             case UILoading():

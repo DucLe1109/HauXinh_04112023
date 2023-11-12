@@ -12,11 +12,9 @@ import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/injector/injector.dart';
 import 'package:boilerplate/router/app_router.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 

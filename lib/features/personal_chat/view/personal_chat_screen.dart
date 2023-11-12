@@ -4,7 +4,6 @@ import 'dart:io';
 import 'dart:math' show pi;
 
 import 'package:boilerplate/core/global_variable.dart';
-import 'package:boilerplate/features/personal_chat/cubit/chat_cubit.dart';
 import 'package:boilerplate/features/personal_chat/message_type.dart';
 import 'package:boilerplate/features/personal_chat/view/message_card.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
@@ -40,7 +39,6 @@ class _ChatScreenState extends State<ChatScreen>
   late List<MessageCard> listMessageView;
   late ScrollController _scrollController;
   bool isScrollable = false;
-  late ChatCubit _cubit;
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
   late Stream<QuerySnapshot<Map<String, dynamic>>> chatStream;
   List<Message> currentMessageList = [];
@@ -54,8 +52,6 @@ class _ChatScreenState extends State<ChatScreen>
   void initState() {
     super.initState();
     isShowEmoji = ValueNotifier(false);
-    _cubit = ChatCubit(widget.chatUser);
-    _cubit.getNewestMessage(chatUser: widget.chatUser, amount: 20);
     listMessageView = [];
     _messageEditingController = TextEditingController();
     _scrollController = ScrollController();
@@ -221,11 +217,9 @@ class _ChatScreenState extends State<ChatScreen>
             } else {
               switch (snapshot.connectionState) {
                 case ConnectionState.none:
-                // TODO: Handle this case.
                 case ConnectionState.waiting:
                   return const DefaultLoadingWidget();
                 case ConnectionState.active:
-                // TODO: Handle this case.
                 case ConnectionState.done:
                   if (snapshot.hasData) {
                     currentMessageList = snapshot.data!.docs

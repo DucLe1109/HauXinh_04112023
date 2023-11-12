@@ -117,8 +117,8 @@ class AuthCubit extends Cubit<AuthState> {
         if (await FirebaseUtils.isExistUser() == false) {
           await FirebaseUtils.createUser();
         }
-        await FirebaseUtils.getSelfInfo();
         await FirebaseUtils.getFCMToken();
+        await FirebaseUtils.getSelfInfo();
 
         emit(
           state.copyWith(
@@ -174,9 +174,9 @@ class AuthCubit extends Cubit<AuthState> {
       ..setAuthProperty(property: AuthProperty.password, value: password);
   }
 
-  void logout() {
-    FirebaseAuth.instance.signOut();
-    GoogleSignIn().signOut();
+  Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
+    await GoogleSignIn().signOut();
     isRememberAccount = _authService.isRememberAccount;
     username = _authService.username;
     password = _authService.password;

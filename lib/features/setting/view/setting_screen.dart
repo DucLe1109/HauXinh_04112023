@@ -1,7 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:boilerplate/core/bloc_core/ui_status.dart';
 import 'package:boilerplate/core/global_variable.dart';
 import 'package:boilerplate/core/widget_core.dart';
-import 'package:boilerplate/features/authentication/cubit/auth_cubit.dart';
 import 'package:boilerplate/features/setting/cubit/setting_cubit.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
@@ -11,6 +11,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rest_client/rest_client.dart';
 
@@ -76,26 +77,33 @@ class _SettingScreenState extends BaseStateFulWidgetState<SettingScreen> {
                 title: S.current.biometry,
                 icon: Icons.touch_app_outlined,
               ),
-              _buildSettingUtility(
-                context: context,
-                title: S.current.log_out,
-                icon: Icons.logout,
-                onTap: () {
-                  AwesomeDialog(
-                    context: context,
-                    title: S.current.log_out,
-                    desc: S.current.are_you_sure,
-                    btnCancelOnPress: () {
-                      context.pop();
-                    },
-                    btnCancelColor: Colors.green[300],
-                    btnOkColor: Colors.blue[300],
-                    btnOkOnPress: () {
-                      Injector.instance<AuthCubit>().logout();
+              BlocListener<SettingCubit, SettingState>(
+                listenWhen: (previous, current) => current.isLogout == true,
+                listener: (context, state) {
+                  switch (state.status) {
+                    case UILoadSuccess():
                       context.pushReplacement(AppRouter.appDirectorPath);
-                    },
-                  ).show();
+                  }
                 },
+                bloc: cubit,
+                child: _buildSettingUtility(
+                  context: context,
+                  title: S.current.log_out,
+                  icon: Icons.logout,
+                  onTap: () {
+                    AwesomeDialog(
+                      context: context,
+                      title: S.current.log_out,
+                      desc: S.current.are_you_sure,
+                      btnCancelOnPress: () {},
+                      btnCancelColor: Colors.green[300],
+                      btnOkColor: Colors.blue[300],
+                      btnOkOnPress: () {
+                        cubit.logout();
+                      },
+                    ).show();
+                  },
+                ),
               ),
             ],
           ),

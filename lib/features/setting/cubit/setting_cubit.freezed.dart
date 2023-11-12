@@ -17,6 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$SettingState {
   UIStatus get status => throw _privateConstructorUsedError;
+  bool get isLogout => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $SettingStateCopyWith<SettingState> get copyWith =>
@@ -29,7 +30,7 @@ abstract class $SettingStateCopyWith<$Res> {
           SettingState value, $Res Function(SettingState) then) =
       _$SettingStateCopyWithImpl<$Res, SettingState>;
   @useResult
-  $Res call({UIStatus status});
+  $Res call({UIStatus status, bool isLogout});
 
   $UIStatusCopyWith<$Res> get status;
 }
@@ -48,12 +49,17 @@ class _$SettingStateCopyWithImpl<$Res, $Val extends SettingState>
   @override
   $Res call({
     Object? status = null,
+    Object? isLogout = null,
   }) {
     return _then(_value.copyWith(
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as UIStatus,
+      isLogout: null == isLogout
+          ? _value.isLogout
+          : isLogout // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 
@@ -74,7 +80,7 @@ abstract class _$$SettingStateImplCopyWith<$Res>
       __$$SettingStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({UIStatus status});
+  $Res call({UIStatus status, bool isLogout});
 
   @override
   $UIStatusCopyWith<$Res> get status;
@@ -92,12 +98,17 @@ class __$$SettingStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? status = null,
+    Object? isLogout = null,
   }) {
     return _then(_$SettingStateImpl(
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as UIStatus,
+      isLogout: null == isLogout
+          ? _value.isLogout
+          : isLogout // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -105,15 +116,19 @@ class __$$SettingStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$SettingStateImpl implements _SettingState {
-  const _$SettingStateImpl({this.status = const UIInitial()});
+  const _$SettingStateImpl(
+      {this.status = const UIInitial(), this.isLogout = false});
 
   @override
   @JsonKey()
   final UIStatus status;
+  @override
+  @JsonKey()
+  final bool isLogout;
 
   @override
   String toString() {
-    return 'SettingState(status: $status)';
+    return 'SettingState(status: $status, isLogout: $isLogout)';
   }
 
   @override
@@ -121,11 +136,13 @@ class _$SettingStateImpl implements _SettingState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SettingStateImpl &&
-            (identical(other.status, status) || other.status == status));
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.isLogout, isLogout) ||
+                other.isLogout == isLogout));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, status);
+  int get hashCode => Object.hash(runtimeType, status, isLogout);
 
   @JsonKey(ignore: true)
   @override
@@ -135,10 +152,13 @@ class _$SettingStateImpl implements _SettingState {
 }
 
 abstract class _SettingState implements SettingState {
-  const factory _SettingState({final UIStatus status}) = _$SettingStateImpl;
+  const factory _SettingState({final UIStatus status, final bool isLogout}) =
+      _$SettingStateImpl;
 
   @override
   UIStatus get status;
+  @override
+  bool get isLogout;
   @override
   @JsonKey(ignore: true)
   _$$SettingStateImplCopyWith<_$SettingStateImpl> get copyWith =>
