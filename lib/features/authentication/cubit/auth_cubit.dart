@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_positional_boolean_parameters, depend_on_referenced_packages, lines_longer_than_80_chars
 
-import 'dart:io';
 
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
@@ -11,7 +10,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
@@ -105,9 +103,7 @@ class AuthCubit extends Cubit<AuthState> {
       final UserCredential userCredential =
           await _auth.signInWithCredential(credential);
       if (userCredential.user != null) {
-        if (Platform.isAndroid) {
-          createNotificationChannel();
-        }
+
         setLoginSessionDuration();
         setRememberAccount(isRememberAccount);
         isRememberAccount
@@ -117,7 +113,6 @@ class AuthCubit extends Cubit<AuthState> {
         if (await FirebaseUtils.isExistUser() == false) {
           await FirebaseUtils.createUser();
         }
-        await FirebaseUtils.getFCMToken();
         await FirebaseUtils.getSelfInfo();
 
         emit(
@@ -191,19 +186,5 @@ class AuthCubit extends Cubit<AuthState> {
     return _authService.password;
   }
 
-  void createNotificationChannel() {
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
-      'high_importance_channel', // id
-      'High Importance Notifications', // title
-      importance: Importance.max,
-    );
 
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
-  }
 }

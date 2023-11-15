@@ -30,6 +30,7 @@ class _AppState extends State<App> {
       ..add(
         const AppEvent.loaded(),
       );
+
     super.initState();
   }
 
@@ -63,7 +64,6 @@ class _App extends StatelessWidget {
     final String locale = context.select(
       (AppBloc value) => value.state.locale,
     );
-
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(

@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:boilerplate/configs/app_config.dart';
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
+import 'package:boilerplate/core/global_variable.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/services/app_service/app_service.dart';
 import 'package:boilerplate/services/log_service/log_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'app_event.dart';
@@ -45,6 +48,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       final bool darkMode = _appService.isDarkMode;
       final bool isFirstUse = _appService.isFirstUse;
       final String locale = _appService.locale;
+
+      if (Platform.isAndroid) {
+        createNotificationChannel();
+      }
 
       emit(
         state.copyWith(
@@ -106,5 +113,21 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         ),
       );
     }
+  }
+
+  void createNotificationChannel() {
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      androidChannelId, // id
+      androidChannelName, // title
+      importance: Importance.max,
+    );
+
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
   }
 }

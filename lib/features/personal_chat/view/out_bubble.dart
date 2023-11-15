@@ -14,8 +14,9 @@ import 'package:rest_client/rest_client.dart';
 
 class OutBubble extends StatelessWidget {
   final Message message;
+  final bool isRounded;
 
-  const OutBubble({super.key, required this.message});
+  const OutBubble({super.key, required this.message, this.isRounded = false});
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +31,10 @@ class OutBubble extends StatelessWidget {
             : EdgeInsets.fromLTRB(0.w, 0.w, 0.w, 8.w),
         decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
-            borderRadius: BorderRadius.only(
+            borderRadius: !isRounded ? BorderRadius.only(
                 topRight: Radius.circular(16.w),
                 topLeft: Radius.circular(16.w),
-                bottomLeft: Radius.circular(16.w))),
+                bottomLeft: Radius.circular(16.w)) : BorderRadius.circular(16.w)),
         child: message.msg!.length >= 15
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.end,

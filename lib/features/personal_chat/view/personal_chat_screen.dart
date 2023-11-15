@@ -244,8 +244,12 @@ class _ChatScreenState extends State<ChatScreen>
                           sizeFactor: Tween<double>(begin: 0, end: 1).animate(
                               CurvedAnimation(
                                   parent: animation, curve: Curves.easeOut)),
-                          child:
-                              MessageCard(message: currentMessageList[index]),
+                          child: MessageCard(
+                              message: currentMessageList[index],
+                              isRounded:
+                                  index < currentMessageList.length - 1 &&
+                                      currentMessageList[index].fromId ==
+                                          currentMessageList[index + 1].fromId),
                         ),
                       );
                     },

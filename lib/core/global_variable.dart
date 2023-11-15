@@ -12,3 +12,8 @@ bool isHasConnection = true;
 
 const int fastDuration = 300;
 const int longDuration = 600;
+
+const String androidChannelId = 'high_importance_channel';
+const String androidChannelName = 'High Importance Notifications';
+const String firebaseMessagingServerKey =
+    'AAAAWxgWTs0:APA91bEzhbOBzD030s4ZHtUFdt9txe2dFpH2FwJMQiigtLRAl_uOUtdzMc7MefG0jC1Ry_Boglps3FTwSxtiN5uoHNjITw3HfJ2dOclAfhfslmxktUDyIvPhlUaYIVj2exGvbYNdvocp';

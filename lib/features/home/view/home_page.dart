@@ -1,9 +1,11 @@
 // ignore_for_file: lines_longer_than_80_chars
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
+import 'package:boilerplate/core/global_variable.dart';
 import 'package:boilerplate/core/widget_core.dart';
 import 'package:boilerplate/features/home/cubit/home_cubit.dart';
 import 'package:boilerplate/features/list_chat/view/list_chat_screen.dart';
@@ -12,9 +14,11 @@ import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/injector/injector.dart';
 import 'package:boilerplate/router/app_router.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
@@ -34,22 +38,21 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
   @override
   void initState() {
     super.initState();
+    FirebaseUtils.getFCMToken();
+
     FirebaseUtils.updateUserStatus(isOnline: true);
 
     _controller = PersistentTabController(initialIndex: 1);
     homeCubit = Injector.instance();
+
     Future.delayed(
       const Duration(seconds: 2),
       () => homeCubit.checkAuthentication(),
     );
-    AppLifecycleListener(
-      onResume: () {
-        FirebaseUtils.updateUserStatus(isOnline: true);
-      },
-      onPause: () {
-        FirebaseUtils.updateUserStatus(isOnline: false);
-      },
-    );
+
+    listenAppState();
+
+    listenFirebaseNotification();
 
     // Connectivity().checkConnectivity().then((value) {
     //   if (value == ConnectivityResult.none) {
@@ -98,6 +101,46 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
     //     ).show();
     //   }
     // });
+  }
+
+  void listenAppState() {
+    AppLifecycleListener(
+      onResume: () {
+        FirebaseUtils.updateUserStatus(isOnline: true);
+      },
+      onPause: () {
+        FirebaseUtils.updateUserStatus(isOnline: false);
+      },
+    );
+  }
+
+  void listenFirebaseNotification() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      if (Platform.isAndroid) {
+        await handleAndroidNoti(message);
+        return;
+      }
+      if (Platform.isIOS) {}
+    });
+  }
+
+  Future<void> handleAndroidNoti(RemoteMessage message) async {
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+    await flutterLocalNotificationsPlugin.show(
+      DateTime.now().millisecond,
+      message.notification?.title,
+      message.notification?.body,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          androidChannelId,
+          androidChannelName,
+          icon: '@mipmap/ic_launcher',
+          priority: Priority.max,
+          importance: Importance.max,
+        ),
+      ),
+    );
   }
 
   @override

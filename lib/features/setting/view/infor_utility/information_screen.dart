@@ -155,7 +155,10 @@ class _InformationScreenState
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(borderRadius))),
         child: Text(S.current.update,
-            style: Theme.of(context).textTheme.bodyMedium),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w500)),
       ),
     );
   }

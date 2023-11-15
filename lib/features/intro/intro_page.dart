@@ -64,7 +64,9 @@ class IntroPage extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
-                    SizedBox(height: 30.w,),
+                    SizedBox(
+                      height: 30.w,
+                    ),
                     SizedBox(
                       height: 45.w,
                       width: double.infinity,
@@ -77,7 +79,11 @@ class IntroPage extends StatelessWidget {
                                 .read<AppBloc>()
                                 .add(const AppEvent.disableFirstUse());
                           },
-                          child: Text(S.current.start_messaging, style: Theme.of(context).textTheme.bodyMedium),
+                          child: Text(S.current.start_messaging,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w500)),
                         ),
                       ),
                     ),

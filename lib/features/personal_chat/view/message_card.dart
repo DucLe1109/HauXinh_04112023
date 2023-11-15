@@ -9,9 +9,11 @@ class MessageCard extends StatefulWidget {
   const MessageCard({
     super.key,
     required this.message,
+    this.isRounded = false,
   });
 
   final Message message;
+  final bool isRounded;
 
   @override
   State<MessageCard> createState() => _MessageCardState();
@@ -40,11 +42,17 @@ class _MessageCardState extends State<MessageCard>
     if (widget.message.readAt?.isEmpty ?? false) {
       FirebaseUtils.readMessage(widget.message);
     }
-    return InBubble(message: widget.message);
+    return InBubble(
+      message: widget.message,
+      isRounded: widget.isRounded,
+    );
   }
 
   Widget _buildOutBubble() {
-    return OutBubble(message: widget.message);
+    return OutBubble(
+      message: widget.message,
+      isRounded: widget.isRounded,
+    );
   }
 
   @override

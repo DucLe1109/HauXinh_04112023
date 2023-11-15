@@ -10,10 +10,12 @@ import 'package:rest_client/rest_client.dart';
 
 class InBubble extends StatelessWidget {
   final Message message;
+  final bool isRounded;
 
   const InBubble({
     super.key,
     required this.message,
+    this.isRounded = false,
   });
 
   @override
@@ -29,10 +31,12 @@ class InBubble extends StatelessWidget {
             : EdgeInsets.fromLTRB(0.w, 0.w, 0.w, 8.w),
         decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.secondary,
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(16.w),
-                bottomLeft: Radius.circular(16.w),
-                bottomRight: Radius.circular(16.w))),
+            borderRadius: !isRounded
+                ? BorderRadius.only(
+                    topRight: Radius.circular(16.w),
+                    bottomLeft: Radius.circular(16.w),
+                    bottomRight: Radius.circular(16.w))
+                : BorderRadius.circular(16.w)),
         child: message.msg!.length >= 15
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

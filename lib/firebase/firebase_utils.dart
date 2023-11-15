@@ -1,13 +1,18 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:boilerplate/core/global_variable.dart';
 import 'package:boilerplate/features/personal_chat/message_type.dart';
-import 'package:boilerplate/firebase/firebase_firestore_exception.dart';
+import 'package:boilerplate/firebase/model/firebase_firestore_exception.dart';
+import 'package:boilerplate/firebase/model/message_notification.dart';
+import 'package:boilerplate/firebase/model/notification_body.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:rest_client/rest_client.dart';
 
@@ -30,12 +35,21 @@ class FirebaseUtils {
   /// Firebase Notification
 
   static Future<void> getFCMToken() async {
-    await FirebaseMessaging.instance.requestPermission(provisional: true);
-    await firebaseMessaging.getToken().then((value) {
-      if (value != null) {
-        updateUserToken(value);
-      }
-    });
+    NotificationSettings? settings;
+    if (Platform.isAndroid) {
+      settings =
+          await FirebaseMessaging.instance.requestPermission(provisional: true);
+    } else if (Platform.isIOS) {
+      settings = await FirebaseMessaging.instance.requestPermission();
+    }
+
+    if (settings?.authorizationStatus == AuthorizationStatus.authorized) {
+      await firebaseMessaging.getToken().then((value) {
+        if (value != null) {
+          updateUserToken(value);
+        }
+      });
+    }
   }
 
   /// End firebase Notification
@@ -202,8 +216,37 @@ class FirebaseUtils {
       timeStamp: messageID,
       fromId: user?.uid,
     );
-    await ref.doc(messageID).set(message.toJson());
+    await ref.doc(messageID).set(message.toJson()).then((value) =>
+        pushNotification(
+            chatUser: chatUser,
+            message: messageType == MessageType.text ? msg : S.current.image));
     return message;
+  }
+
+  static Future<void> pushNotification(
+      {required ChatUser chatUser,
+      required String message,
+      bool mutableContent = true,
+      String sound = 'Tri-tone'}) async {
+    final body = NotificationBody(
+        to: chatUser.pushToken,
+        notification: MessageNotification(
+            android_channel_id: androidChannelId,
+            title: me.fullName,
+            body: message,
+            mutable_content: mutableContent,
+            sound: sound));
+
+    try {
+      await post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
+          headers: {
+            HttpHeaders.contentTypeHeader: 'application/json',
+            HttpHeaders.authorizationHeader: 'key=$firebaseMessagingServerKey'
+          },
+          body: json.encode(body));
+    } catch (e) {
+      debugPrint('Push notification error: $e');
+    }
   }
 
   static Future<void> sendFile(
