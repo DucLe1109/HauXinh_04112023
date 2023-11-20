@@ -4,26 +4,34 @@ import 'dart:io';
 import 'dart:math' show pi;
 
 import 'package:boilerplate/core/global_variable.dart';
+import 'package:boilerplate/core/widget_core.dart';
+import 'package:boilerplate/features/authentication/view/base_loading_dialog.dart';
+import 'package:boilerplate/features/personal_chat/cubit/chat_cubit.dart';
+import 'package:boilerplate/features/personal_chat/cubit/chat_state.dart';
 import 'package:boilerplate/features/personal_chat/message_type.dart';
+import 'package:boilerplate/features/personal_chat/model/message_model.dart';
 import 'package:boilerplate/features/personal_chat/view/message_card.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/assets.gen.dart';
 import 'package:boilerplate/generated/l10n.dart';
+import 'package:boilerplate/injector/injector.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:boilerplate/widgets/app_bar_leading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:d_bloc/default_widget/default_loading_widget.dart';
+import 'package:d_bloc/d_bloc.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:jumping_dot/jumping_dot.dart';
 import 'package:rest_client/rest_client.dart';
 
-class ChatScreen extends StatefulWidget {
+class ChatScreen extends BaseStateFulWidget {
   const ChatScreen(this.chatUser, {super.key});
 
   final ChatUser chatUser;
@@ -32,7 +40,7 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen>
+class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     with SingleTickerProviderStateMixin {
   late TextEditingController _messageEditingController;
   late FocusNode _messageFocusNode;
@@ -40,45 +48,51 @@ class _ChatScreenState extends State<ChatScreen>
   late ScrollController _scrollController;
   bool isScrollable = false;
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
-  late Stream<QuerySnapshot<Map<String, dynamic>>> chatStream;
-  List<Message> currentMessageList = [];
   late ValueNotifier<bool> isShowEmoji;
   late AnimationController _animationController;
   late Animation<double> animation;
   List<XFile> photos = [];
   late Stream<DocumentSnapshot<Map<String, dynamic>>> chatUserStream;
+  late ChatCubit _cubit;
 
   @override
   void initState() {
     super.initState();
+    _cubit = Injector.instance();
+    _cubit.initData(
+        chatUser: widget.chatUser, numberOfItem: _cubit.numOfInitialMessage);
+    _scrollController = ScrollController();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.atEdge) {
+        final bool isTop = _scrollController.position.pixels == 0;
+        if (isTop) {
+          return;
+        } else {
+          /// Load more message
+          _cubit.loadMoreMessage(
+              chatUser: widget.chatUser,
+              numberOfItem: _cubit.numOfInitialMessage,
+              lastItemVisible: _cubit.currentListDocumentSnapshot.last);
+          return;
+        }
+      }
+    });
+
     isShowEmoji = ValueNotifier(false);
     listMessageView = [];
     _messageEditingController = TextEditingController();
-    _scrollController = ScrollController();
     _messageFocusNode = FocusNode();
     _messageFocusNode.addListener(() {
       if (_messageFocusNode.hasFocus) {
         isShowEmoji.value = false;
       }
     });
-    chatStream = FirebaseUtils.getAllMessages(widget.chatUser);
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: fastDuration));
     animation =
         CurvedAnimation(parent: _animationController, curve: Curves.easeOut);
-    chatStream.listen((newData) {
-      final List<Message> newMessage =
-          newData.docs.map((e) => Message.fromJson(e.data())).toList();
-      if (listKey.currentState != null &&
-          listKey.currentState!.widget.initialItemCount < newMessage.length) {
-        final List<Message> updateList = newMessage
-            .where((element) => !currentMessageList.contains(element))
-            .toList();
-        for (final _ in updateList) {
-          listKey.currentState!.insertItem(0);
-        }
-      }
-    });
+
     chatUserStream = FirebaseUtils.getUserInfo(widget.chatUser);
   }
 
@@ -167,7 +181,13 @@ class _ChatScreenState extends State<ChatScreen>
         ],
       ),
       body: GestureDetector(
-        onTap: Utils.hideKeyboard,
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          Utils.hideKeyboard();
+          if (isShowEmoji.value) {
+            isShowEmoji.value = false;
+          }
+        },
         child: SafeArea(
           child: Column(
             children: [
@@ -208,63 +228,128 @@ class _ChatScreenState extends State<ChatScreen>
 
   Widget _buildChatSection(BuildContext context) {
     return Expanded(
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: StreamBuilder(
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Container();
-            } else {
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                case ConnectionState.waiting:
-                  return const DefaultLoadingWidget();
-                case ConnectionState.active:
-                case ConnectionState.done:
-                  if (snapshot.hasData) {
-                    currentMessageList = snapshot.data!.docs
-                        .map((e) => Message.fromJson(e.data()))
-                        .toList()
-                        .reversed
-                        .toList();
+      child: Stack(
+        children: [
+          BlocConsumer(
+              listener: (context, state) {
+                switch (state) {
+                  case LoadMoreSuccessfully():
+                    listKey.currentState?.insertAllItems(
+                        0, state.numberOfNewMessage,
+                        duration: Duration.zero);
+                    break;
+                }
+              },
+              listenWhen: (previous, current) =>
+                  current is LoadMoreSuccessfully,
+              builder: (context, state) {
+                switch (state) {
+                  case LoadingMore():
+                    return _buildJumpingDot();
+                  case LoadMoreSuccessfully():
+                    return Container();
+                  default:
+                    return Container();
+                }
+              },
+              buildWhen: (previous, current) =>
+                  current is LoadingMore ||
+                  current is LoadMoreSuccessfully ||
+                  current is LoadMoreDone,
+              bloc: _cubit),
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: BlocConsumer(
+                listener: (context, state) {
+                  if (state is NewMessageState) {
+                    listKey.currentState?.insertItem(0);
+
+                    /// Delete item.
+                    if (_cubit.currentListMessage.length >
+                        _cubit.numOfInitialMessage) {
+                      listKey.currentState?.removeItem(
+                          _cubit.currentListMessage.length - 1,
+                          (context, animation) => Container());
+                      _cubit.currentListMessage.removeLast();
+                    }
                   }
-
-                  isScrollable = currentMessageList.isNotEmpty;
-
-                  return AnimatedList(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    key: listKey,
-                    itemBuilder: (context, index, animation) {
-                      return SlideTransition(
-                        position:
-                            Tween(begin: Offset(0.w, 5.w), end: Offset.zero)
-                                .animate(CurvedAnimation(
-                                    parent: animation, curve: Curves.easeOut)),
-                        child: SizeTransition(
-                          sizeFactor: Tween<double>(begin: 0, end: 1).animate(
-                              CurvedAnimation(
-                                  parent: animation, curve: Curves.easeOut)),
-                          child: MessageCard(
-                              message: currentMessageList[index],
-                              isRounded:
-                                  index < currentMessageList.length - 1 &&
-                                      currentMessageList[index].fromId ==
-                                          currentMessageList[index + 1].fromId),
+                  if (state is ErrorState) {
+                    showToast(
+                        toastType: ToastType.error,
+                        context: context,
+                        title: S.current.update_fail,
+                        description: (state.error as DefaultException).message);
+                  }
+                },
+                bloc: _cubit,
+                listenWhen: (previous, current) =>
+                    current is NewMessageState || current is ErrorState,
+                buildWhen: (previous, current) =>
+                    current is InitiateData ||
+                    current is InitiateDataSuccessFully,
+                builder: (context, state) {
+                  switch (state) {
+                    case InitiateData():
+                      return const Center(child: BaseLoadingDialog());
+                    case InitiateDataSuccessFully():
+                      return ListenableBuilder(
+                        listenable: _cubit.animatedListNotifier,
+                        builder: (context, child) => AnimatedList(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          key: listKey,
+                          itemBuilder: (context, index, animation) {
+                            return SlideTransition(
+                              position: Tween(
+                                      begin: Offset(0.w, 5.w), end: Offset.zero)
+                                  .animate(CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeOut)),
+                              child: SizeTransition(
+                                sizeFactor: Tween<double>(begin: 0, end: 1)
+                                    .animate(CurvedAnimation(
+                                        parent: animation,
+                                        curve: Curves.easeOut)),
+                                child: MessageCard(
+                                    message: _cubit.currentListMessage[index],
+                                    isRounded: index <
+                                            _cubit.currentListMessage.length -
+                                                1 &&
+                                        _cubit.currentListMessage[index]
+                                                .fromId ==
+                                            _cubit.currentListMessage[index + 1]
+                                                .fromId),
+                              ),
+                            );
+                          },
+                          initialItemCount: _cubit.currentListMessage.length,
+                          controller: _scrollController,
+                          shrinkWrap: true,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 16.w, horizontal: 16.w),
+                          reverse: true,
                         ),
                       );
-                    },
-                    initialItemCount: currentMessageList.length,
-                    controller: _scrollController,
-                    shrinkWrap: true,
-                    padding:
-                        EdgeInsets.symmetric(vertical: 16.w, horizontal: 16.w),
-                    reverse: true,
-                  );
-              }
-            }
-          },
-          stream: chatStream,
-        ),
+                    default:
+                      return Container();
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildJumpingDot() {
+    return Container(
+      padding: EdgeInsets.only(top: 8.w),
+      height: 20.w,
+      child: JumpingDots(
+        verticalOffset: 10,
+        color: Colors.orange,
+        radius: 6.w,
       ),
     );
   }
@@ -399,9 +484,9 @@ class _ChatScreenState extends State<ChatScreen>
             onTap: () {
               if (photos.isNotEmpty) {
                 for (final e in photos) {
-                  currentMessageList.insert(
+                  _cubit.currentListMessage.insert(
                       0,
-                      Message(
+                      MessageModel(
                           fromId: FirebaseUtils.user?.uid,
                           toId: widget.chatUser.id,
                           type: MessageType.temp.name,
@@ -448,9 +533,9 @@ class _ChatScreenState extends State<ChatScreen>
       child: InkWell(
           onTap: () async {
             final ImagePicker picker = ImagePicker();
-            photos = await picker.pickMultiImage(imageQuality: 60);
+            photos = await picker.pickMultiImage(imageQuality: 70);
+            if (photos.isNotEmpty) await _animationController.forward();
             setState(() {});
-            await _animationController.forward();
           },
           borderRadius: BorderRadius.circular(100),
           child: Assets.icons.icImage.image(
@@ -468,6 +553,17 @@ class _ChatScreenState extends State<ChatScreen>
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(100),
       child: InkWell(
+          onTap: () async {
+            final ImagePicker picker = ImagePicker();
+            final XFile? photo = await picker.pickImage(
+                source: ImageSource.camera, imageQuality: 70);
+
+            if (photo != null) {
+              photos.add(photo);
+            }
+            if (photos.isNotEmpty) await _animationController.forward();
+            setState(() {});
+          },
           borderRadius: BorderRadius.circular(100),
           child: Padding(
             padding: EdgeInsets.fromLTRB(8.w, 6.w, 8.w, 7.w),

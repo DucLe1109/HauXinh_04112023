@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:boilerplate/features/authentication/view/base_loading_dialog.dart';
 import 'package:boilerplate/features/personal_chat/message_type.dart';
+import 'package:boilerplate/features/personal_chat/model/message_model.dart';
 import 'package:boilerplate/generated/assets.gen.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/utils/utils.dart';
@@ -10,10 +11,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:rest_client/rest_client.dart';
 
 class OutBubble extends StatelessWidget {
-  final Message message;
+  final MessageModel message;
   final bool isRounded;
 
   const OutBubble({super.key, required this.message, this.isRounded = false});

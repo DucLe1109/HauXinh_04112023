@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motion_toast/motion_toast.dart';
 import 'package:motion_toast/resources/arrays.dart';
@@ -11,8 +12,6 @@ abstract class BaseStateFulWidgetState<T extends BaseStateFulWidget>
     extends State<T> {
   int toastDuration = 3000;
   int toastAnimationDuration = 600;
-  double toastWidth = 300;
-  double toastHeight = 80;
 
   @override
   void initState() {
@@ -53,14 +52,10 @@ abstract class BaseStateFulWidgetState<T extends BaseStateFulWidget>
     required BuildContext context,
     required String title,
     required String description,
-    double? toastWidth,
-    double? toastHeight,
   }) {
     switch (toastType) {
       case ToastType.warning:
         MotionToast.warning(
-          width: toastWidth ?? 300,
-          height: toastHeight ?? 60,
           animationDuration: Duration(milliseconds: toastAnimationDuration),
           toastDuration: Duration(milliseconds: toastDuration),
           title: Padding(
@@ -83,8 +78,6 @@ abstract class BaseStateFulWidgetState<T extends BaseStateFulWidget>
         break;
       case ToastType.error:
         MotionToast.error(
-          width: toastWidth ?? 300,
-          height: toastHeight ?? 60,
           animationDuration: Duration(milliseconds: toastAnimationDuration),
           toastDuration: Duration(milliseconds: toastDuration),
           title: Padding(
@@ -107,8 +100,6 @@ abstract class BaseStateFulWidgetState<T extends BaseStateFulWidget>
         break;
       case ToastType.info:
         MotionToast.info(
-          width: toastWidth ?? 300,
-          height: toastHeight ?? 60,
           animationDuration: Duration(milliseconds: toastAnimationDuration),
           toastDuration: Duration(milliseconds: toastDuration),
           title: Padding(
@@ -131,8 +122,8 @@ abstract class BaseStateFulWidgetState<T extends BaseStateFulWidget>
         break;
       case ToastType.success:
         MotionToast.success(
-          width: toastWidth ?? 300,
-          height: toastHeight ?? 60,
+          width: 320.w,
+          height: 60.w,
           animationDuration: Duration(milliseconds: toastAnimationDuration),
           toastDuration: Duration(milliseconds: toastDuration),
           title: Padding(
@@ -155,8 +146,6 @@ abstract class BaseStateFulWidgetState<T extends BaseStateFulWidget>
         break;
       case ToastType.delete:
         MotionToast.delete(
-          width: toastWidth ?? 300,
-          height: toastHeight ?? 60,
           animationDuration: Duration(milliseconds: toastAnimationDuration),
           toastDuration: Duration(milliseconds: toastDuration),
           title: Padding(

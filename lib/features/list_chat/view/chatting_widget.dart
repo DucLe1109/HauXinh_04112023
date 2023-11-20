@@ -9,9 +9,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rest_client/rest_client.dart';
 
 class Chatting extends StatelessWidget {
-  const Chatting(this.chatUser, {super.key});
+  const Chatting({super.key, this.onTap, required this.chatUser});
 
   final ChatUser chatUser;
+  final Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -22,32 +23,50 @@ class Chatting extends StatelessWidget {
     final double badgeHeight = 14.w;
     final Stream<QuerySnapshot<Map<String, dynamic>>> latestMessageStream =
         FirebaseUtils.getLatestMessage(chatUser);
-    final Future<QuerySnapshot<Map<String, dynamic>>> getAllUnreadMessage =
-        FirebaseUtils.getAllUnreadMessage(chatUser);
 
-    return Stack(
-      children: [
-        StreamBuilder(
-            stream: latestMessageStream,
-            builder: (context, snapshot) {
-              Message? message;
-              if (snapshot.hasData) {
-                final result = snapshot.data?.docs.firstOrNull;
-                if (result != null) {
-                  message = Message.fromJson(result.data());
+    return InkWell(
+      onTap: onTap,
+      child: Stack(
+        children: [
+          StreamBuilder(
+              stream: latestMessageStream,
+              builder: (context, snapshot) {
+                Message? message;
+                if (snapshot.hasData) {
+                  final result = snapshot.data?.docs.firstOrNull;
+                  if (result != null) {
+                    message = Message.fromJson(result.data());
+                  }
                 }
-              }
-              return ListTile(
-                leading: chatUser.isHasStory
-                    ? Container(
-                        padding: EdgeInsets.all(1.w),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.blue, width: 1.w)),
-                        child: CachedNetworkImage(
+                return ListTile(
+                  leading: chatUser.isHasStory
+                      ? Container(
+                          padding: EdgeInsets.all(1.w),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border:
+                                  Border.all(color: Colors.blue, width: 1.w)),
+                          child: CachedNetworkImage(
+                            imageBuilder: (context, imageProvider) => Container(
+                              width: imageWidth,
+                              height: imageWidth,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                    image: imageProvider, fit: BoxFit.cover),
+                              ),
+                            ),
+                            imageUrl: chatUser.avatar,
+                            placeholder: (context, url) =>
+                                const CircleAvatar(child: Icon(Icons.person)),
+                            errorWidget: (context, url, error) =>
+                                const CircleAvatar(child: Icon(Icons.person)),
+                          ),
+                        )
+                      : CachedNetworkImage(
                           imageBuilder: (context, imageProvider) => Container(
-                            width: imageWidth,
-                            height: imageWidth,
+                            width: imageWidth + 2.w,
+                            height: imageWidth + 2.w,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               image: DecorationImage(
@@ -60,60 +79,26 @@ class Chatting extends StatelessWidget {
                           errorWidget: (context, url, error) =>
                               const CircleAvatar(child: Icon(Icons.person)),
                         ),
-                      )
-                    : CachedNetworkImage(
-                        imageBuilder: (context, imageProvider) => Container(
-                          width: imageWidth + 2.w,
-                          height: imageWidth + 2.w,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                                image: imageProvider, fit: BoxFit.cover),
-                          ),
-                        ),
-                        imageUrl: chatUser.avatar,
-                        placeholder: (context, url) =>
-                            const CircleAvatar(child: Icon(Icons.person)),
-                        errorWidget: (context, url, error) =>
-                            const CircleAvatar(child: Icon(Icons.person)),
-                      ),
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      flex: 4,
-                      child: Text(
-                        chatUser.fullName,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Flexible(
-                      flex: 2,
-                      child: Text(
-                        Utils.formatToLastMessageTime(message?.createdTime),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.color
-                                ?.withOpacity(0.7)),
-                      ),
-                    )
-                  ],
-                ),
-                subtitle: IntrinsicHeight(
-                  child: Row(
+                  title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Flexible(
+                        flex: 4,
                         child: Text(
-                          getMessage(message),
+                          chatUser.fullName,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Flexible(
+                        flex: 2,
+                        child: Text(
+                          Utils.formatToLastMessageTime(message?.createdTime),
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall
@@ -122,73 +107,85 @@ class Chatting extends StatelessWidget {
                                       .textTheme
                                       .bodySmall
                                       ?.color
-                                      ?.withOpacity(0.6)),
-                          maxLines: 2,
+                                      ?.withOpacity(0.7)),
                         ),
-                      ),
-                      SizedBox(
-                        width: 20.w,
-                      ),
-                      // isNotReadMessageYet(message)
-                      //     ? Container(
-                      //         width: 8.w,
-                      //         height: 8.w,
-                      //         decoration: const BoxDecoration(
-                      //           shape: BoxShape.circle,
-                      //           color: Color(0xFFD2D5F9),
-                      //         ),
-                      //       )
-                      //     : Container()
-                      FutureBuilder(
-                        future: getAllUnreadMessage,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return (snapshot.data?.docs.isNotEmpty ?? false)
-                                ? Container(
-                                    alignment: Alignment.center,
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 3.w, horizontal: 5.w),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10.w),
-                                      color: const Color(0xFFD2D5F9),
-                                    ),
-                                    child: Text(
-                                      snapshot.data?.docs.length.toString() ??
-                                          '',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(fontSize: 10),
-                                    ),
-                                  )
-                                : Container();
-                          }
-                          return Container();
-                        },
                       )
                     ],
                   ),
-                ),
-                horizontalTitleGap: 12,
-              );
-            }),
-        chatUser.isOnline
-            ? Positioned(
-                top: badgeTopPosition,
-                left: badgeLeftPosition,
-                child: Container(
-                  padding: const EdgeInsets.all(2),
-                  width: badgeWidth,
-                  height: badgeHeight,
-                  decoration: const BoxDecoration(
-                      color: Colors.white, shape: BoxShape.circle),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        color: Colors.green, shape: BoxShape.circle),
+                  subtitle: IntrinsicHeight(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            getMessage(message),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.color
+                                        ?.withOpacity(0.6)),
+                            maxLines: 2,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 20.w,
+                        ),
+                        FutureBuilder(
+                          future: FirebaseUtils.getAllUnreadMessage(chatUser),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return (snapshot.data?.docs.isNotEmpty ?? false)
+                                  ? Container(
+                                      alignment: Alignment.center,
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 3.w, horizontal: 8.w),
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(16.w),
+                                        color: const Color(0xFFD2D5F9),
+                                      ),
+                                      child: Text(
+                                        snapshot.data?.docs.length.toString() ??
+                                            '',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(fontSize: 10),
+                                      ),
+                                    )
+                                  : Container();
+                            }
+                            return Container();
+                          },
+                        )
+                      ],
+                    ),
                   ),
-                ))
-            : Container()
-      ],
+                  horizontalTitleGap: 12,
+                );
+              }),
+          chatUser.isOnline
+              ? Positioned(
+                  top: badgeTopPosition,
+                  left: badgeLeftPosition,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    width: badgeWidth,
+                    height: badgeHeight,
+                    decoration: const BoxDecoration(
+                        color: Colors.white, shape: BoxShape.circle),
+                    child: Container(
+                      decoration: const BoxDecoration(
+                          color: Colors.green, shape: BoxShape.circle),
+                    ),
+                  ))
+              : Container()
+        ],
+      ),
     );
   }
 

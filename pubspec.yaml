@@ -84,6 +84,7 @@ dependencies:
   flutter_local_notifications: ^16.1.0
   firebase_crashlytics: ^3.4.4
   http: ^1.1.0
+  jumping_dot: ^0.0.6
 
 
 dev_dependencies:

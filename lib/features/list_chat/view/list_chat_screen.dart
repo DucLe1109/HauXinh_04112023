@@ -117,13 +117,15 @@ class _ListChatScreenState extends State<ListChatScreen> {
                 shrinkWrap: true,
                 itemCount:
                     !isSearch ? _listUser.length : _searchListUser.length,
-                itemBuilder: (context, index) => InkWell(
-                  onTap: () => context.push(AppRouter.chatScreenPath,
-                      extra: !isSearch
-                          ? _listUser[index]
-                          : _searchListUser[index]),
-                  child: Chatting(
-                      !isSearch ? _listUser[index] : _searchListUser[index]),
+                itemBuilder: (context, index) => Chatting(
+                  onTap: () {
+                    context.push(AppRouter.chatScreenPath,
+                        extra: !isSearch
+                            ? _listUser[index]
+                            : _searchListUser[index]);
+                  },
+                  chatUser:
+                      !isSearch ? _listUser[index] : _searchListUser[index],
                 ),
               );
             case ConnectionState.done:

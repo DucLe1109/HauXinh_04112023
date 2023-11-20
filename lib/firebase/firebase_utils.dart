@@ -3,9 +3,11 @@ import 'dart:io';
 
 import 'package:boilerplate/core/global_variable.dart';
 import 'package:boilerplate/features/personal_chat/message_type.dart';
+import 'package:boilerplate/features/personal_chat/model/message_model.dart';
+import 'package:boilerplate/firebase/model/fcm/message_notification.dart';
+import 'package:boilerplate/firebase/model/fcm/notification_body.dart';
+import 'package:boilerplate/firebase/model/firebase_collections.dart';
 import 'package:boilerplate/firebase/model/firebase_firestore_exception.dart';
-import 'package:boilerplate/firebase/model/message_notification.dart';
-import 'package:boilerplate/firebase/model/notification_body.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -79,7 +81,7 @@ class FirebaseUtils {
     firebaseStore
         .collection(Collections.chatUser.value)
         .doc(user?.uid)
-        .update({'pushToken': pushToken});
+        .update({ChatUserProperty.pushToken.value: pushToken});
   }
 
   static Future<bool> isExistUser() async {
@@ -147,8 +149,9 @@ class FirebaseUtils {
           .collection(Collections.chatUser.value)
           .doc(user!.uid)
           .update({
-        'lastActive': DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now()),
-        'isOnline': isOnline,
+        ChatUserProperty.lastActive.value:
+            DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now()),
+        ChatUserProperty.isOnline.value: isOnline,
       });
     }
   }
@@ -167,7 +170,7 @@ class FirebaseUtils {
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
     return firebaseStore
         .collection(Collections.chatUser.value)
-        .where('id', isNotEqualTo: user?.uid)
+        .where(ChatUserProperty.id.value, isNotEqualTo: user?.uid)
         .snapshots();
   }
 
@@ -183,7 +186,31 @@ class FirebaseUtils {
     return firebaseStore
         .collection(
             '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
+        .orderBy(MessageProperty.timeStamp.value, descending: true)
         .snapshots();
+  }
+
+  /// Function to get message with pagination
+  static Future<QuerySnapshot<Map<String, dynamic>>> getMessage(
+      {required ChatUser chatUser,
+      DocumentSnapshot? lastItemVisible,
+      required int numberOfItem}) {
+    if (lastItemVisible != null) {
+      return firebaseStore
+          .collection(
+              '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
+          .orderBy(MessageProperty.timeStamp.value, descending: true)
+          .startAfterDocument(lastItemVisible)
+          .limit(numberOfItem)
+          .get();
+    } else {
+      return firebaseStore
+          .collection(
+              '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
+          .orderBy(MessageProperty.timeStamp.value, descending: true)
+          .limit(numberOfItem)
+          .get();
+    }
   }
 
   /// Function to get message of myself with specific user.
@@ -192,7 +219,7 @@ class FirebaseUtils {
     return firebaseStore
         .collection(
             '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
-        .orderBy('timeStamp', descending: true)
+        .orderBy(MessageProperty.timeStamp.value, descending: true)
         .limit(numberOfMessage)
         .snapshots();
   }
@@ -269,19 +296,19 @@ class FirebaseUtils {
     return firebaseStore
         .collection(
             '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
-        .orderBy('timeStamp', descending: true)
+        .orderBy(MessageProperty.timeStamp.value, descending: true)
         .limit(amount)
         .get();
   }
 
   /// Function to update read message
-  static Future<void> readMessage(Message message) {
+  static Future<void> readMessage(MessageModel message) {
     final now = DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now());
     return firebaseStore
         .collection(
             '${Collections.chats.value}/${getConversationID(message.fromId ?? '')}/${Collections.messages.value}/')
         .doc(message.timeStamp)
-        .update({'readAt': now});
+        .update({MessageProperty.readAt.value: now});
   }
 
   /// Function to get latest message of specific user
@@ -290,7 +317,7 @@ class FirebaseUtils {
     return firebaseStore
         .collection(
             '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
-        .orderBy('timeStamp', descending: true)
+        .orderBy(MessageProperty.timeStamp.value, descending: true)
         .limit(1)
         .snapshots();
   }
@@ -301,8 +328,8 @@ class FirebaseUtils {
     return firebaseStore
         .collection(
             '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
-        .where('fromId', isEqualTo: chatUser.id)
-        .where('readAt', isEqualTo: '')
+        .where(MessageProperty.fromId.value, isEqualTo: chatUser.id)
+        .where(MessageProperty.readAt.value, isEqualTo: '')
         .get();
   }
 

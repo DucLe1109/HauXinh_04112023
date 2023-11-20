@@ -3,6 +3,7 @@ import 'package:d_bloc/state/d_state.dart';
 import 'package:flutter/material.dart';
 
 /// T is Type of return Data
+/// E is Type of return Error
 
 Widget Function(BuildContext, BlocState) dBuilder<T, E>({
   Widget Function()? onLoading,

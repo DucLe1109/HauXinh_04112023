@@ -1,4 +1,4 @@
-import 'package:boilerplate/firebase/model/message_notification.dart';
+import 'package:boilerplate/firebase/model/fcm/message_notification.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'notification_body.freezed.dart';

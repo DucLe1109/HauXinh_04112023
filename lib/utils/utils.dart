@@ -45,9 +45,10 @@ class Utils {
           datetime.year == now.year &&
           datetime.hour == now.hour) {
         final lastMinuteActive = int.parse(DateFormat('mm').format(datetime));
-        final minute = now.minute - lastMinuteActive;
+        var minute = now.minute - lastMinuteActive;
+        if(minute == 0) minute += 1;
 
-        return '${S.current.active} $minute ${minute == 1 ? S.current.minute : S.current.minutes} ${S.current.ago}';
+        return '${S.current.active} $minute ${minute > 1 ? S.current.minute : S.current.minutes} ${S.current.ago}';
       }
       if (datetime.day == now.day &&
           datetime.month == now.month &&

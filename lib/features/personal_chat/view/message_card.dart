@@ -1,9 +1,9 @@
+import 'package:boilerplate/features/personal_chat/model/message_model.dart';
 import 'package:boilerplate/features/personal_chat/view/in_bubble.dart';
 import 'package:boilerplate/features/personal_chat/view/out_bubble.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:rest_client/rest_client.dart';
 
 class MessageCard extends StatefulWidget {
   const MessageCard({
@@ -12,7 +12,7 @@ class MessageCard extends StatefulWidget {
     this.isRounded = false,
   });
 
-  final Message message;
+  final MessageModel message;
   final bool isRounded;
 
   @override

@@ -106,10 +106,16 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
   void listenAppState() {
     AppLifecycleListener(
       onResume: () {
-        FirebaseUtils.updateUserStatus(isOnline: true);
+        Future.delayed(
+          const Duration(minutes: 1),
+          () => FirebaseUtils.updateUserStatus(isOnline: true),
+        );
       },
       onPause: () {
-        FirebaseUtils.updateUserStatus(isOnline: false);
+        Future.delayed(
+          const Duration(minutes: 1),
+          () => FirebaseUtils.updateUserStatus(isOnline: false),
+        );
       },
     );
   }
