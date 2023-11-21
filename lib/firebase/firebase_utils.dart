@@ -17,6 +17,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:rest_client/rest_client.dart';
+import 'package:path/path.dart' as p;
 
 class FirebaseUtils {
   FirebaseUtils._();
@@ -228,12 +229,14 @@ class FirebaseUtils {
   static Future<Message> sendMessage(
       {required ChatUser chatUser,
       required String msg,
+      String? imageCacheUri,
       required MessageType messageType}) async {
     final messageID = DateTime.now().millisecondsSinceEpoch.toString();
     final now = DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now());
     final ref = firebaseStore.collection(
         '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/');
     final message = Message(
+      imageCacheUri: imageCacheUri,
       toId: chatUser.id,
       createdTime: now,
       updatedTime: '',
@@ -278,7 +281,7 @@ class FirebaseUtils {
 
   static Future<void> sendFile(
       {required ChatUser chatUser, required File file}) async {
-    final extension = file.path.split('.')[1];
+    final extension = p.extension(file.path).replaceAll('.', '');
 
     final ref = firebaseStorage.ref().child(
         'chat_image/${getConversationID(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$extension');
@@ -287,7 +290,10 @@ class FirebaseUtils {
     final imageUrl = await ref.getDownloadURL();
 
     await sendMessage(
-        messageType: MessageType.image, chatUser: chatUser, msg: imageUrl);
+        messageType: MessageType.image,
+        chatUser: chatUser,
+        msg: imageUrl,
+        imageCacheUri: file.path);
   }
 
   /// Function to get 50 (optional) newest message
@@ -372,7 +378,7 @@ class FirebaseUtils {
     } else if (errorCode == FirebaseFirestoreException.DEADLINE_EXCEEDED.code) {
       return S.current.error_code_deadline_exceeded;
     }
-    return '';
+    return S.current.this_error_code_is_not_handled;
   }
 
   /// --------------- End firebase exception ---------------

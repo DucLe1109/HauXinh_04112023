@@ -13,6 +13,7 @@ class MessageModel {
     this.createdTime,
     this.msg,
     this.readAt,
+    this.imageCacheUri,
   });
 
   String? fromId;
@@ -23,6 +24,7 @@ class MessageModel {
   String? msg;
   String? type;
   String? timeStamp;
+  String? imageCacheUri;
 
 
 

@@ -31,10 +31,12 @@ class OutBubble extends StatelessWidget {
             : EdgeInsets.fromLTRB(0.w, 0.w, 0.w, 8.w),
         decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
-            borderRadius: !isRounded ? BorderRadius.only(
-                topRight: Radius.circular(16.w),
-                topLeft: Radius.circular(16.w),
-                bottomLeft: Radius.circular(16.w)) : BorderRadius.circular(16.w)),
+            borderRadius: !isRounded
+                ? BorderRadius.only(
+                    topRight: Radius.circular(16.w),
+                    topLeft: Radius.circular(16.w),
+                    bottomLeft: Radius.circular(16.w))
+                : BorderRadius.circular(16.w)),
         child: message.msg!.length >= 15
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -54,20 +56,30 @@ class OutBubble extends StatelessWidget {
                                   Container(),
                           transitionBuilder:
                               (context, animation, secondaryAnimation, child) {
-                            return _buildImageScreen(context, animation);
+                            return _buildRemoteImageScreen(context, animation);
                           },
                         );
                       },
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(16.w),
-                            topLeft: Radius.circular(16.w),
-                          ),
-                          child:
-                              CachedNetworkImage(imageUrl: message.msg ?? '')),
+                      child: _buildRemoteImage(),
                     )
                   else
-                    _buildTempImage(context),
+                    GestureDetector(
+                      onTap: () {
+                        if (message.type == MessageType.local.name) {
+                          showGeneralDialog(
+                            context: context,
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    Container(),
+                            transitionBuilder: (context, animation,
+                                secondaryAnimation, child) {
+                              return _buildLocalImageScreen(context, animation);
+                            },
+                          );
+                        }
+                      },
+                      child: _buildLocalImage(context),
+                    ),
                   SizedBox(
                     height: 8.w,
                   ),
@@ -140,7 +152,16 @@ class OutBubble extends StatelessWidget {
     );
   }
 
-  Stack _buildTempImage(BuildContext context) {
+  ClipRRect _buildRemoteImage() {
+    return ClipRRect(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(16.w),
+          topLeft: Radius.circular(16.w),
+        ),
+        child: CachedNetworkImage(imageUrl: message.msg ?? ''));
+  }
+
+  Stack _buildLocalImage(BuildContext context) {
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -153,31 +174,68 @@ class OutBubble extends StatelessWidget {
               File(message.msg ?? ''),
               fit: BoxFit.cover,
             )),
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-                color: Theme.of(context)
-                    .colorScheme
-                    .inversePrimary
-                    .withOpacity(0.5),
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(16.w),
-                  topLeft: Radius.circular(16.w),
-                )),
+        Visibility(
+          visible: message.type != MessageType.local.name,
+          child: Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .inversePrimary
+                      .withOpacity(0.5),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(16.w),
+                    topLeft: Radius.circular(16.w),
+                  )),
+            ),
           ),
         ),
-        BaseLoadingDialog(
-          activeColor: Colors.blueAccent,
-          inactiveColor: Colors.redAccent,
-          radius: 23.w,
-          isShowIcon: false,
-          relativeWidth: 1,
+        Visibility(
+          visible: message.type != MessageType.local.name,
+          child: BaseLoadingDialog(
+            startRatio: 0.8,
+            willPopScope: true,
+            activeColor: Colors.lightGreen,
+            inactiveColor: Colors.white60,
+            radius: 20.w,
+            isShowIcon: false,
+            relativeWidth: 1.5,
+          ),
         )
       ],
     );
   }
 
-  Scaffold _buildImageScreen(
+  Scaffold _buildLocalImageScreen(
+      BuildContext context, Animation<double> animation) {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        title: Text(S.current.image.replaceAll('[', '').replaceAll(']', '')),
+        backgroundColor: Theme.of(context).primaryColor,
+        leading: const AppBarLeading(),
+      ),
+      backgroundColor: Theme.of(context).primaryColor,
+      body: Opacity(
+        opacity: animation.value,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 80.w),
+          child: ClipRRect(
+            child: PhotoView(
+                backgroundDecoration:
+                    BoxDecoration(color: Theme.of(context).primaryColor),
+                minScale: PhotoViewComputedScale.contained * 1,
+                maxScale: PhotoViewComputedScale.contained * 1.4,
+                initialScale: PhotoViewComputedScale.contained,
+                imageProvider: FileImage(File(message.imageCacheUri ?? ''))),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Scaffold _buildRemoteImageScreen(
       BuildContext context, Animation<double> animation) {
     return Scaffold(
       appBar: AppBar(

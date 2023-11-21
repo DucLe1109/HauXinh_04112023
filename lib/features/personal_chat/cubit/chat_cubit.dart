@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:boilerplate/features/personal_chat/cubit/chat_state.dart';
+import 'package:boilerplate/features/personal_chat/message_type.dart';
 import 'package:boilerplate/features/personal_chat/model/message_model.dart';
 import 'package:boilerplate/features/personal_chat/notifier/animated_list_notifier.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:d_bloc/d_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:rest_client/rest_client.dart';
 
@@ -17,49 +21,94 @@ class ChatCubit extends DCubit {
   void listenMessageStream(ChatUser chatUser) {
     chatStream = FirebaseUtils.getLatestMessage(chatUser);
     chatStream.listen((newData) {
-      if (newData.docs.isNotEmpty) {
+      if (isFirstLoad) {
+        isFirstLoad = false;
+        return;
+      }
+      if (newData.docs.isNotEmpty && !isFirstLoad) {
         final newListMessage =
             newData.docs.map((e) => MessageModel.fromJson(e.data())).toList();
         final newListDocumentSnapshot = newData.docs;
 
-        /// Has new message in conversation
+        /// Latest message
+        final newMessage = newListMessage.first;
+        final newDocumentSnapshot = newListDocumentSnapshot.first;
+
+        /// Has new message in conversation (do not execute when message type is Image)
         if (currentListMessage.isNotEmpty &&
-            newListMessage.first.timeStamp !=
-                currentListMessage.first.timeStamp) {
-          currentListMessage.insert(0, newListMessage.first);
+            newMessage.timeStamp != currentListMessage.first.timeStamp) {
+          /// handle when message type is Text
+          if (newMessage.type == MessageType.text.name) {
+            insertNewItem(
+                newDocumentSnapshot: newDocumentSnapshot,
+                newMessage: newMessage);
 
-          /// Check if has limit number of message in chat screen
-          if (currentListMessage.length > numOfInitialMessage) {
-            currentListDocumentSnapshot
-              ..insert(0, newListDocumentSnapshot.first)
-              ..removeLast();
+            emit(NewMessageState(message: newMessage));
           }
 
-          ///
-          else {
-            currentListDocumentSnapshot.insert(
-                0, newListDocumentSnapshot.first);
-          }
+          /// Handle when message type is Image
+          else if (newMessage.type == MessageType.image.name) {
+            /// Check if is out message
+            if (newMessage.fromId == FirebaseUtils.me.id) {
+              updateImageStatus(newMessage);
+            }
 
-          emit(NewMessageState(message: newListMessage.first));
+            /// Check if is in message
+            else {
+              insertNewItem(
+                  newDocumentSnapshot: newDocumentSnapshot,
+                  newMessage: newMessage);
+
+              emit(NewMessageState(message: newMessage));
+            }
+          }
         }
 
         /// New conversation
         else if (currentListMessage.isEmpty) {
-          currentListMessage.insert(0, newListMessage.first);
-          currentListDocumentSnapshot.insert(0, newListDocumentSnapshot.first);
-          emit(NewMessageState(message: newListMessage.first));
+          currentListMessage.insert(0, newMessage);
+          currentListDocumentSnapshot.insert(0, newDocumentSnapshot);
+          emit(NewMessageState(message: newMessage));
         }
 
         /// update message status
         else if (currentListMessage.isNotEmpty &&
-            newListMessage.first.timeStamp ==
-                currentListMessage.first.timeStamp) {
+            newMessage.timeStamp == currentListMessage.first.timeStamp) {
           updateReadStatus();
           reloadAnimatedList();
         }
       }
     });
+  }
+
+  void updateImageStatus(MessageModel newMessage) {
+    currentListMessage
+        .where((element) =>
+            element.imageCacheUri == newMessage.imageCacheUri &&
+            element.type == MessageType.temp.name)
+        .firstOrNull
+        ?.type = MessageType.local.name;
+
+    reloadAnimatedList();
+  }
+
+  void insertNewItem({
+    required MessageModel newMessage,
+    required DocumentSnapshot newDocumentSnapshot,
+  }) {
+    currentListMessage.insert(0, newMessage);
+
+    /// Check if has limit number of message in chat screen
+    if (currentListMessage.length > numOfInitialMessage) {
+      currentListDocumentSnapshot
+        ..insert(0, newDocumentSnapshot)
+        ..removeLast();
+    }
+
+    ///
+    else {
+      currentListDocumentSnapshot.insert(0, newDocumentSnapshot);
+    }
   }
 
   void updateReadStatus() {
@@ -134,10 +183,33 @@ class ChatCubit extends DCubit {
     animatedListNotifier.reloadList(newData: currentListMessage);
   }
 
+  Future<void> sendAllMessage(
+      {required List<XFile> photos, required ChatUser chatUser}) async {
+    final List<FirebaseException> exceptions = [];
+    emit(SendingFile());
+    for (final XFile e in List.from(photos)) {
+      try {
+        await FirebaseUtils.sendFile(chatUser: chatUser, file: File(e.path));
+      } on FirebaseException catch (e) {
+        exceptions.add(e);
+      }
+    }
+
+    if (exceptions.isEmpty) {
+      emit(SendFileSuccessfully());
+    } else {
+      emit(ErrorState(
+          error: DefaultException(
+              message: FirebaseUtils.handleException(exceptions.first.code),
+              statusCode: -1)));
+    }
+  }
+
   late Stream<QuerySnapshot<Map<String, dynamic>>> chatStream;
   late List<MessageModel> currentListMessage;
   late AnimatedListNotifier animatedListNotifier;
   late List<DocumentSnapshot> currentListDocumentSnapshot;
   int numOfInitialMessage = 50;
   bool isLoadMoreDone = false;
+  bool isFirstLoad = true;
 }

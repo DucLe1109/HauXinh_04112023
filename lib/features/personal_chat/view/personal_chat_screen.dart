@@ -97,6 +97,16 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
   }
 
   @override
+  void dispose() {
+    _animationController.dispose();
+    _messageEditingController.dispose();
+    _messageFocusNode.dispose();
+    _scrollController.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
@@ -291,7 +301,14 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
                 builder: (context, state) {
                   switch (state) {
                     case InitiateData():
-                      return const Center(child: BaseLoadingDialog());
+                      return Center(
+                          child: BaseLoadingDialog(
+                        startRatio: 0.8,
+                        iconHeight: 26.w,
+                        iconWidth: 26.w,
+                        radius: 28.w,
+                        relativeWidth: 1.5,
+                      ));
                     case InitiateDataSuccessFully():
                       return ListenableBuilder(
                         listenable: _cubit.animatedListNotifier,
@@ -483,20 +500,10 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
         child: InkWell(
             onTap: () {
               if (photos.isNotEmpty) {
-                for (final e in photos) {
-                  _cubit.currentListMessage.insert(
-                      0,
-                      MessageModel(
-                          fromId: FirebaseUtils.user?.uid,
-                          toId: widget.chatUser.id,
-                          type: MessageType.temp.name,
-                          createdTime: DateFormat('dd/MM/yyyy HH:mm:ss')
-                              .format(DateTime.now()),
-                          msg: e.path));
-                  listKey.currentState?.insertItem(0);
-                  // FirebaseUtils.sendFile(
-                  //     chatUser: widget.chatUser, file: File(e.path));
-                }
+                // sendImageOnlineMode();
+
+                sendImageOfflineMode();
+
                 photos.clear();
                 goTopOfList();
                 _animationController.reset();
@@ -524,6 +531,27 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
             )),
       ),
     );
+  }
+
+  void sendImageOnlineMode() {
+    _cubit.sendAllMessage(photos: photos, chatUser: widget.chatUser);
+  }
+
+  void sendImageOfflineMode() {
+    for (final e in photos) {
+      _cubit.currentListMessage.insert(
+          0,
+          MessageModel(
+              imageCacheUri: e.path,
+              readAt: '',
+              fromId: FirebaseUtils.me.id,
+              toId: widget.chatUser.id,
+              type: MessageType.temp.name,
+              createdTime:
+                  DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now()),
+              msg: e.path));
+      listKey.currentState?.insertItem(0);
+    }
   }
 
   Widget _buildPickImageButton() {

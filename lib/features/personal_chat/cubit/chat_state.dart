@@ -36,8 +36,13 @@ class LoadMoreSuccessfully extends BlocState {
   final int numberOfNewMessage;
 
   const LoadMoreSuccessfully({required this.numberOfNewMessage});
+
   @override
   List<Object?> get props => [numberOfNewMessage];
 }
 
 class LoadMoreDone extends BlocState {}
+
+class SendingFile extends BlocState {}
+
+class SendFileSuccessfully extends BlocState {}

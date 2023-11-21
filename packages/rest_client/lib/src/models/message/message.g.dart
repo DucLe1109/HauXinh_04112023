@@ -16,6 +16,7 @@ _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
       msg: json['msg'] as String?,
       type: json['type'] as String?,
       timeStamp: json['timeStamp'] as String?,
+      imageCacheUri: json['imageCacheUri'] as String?,
     );
 
 Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
@@ -28,4 +29,5 @@ Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
       'msg': instance.msg,
       'type': instance.type,
       'timeStamp': instance.timeStamp,
+      'imageCacheUri': instance.imageCacheUri,
     };
