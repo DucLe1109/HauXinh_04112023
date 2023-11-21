@@ -140,6 +140,8 @@ class Chatting extends StatelessWidget {
                             if (snapshot.hasData) {
                               return (snapshot.data?.docs.isNotEmpty ?? false)
                                   ? Container(
+                                      constraints:
+                                          BoxConstraints(maxHeight: 22.w),
                                       alignment: Alignment.center,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 3.w, horizontal: 8.w),
