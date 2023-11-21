@@ -328,14 +328,9 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
                                         parent: animation,
                                         curve: Curves.easeOut)),
                                 child: MessageCard(
+                                    chatUser: widget.chatUser,
                                     message: _cubit.currentListMessage[index],
-                                    isRounded: index <
-                                            _cubit.currentListMessage.length -
-                                                1 &&
-                                        _cubit.currentListMessage[index]
-                                                .fromId ==
-                                            _cubit.currentListMessage[index + 1]
-                                                .fromId),
+                                    isRounded: isRounded(index)),
                               ),
                             );
                           },
@@ -357,6 +352,12 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
         ],
       ),
     );
+  }
+
+  bool isRounded(int index) {
+    return index < _cubit.currentListMessage.length - 1 &&
+        _cubit.currentListMessage[index].fromId ==
+            _cubit.currentListMessage[index + 1].fromId;
   }
 
   Widget _buildJumpingDot() {
@@ -500,7 +501,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
         child: InkWell(
             onTap: () {
               if (photos.isNotEmpty) {
-                // sendImageOnlineMode();
+                sendImageOnlineMode();
 
                 sendImageOfflineMode();
 

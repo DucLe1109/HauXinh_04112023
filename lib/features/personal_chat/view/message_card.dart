@@ -4,15 +4,18 @@ import 'package:boilerplate/features/personal_chat/view/out_bubble.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rest_client/rest_client.dart';
 
 class MessageCard extends StatefulWidget {
   const MessageCard({
     super.key,
     required this.message,
+    required this.chatUser,
     this.isRounded = false,
   });
 
   final MessageModel message;
+  final ChatUser chatUser;
   final bool isRounded;
 
   @override
@@ -43,6 +46,7 @@ class _MessageCardState extends State<MessageCard>
       FirebaseUtils.readMessage(widget.message);
     }
     return InBubble(
+      chatUser: widget.chatUser,
       message: widget.message,
       isRounded: widget.isRounded,
     );

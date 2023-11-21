@@ -20,6 +20,68 @@ class OutBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final circularValue = 12.w;
+
+    Widget buildRemoteImage() {
+      return ClipRRect(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(circularValue),
+            topLeft: isRounded
+                ? Radius.circular(circularValue)
+                : Radius.circular(0.w),
+          ),
+          child: CachedNetworkImage(imageUrl: message.msg ?? ''));
+    }
+
+    Widget buildLocalImage(BuildContext context) {
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          ClipRRect(
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(circularValue),
+                topLeft: isRounded
+                    ? Radius.circular(circularValue)
+                    : Radius.circular(0.w),
+              ),
+              child: Image.file(
+                File(message.msg ?? ''),
+                fit: BoxFit.cover,
+              )),
+          Visibility(
+            visible: message.type != MessageType.local.name,
+            child: Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .inversePrimary
+                        .withOpacity(0.5),
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(circularValue),
+                      topLeft: isRounded
+                          ? Radius.circular(circularValue)
+                          : Radius.circular(0.w),
+                    )),
+              ),
+            ),
+          ),
+          Visibility(
+            visible: message.type != MessageType.local.name,
+            child: BaseLoadingDialog(
+              startRatio: 0.8,
+              willPopScope: true,
+              activeColor: Colors.lightGreen,
+              inactiveColor: Colors.white60,
+              radius: 20.w,
+              isShowIcon: false,
+              relativeWidth: 1.5,
+            ),
+          )
+        ],
+      );
+    }
+
     return Align(
       alignment: Alignment.centerRight,
       child: Container(
@@ -33,10 +95,10 @@ class OutBubble extends StatelessWidget {
             color: Theme.of(context).colorScheme.primary,
             borderRadius: !isRounded
                 ? BorderRadius.only(
-                    topRight: Radius.circular(16.w),
-                    topLeft: Radius.circular(16.w),
-                    bottomLeft: Radius.circular(16.w))
-                : BorderRadius.circular(16.w)),
+                    topRight: Radius.circular(circularValue),
+                    topLeft: Radius.circular(circularValue),
+                    bottomLeft: Radius.circular(circularValue))
+                : BorderRadius.circular(circularValue)),
         child: message.msg!.length >= 15
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -60,7 +122,7 @@ class OutBubble extends StatelessWidget {
                           },
                         );
                       },
-                      child: _buildRemoteImage(),
+                      child: buildRemoteImage(),
                     )
                   else
                     GestureDetector(
@@ -78,7 +140,7 @@ class OutBubble extends StatelessWidget {
                           );
                         }
                       },
-                      child: _buildLocalImage(context),
+                      child: buildLocalImage(context),
                     ),
                   SizedBox(
                     height: 8.w,
@@ -152,61 +214,7 @@ class OutBubble extends StatelessWidget {
     );
   }
 
-  ClipRRect _buildRemoteImage() {
-    return ClipRRect(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(16.w),
-          topLeft: Radius.circular(16.w),
-        ),
-        child: CachedNetworkImage(imageUrl: message.msg ?? ''));
-  }
-
-  Stack _buildLocalImage(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        ClipRRect(
-            borderRadius: BorderRadius.only(
-              topRight: Radius.circular(16.w),
-              topLeft: Radius.circular(16.w),
-            ),
-            child: Image.file(
-              File(message.msg ?? ''),
-              fit: BoxFit.cover,
-            )),
-        Visibility(
-          visible: message.type != MessageType.local.name,
-          child: Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .inversePrimary
-                      .withOpacity(0.5),
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(16.w),
-                    topLeft: Radius.circular(16.w),
-                  )),
-            ),
-          ),
-        ),
-        Visibility(
-          visible: message.type != MessageType.local.name,
-          child: BaseLoadingDialog(
-            startRatio: 0.8,
-            willPopScope: true,
-            activeColor: Colors.lightGreen,
-            inactiveColor: Colors.white60,
-            radius: 20.w,
-            isShowIcon: false,
-            relativeWidth: 1.5,
-          ),
-        )
-      ],
-    );
-  }
-
-  Scaffold _buildLocalImageScreen(
+  Widget _buildLocalImageScreen(
       BuildContext context, Animation<double> animation) {
     return Scaffold(
       appBar: AppBar(
@@ -235,7 +243,7 @@ class OutBubble extends StatelessWidget {
     );
   }
 
-  Scaffold _buildRemoteImageScreen(
+  Widget _buildRemoteImageScreen(
       BuildContext context, Animation<double> animation) {
     return Scaffold(
       appBar: AppBar(
