@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -16,8 +18,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
-import 'package:rest_client/rest_client.dart';
 import 'package:path/path.dart' as p;
+import 'package:rest_client/rest_client.dart';
 
 class FirebaseUtils {
   FirebaseUtils._();
@@ -336,6 +338,8 @@ class FirebaseUtils {
             '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
         .where(MessageProperty.fromId.value, isEqualTo: chatUser.id)
         .where(MessageProperty.readAt.value, isEqualTo: '')
+        .orderBy(MessageProperty.timeStamp.value, descending: true)
+        .limit(numOfMessagePerPage)
         .get();
   }
 

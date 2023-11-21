@@ -125,7 +125,9 @@ class InBubble extends StatelessWidget {
                             },
                             child: ClipRRect(
                                 borderRadius: BorderRadius.only(
-                                  topLeft: isRounded ? Radius.circular(circularValue) : Radius.circular(0.w),
+                                  topLeft: isRounded
+                                      ? Radius.circular(circularValue)
+                                      : Radius.circular(0.w),
                                   topRight: Radius.circular(circularValue),
                                 ),
                                 child: CachedNetworkImage(

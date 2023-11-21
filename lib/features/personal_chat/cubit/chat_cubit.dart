@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:boilerplate/core/global_variable.dart';
 import 'package:boilerplate/features/personal_chat/cubit/chat_state.dart';
 import 'package:boilerplate/features/personal_chat/message_type.dart';
 import 'package:boilerplate/features/personal_chat/model/message_model.dart';
@@ -99,7 +100,7 @@ class ChatCubit extends DCubit {
     currentListMessage.insert(0, newMessage);
 
     /// Check if has limit number of message in chat screen
-    if (currentListMessage.length > numOfInitialMessage) {
+    if (currentListMessage.length > numOfMessagePerPage) {
       currentListDocumentSnapshot
         ..insert(0, newDocumentSnapshot)
         ..removeLast();
@@ -209,7 +210,6 @@ class ChatCubit extends DCubit {
   late List<MessageModel> currentListMessage;
   late AnimatedListNotifier animatedListNotifier;
   late List<DocumentSnapshot> currentListDocumentSnapshot;
-  int numOfInitialMessage = 50;
   bool isLoadMoreDone = false;
   bool isFirstLoad = true;
 }

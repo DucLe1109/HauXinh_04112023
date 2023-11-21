@@ -60,7 +60,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     super.initState();
     _cubit = Injector.instance();
     _cubit.initData(
-        chatUser: widget.chatUser, numberOfItem: _cubit.numOfInitialMessage);
+        chatUser: widget.chatUser, numberOfItem: numOfMessagePerPage);
     _scrollController = ScrollController();
 
     _scrollController.addListener(() {
@@ -72,7 +72,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
           /// Load more message
           _cubit.loadMoreMessage(
               chatUser: widget.chatUser,
-              numberOfItem: _cubit.numOfInitialMessage,
+              numberOfItem: numOfMessagePerPage,
               lastItemVisible: _cubit.currentListDocumentSnapshot.last);
           return;
         }
@@ -277,7 +277,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
 
                     /// Delete item.
                     if (_cubit.currentListMessage.length >
-                        _cubit.numOfInitialMessage) {
+                        numOfMessagePerPage) {
                       listKey.currentState?.removeItem(
                           _cubit.currentListMessage.length - 1,
                           (context, animation) => Container());
