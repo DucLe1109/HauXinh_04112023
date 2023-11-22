@@ -116,6 +116,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     _messageFocusNode.dispose();
     _scrollController.dispose();
     _keyboardSubscription.cancel();
+    _cubit.stopListenMessageStream();
     WidgetsBinding.instance.removeObserver(this);
 
     super.dispose();
@@ -295,7 +296,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
   }
 
   Widget _buildChatSection(BuildContext context) {
-    return Flexible(
+    return Expanded(
       child: Stack(
         children: [
           BlocConsumer(

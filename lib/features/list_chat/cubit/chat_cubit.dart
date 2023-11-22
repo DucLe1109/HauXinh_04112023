@@ -9,26 +9,26 @@ class ChatCubit extends DCubit {
   late Stream<QuerySnapshot<Map<String, dynamic>>> latestMessageStream;
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? subscription;
 
-  ChatCubit({required ChatUser chatUser}) {
-    latestMessageStream = FirebaseUtils.getLatestMessage(chatUser);
-    subscription = latestMessageStream.listen((event) {
-      if (event.docs.isNotEmpty) {
-        getAllUnreadMessage(chatUser);
-      }
-    }, onError: (e) {
-      subscription?.cancel();
-    });
-  }
+  // ChatCubit({required ChatUser chatUser}) {
+  //   latestMessageStream = FirebaseUtils.getLatestMessage(chatUser);
+  //   subscription = latestMessageStream.listen((event) {
+  //     if (event.docs.isNotEmpty) {
+  //       getAllUnreadMessage(chatUser);
+  //     }
+  //   }, onError: (e) {
+  //     subscription?.cancel();
+  //   });
+  // }
 
-  Future<void> getAllUnreadMessage(ChatUser chatUser) async {
-    emit(const LoadingState());
-    try {
-      final result = await FirebaseUtils.getAllUnreadMessage(chatUser);
-      emit(SuccessState(data: result.docs.length));
-    } on FirebaseException catch (e) {
-      emit(ErrorState(
-          error: DefaultException(
-              message: FirebaseUtils.handleException(e.code), statusCode: -1)));
-    }
-  }
+  // Future<void> getAllUnreadMessage(ChatUser chatUser) async {
+  //   emit(const LoadingState());
+  //   try {
+  //     final result = await FirebaseUtils.getAllUnreadMessage(chatUser);
+  //     emit(SuccessState(data: result.docs.length));
+  //   } on FirebaseException catch (e) {
+  //     emit(ErrorState(
+  //         error: DefaultException(
+  //             message: FirebaseUtils.handleException(e.code), statusCode: -1)));
+  //   }
+  // }
 }

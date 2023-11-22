@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:boilerplate/core/global_variable.dart';
@@ -13,6 +14,14 @@ import 'package:intl/intl.dart';
 import 'package:rest_client/rest_client.dart';
 
 class PersonalChatCubit extends DCubit {
+  late Stream<QuerySnapshot<Map<String, dynamic>>> chatStream;
+  late List<MessageModel> currentListMessage;
+  late AnimatedListNotifier animatedListNotifier;
+  late List<DocumentSnapshot> currentListDocumentSnapshot;
+  bool isLoadMoreDone = false;
+  bool isFirstLoad = true;
+  late StreamSubscription chatStreamSubscription;
+
   PersonalChatCubit() {
     currentListMessage = [];
     currentListDocumentSnapshot = [];
@@ -21,7 +30,7 @@ class PersonalChatCubit extends DCubit {
 
   void listenMessageStream(ChatUser chatUser) {
     chatStream = FirebaseUtils.getLatestMessage(chatUser);
-    chatStream.listen((newData) {
+    chatStreamSubscription = chatStream.listen((newData) {
       if (isFirstLoad) {
         isFirstLoad = false;
         return;
@@ -80,6 +89,10 @@ class PersonalChatCubit extends DCubit {
         }
       }
     });
+  }
+
+  void stopListenMessageStream() {
+    chatStreamSubscription.cancel();
   }
 
   void updateImageStatus(MessageModel newMessage) {
@@ -205,11 +218,4 @@ class PersonalChatCubit extends DCubit {
               statusCode: -1)));
     }
   }
-
-  late Stream<QuerySnapshot<Map<String, dynamic>>> chatStream;
-  late List<MessageModel> currentListMessage;
-  late AnimatedListNotifier animatedListNotifier;
-  late List<DocumentSnapshot> currentListDocumentSnapshot;
-  bool isLoadMoreDone = false;
-  bool isFirstLoad = true;
 }

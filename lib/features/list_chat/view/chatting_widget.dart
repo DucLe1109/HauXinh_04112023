@@ -1,12 +1,9 @@
-import 'package:boilerplate/features/list_chat/cubit/chat_cubit.dart';
 import 'package:boilerplate/features/personal_chat/message_type.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:d_bloc/d_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rest_client/rest_client.dart';
 
@@ -19,18 +16,15 @@ class Chatting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double imageWidth = 42.w;
-    final double badgeLeftPosition = imageWidth + 5.w;
-    final double badgeTopPosition = 10.w;
+    final double badgeLeftPosition = imageWidth + 8.w;
+    final double badgeTopPosition = 14.w;
     final double badgeSize = 10.w;
-
-    final ChatCubit chatCubit = ChatCubit(chatUser: chatUser);
-
     return InkWell(
       onTap: onTap,
       child: Stack(
         children: [
           StreamBuilder(
-              stream: chatCubit.latestMessageStream,
+              stream: FirebaseUtils.getLatestMessage(chatUser),
               builder: (context, snapshot) {
                 Message? message;
                 if (snapshot.hasData) {
@@ -128,7 +122,11 @@ class Chatting extends StatelessWidget {
                                         .textTheme
                                         .bodySmall
                                         ?.color
-                                        ?.withOpacity(0.8)),
+                                        ?.withOpacity(
+                                            (message?.readAt?.isNotEmpty ??
+                                                    false)
+                                                ? 0.7
+                                                : 1)),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -136,35 +134,39 @@ class Chatting extends StatelessWidget {
                         SizedBox(
                           width: 20.w,
                         ),
-                        BlocBuilder(
-                          builder: dBuilder<int, DefaultException>(
-                            onLoading: Container.new,
-                            onSuccess: (data) => data != null && data > 0
-                                ? Container(
-                                    constraints:
-                                        BoxConstraints(maxHeight: 22.w),
-                                    alignment: Alignment.center,
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 3.w, horizontal: 8.w),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16.w),
-                                      color: const Color(0xFF878EE1),
-                                    ),
-                                    child: Text(
-                                      data.toString(),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                              fontSize: 10,
-                                              color: Colors.white),
-                                    ),
-                                  )
-                                : Container(),
-                            otherwise: (state) => Container(),
-                          ),
-                          bloc: chatCubit,
-                        )
+                        FirebaseUtils.user != null
+                            ? FutureBuilder(
+                                future:
+                                    FirebaseUtils.getAllUnreadMessage(chatUser),
+                                builder: (context, snapshot) {
+                                  return snapshot.hasData &&
+                                          snapshot.data!.docs.isNotEmpty
+                                      ? Container(
+                                          constraints:
+                                              BoxConstraints(maxHeight: 22.w),
+                                          alignment: Alignment.center,
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 3.w, horizontal: 8.w),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(16.w),
+                                            color: const Color(0xFF878EE1),
+                                          ),
+                                          child: Text(
+                                            snapshot.data!.docs.length
+                                                .toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall
+                                                ?.copyWith(
+                                                    fontSize: 10,
+                                                    color: Colors.white),
+                                          ),
+                                        )
+                                      : Container();
+                                },
+                              )
+                            : Container()
                       ],
                     ),
                   ),

@@ -139,10 +139,9 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
                       ),
                       Text(
                         'English',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.w500),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.grey800),
                       )
                     ],
                   )
@@ -151,10 +150,9 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
                       Assets.images.icVietnamese.image(scale: 17),
                       Text(
                         'Tiếng Việt',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.w500),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.grey800),
                       )
                     ],
                   )
