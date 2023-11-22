@@ -147,6 +147,8 @@ class _ListChatScreenState extends State<ListChatScreen> {
           color: Theme.of(context).scaffoldBackgroundColor,
         ),
         child: TextField(
+          cursorColor:
+              Theme.of(context).colorScheme.inversePrimary.withOpacity(0.5),
           focusNode: _searchFocusNode,
           onChanged: (value) {
             _searchListUser.clear();
@@ -163,6 +165,7 @@ class _ListChatScreenState extends State<ListChatScreen> {
               isShowClearIcon = value.isNotEmpty;
             });
           },
+          style: Theme.of(context).textTheme.bodyMedium,
           onEditingComplete: Utils.hideKeyboard,
           controller: _searchController,
           textAlignVertical: TextAlignVertical.center,

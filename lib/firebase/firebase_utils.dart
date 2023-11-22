@@ -45,7 +45,10 @@ class FirebaseUtils {
       settings =
           await FirebaseMessaging.instance.requestPermission(provisional: true);
     } else if (Platform.isIOS) {
-      settings = await FirebaseMessaging.instance.requestPermission();
+      final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+      if (apnsToken != null) {
+        settings = await FirebaseMessaging.instance.requestPermission();
+      }
     }
 
     if (settings?.authorizationStatus == AuthorizationStatus.authorized) {
@@ -178,10 +181,14 @@ class FirebaseUtils {
   }
 
   /// Function to generate unique ID by 2 user id
-  static String getConversationID(String id) =>
-      user!.uid.hashCode <= id.hashCode
+  static String getConversationID(String id) {
+    if (user != null) {
+      return user!.uid.hashCode <= id.hashCode
           ? '${user?.uid}_$id'
           : '${id}_${user?.uid}';
+    }
+    return '';
+  }
 
   /// Function to get all message of myself  with specific user.
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(

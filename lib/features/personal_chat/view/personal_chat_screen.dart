@@ -6,15 +6,14 @@ import 'dart:math' show pi;
 import 'package:boilerplate/core/global_variable.dart';
 import 'package:boilerplate/core/widget_core.dart';
 import 'package:boilerplate/features/authentication/view/base_loading_dialog.dart';
-import 'package:boilerplate/features/personal_chat/cubit/chat_cubit.dart';
-import 'package:boilerplate/features/personal_chat/cubit/chat_state.dart';
+import 'package:boilerplate/features/personal_chat/cubit/personal_chat_cubit.dart';
+import 'package:boilerplate/features/personal_chat/cubit/personal_chat_state.dart';
 import 'package:boilerplate/features/personal_chat/message_type.dart';
 import 'package:boilerplate/features/personal_chat/model/message_model.dart';
 import 'package:boilerplate/features/personal_chat/view/message_card.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/assets.gen.dart';
 import 'package:boilerplate/generated/l10n.dart';
-import 'package:boilerplate/injector/injector.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:boilerplate/widgets/app_bar_leading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -53,12 +52,12 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
   late Animation<double> animation;
   List<XFile> photos = [];
   late Stream<DocumentSnapshot<Map<String, dynamic>>> chatUserStream;
-  late ChatCubit _cubit;
+  late PersonalChatCubit _cubit;
 
   @override
   void initState() {
     super.initState();
-    _cubit = Injector.instance();
+    _cubit = PersonalChatCubit();
     _cubit.initData(
         chatUser: widget.chatUser, numberOfItem: numOfMessagePerPage);
     _scrollController = ScrollController();
@@ -84,6 +83,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     _messageEditingController = TextEditingController();
     _messageFocusNode = FocusNode();
     _messageFocusNode.addListener(() {
+
       if (_messageFocusNode.hasFocus) {
         isShowEmoji.value = false;
       }
@@ -109,6 +109,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -154,6 +155,9 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
                             .bodyLarge
                             ?.copyWith(fontWeight: FontWeight.w500),
                       ),
+                      SizedBox(
+                        height: 3.w,
+                      ),
                       Text(getCurrentStatus(chatUser),
                           style: Theme.of(context).textTheme.bodySmall)
                     ],
@@ -190,15 +194,15 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
               ))
         ],
       ),
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          Utils.hideKeyboard();
-          if (isShowEmoji.value) {
-            isShowEmoji.value = false;
-          }
-        },
-        child: SafeArea(
+      body: SafeArea(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            Utils.hideKeyboard();
+            if (isShowEmoji.value) {
+              isShowEmoji.value = false;
+            }
+          },
           child: Column(
             children: [
               _buildChatSection(context),
@@ -213,7 +217,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
                         textEditingController: _messageEditingController,
                         config: Config(
                           buttonMode: ButtonMode.CUPERTINO,
-                          emojiSizeMax: 30.w *
+                          emojiSizeMax: 22.w *
                               (foundation.defaultTargetPlatform ==
                                       TargetPlatform.iOS
                                   ? 1
@@ -237,7 +241,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
   }
 
   Widget _buildChatSection(BuildContext context) {
-    return Expanded(
+    return Flexible(
       child: Stack(
         children: [
           BlocConsumer(
@@ -561,8 +565,10 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
       borderRadius: BorderRadius.circular(100),
       child: InkWell(
           onTap: () async {
+            Utils.hideKeyboard();
             final ImagePicker picker = ImagePicker();
-            photos = await picker.pickMultiImage(imageQuality: 70);
+            final result = await picker.pickMultiImage(imageQuality: 70);
+            photos.addAll(result);
             if (photos.isNotEmpty) await _animationController.forward();
             setState(() {});
           },

@@ -51,8 +51,7 @@ class InBubble extends StatelessWidget {
           ),
           Flexible(
             child: Container(
-              constraints: BoxConstraints(
-                  minWidth: 70.w, maxWidth: 300.w, minHeight: 10.w),
+              constraints: BoxConstraints(maxWidth: 200.w, minHeight: 10.w),
               margin: EdgeInsets.only(
                   bottom: 5.w, left: isRounded ? smallAvatarSize : 0.w),
               padding: message.type == MessageType.text.name

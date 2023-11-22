@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_positional_boolean_parameters, depend_on_referenced_packages, lines_longer_than_80_chars
 
-
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
@@ -103,7 +102,6 @@ class AuthCubit extends Cubit<AuthState> {
       final UserCredential userCredential =
           await _auth.signInWithCredential(credential);
       if (userCredential.user != null) {
-
         setLoginSessionDuration();
         setRememberAccount(isRememberAccount);
         isRememberAccount
@@ -185,6 +183,4 @@ class AuthCubit extends Cubit<AuthState> {
   String getPasswordForBiometric() {
     return _authService.password;
   }
-
-
 }

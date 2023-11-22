@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:boilerplate/core/global_variable.dart';
-import 'package:boilerplate/features/personal_chat/cubit/chat_state.dart';
+import 'package:boilerplate/features/personal_chat/cubit/personal_chat_state.dart';
 import 'package:boilerplate/features/personal_chat/message_type.dart';
 import 'package:boilerplate/features/personal_chat/model/message_model.dart';
 import 'package:boilerplate/features/personal_chat/notifier/animated_list_notifier.dart';
@@ -12,8 +12,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:rest_client/rest_client.dart';
 
-class ChatCubit extends DCubit {
-  ChatCubit() {
+class PersonalChatCubit extends DCubit {
+  PersonalChatCubit() {
     currentListMessage = [];
     currentListDocumentSnapshot = [];
     animatedListNotifier = AnimatedListNotifier(messages: currentListMessage);

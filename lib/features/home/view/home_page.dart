@@ -44,7 +44,6 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
 
     _controller = PersistentTabController(initialIndex: 1);
     homeCubit = Injector.instance();
-
     Future.delayed(
       const Duration(seconds: 2),
       () => homeCubit.checkAuthentication(),
@@ -128,6 +127,7 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
       }
       if (Platform.isIOS) {}
     });
+
   }
 
   Future<void> handleAndroidNoti(RemoteMessage message) async {

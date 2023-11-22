@@ -1,10 +1,12 @@
+import 'package:boilerplate/features/list_chat/cubit/chat_cubit.dart';
 import 'package:boilerplate/features/personal_chat/message_type.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:d_bloc/d_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rest_client/rest_client.dart';
 
@@ -17,19 +19,18 @@ class Chatting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double imageWidth = 42.w;
-    final double badgeLeftPosition = imageWidth + 8.w;
+    final double badgeLeftPosition = imageWidth + 5.w;
     final double badgeTopPosition = 10.w;
-    final double badgeWidth = 14.w;
-    final double badgeHeight = 14.w;
-    final Stream<QuerySnapshot<Map<String, dynamic>>> latestMessageStream =
-        FirebaseUtils.getLatestMessage(chatUser);
+    final double badgeSize = 10.w;
+
+    final ChatCubit chatCubit = ChatCubit(chatUser: chatUser);
 
     return InkWell(
       onTap: onTap,
       child: Stack(
         children: [
           StreamBuilder(
-              stream: latestMessageStream,
+              stream: chatCubit.latestMessageStream,
               builder: (context, snapshot) {
                 Message? message;
                 if (snapshot.hasData) {
@@ -127,42 +128,42 @@ class Chatting extends StatelessWidget {
                                         .textTheme
                                         .bodySmall
                                         ?.color
-                                        ?.withOpacity(0.6)),
-                            maxLines: 2,
+                                        ?.withOpacity(0.8)),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         SizedBox(
                           width: 20.w,
                         ),
-                        FutureBuilder(
-                          future: FirebaseUtils.getAllUnreadMessage(chatUser),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return (snapshot.data?.docs.isNotEmpty ?? false)
-                                  ? Container(
-                                      constraints:
-                                          BoxConstraints(maxHeight: 22.w),
-                                      alignment: Alignment.center,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 3.w, horizontal: 8.w),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(16.w),
-                                        color: const Color(0xFFD2D5F9),
-                                      ),
-                                      child: Text(
-                                        snapshot.data?.docs.length.toString() ??
-                                            '',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall
-                                            ?.copyWith(fontSize: 10),
-                                      ),
-                                    )
-                                  : Container();
-                            }
-                            return Container();
-                          },
+                        BlocBuilder(
+                          builder: dBuilder<int, DefaultException>(
+                            onLoading: Container.new,
+                            onSuccess: (data) => data != null && data > 0
+                                ? Container(
+                                    constraints:
+                                        BoxConstraints(maxHeight: 22.w),
+                                    alignment: Alignment.center,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 3.w, horizontal: 8.w),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16.w),
+                                      color: const Color(0xFF878EE1),
+                                    ),
+                                    child: Text(
+                                      data.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                              fontSize: 10,
+                                              color: Colors.white),
+                                    ),
+                                  )
+                                : Container(),
+                            otherwise: (state) => Container(),
+                          ),
+                          bloc: chatCubit,
                         )
                       ],
                     ),
@@ -176,8 +177,8 @@ class Chatting extends StatelessWidget {
                   left: badgeLeftPosition,
                   child: Container(
                     padding: const EdgeInsets.all(2),
-                    width: badgeWidth,
-                    height: badgeHeight,
+                    width: badgeSize,
+                    height: badgeSize,
                     decoration: const BoxDecoration(
                         color: Colors.white, shape: BoxShape.circle),
                     child: Container(
