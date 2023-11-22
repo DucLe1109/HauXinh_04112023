@@ -33,7 +33,13 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
   late PersistentTabController _controller;
   late HomeCubit homeCubit;
 
-  // late StreamSubscription subscription;
+  late StreamSubscription subscriptionNoti;
+
+  @override
+  void deactivate() {
+    subscriptionNoti.cancel();
+    super.deactivate();
+  }
 
   @override
   void initState() {
@@ -120,14 +126,14 @@ class _HomePageState extends BaseStateFulWidgetState<HomePage> {
   }
 
   void listenFirebaseNotification() {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+    subscriptionNoti =
+        FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       if (Platform.isAndroid) {
         await handleAndroidNoti(message);
         return;
       }
       if (Platform.isIOS) {}
     });
-
   }
 
   Future<void> handleAndroidNoti(RemoteMessage message) async {

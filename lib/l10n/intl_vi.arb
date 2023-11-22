@@ -89,9 +89,6 @@
   "hour" : "giờ",
   "day" : "ngày",
   "ago": "trước",
-  "this_error_code_is_not_handled": "Mã lỗi này chưa được xử lý",
-  "sign_in_with_gmail" : "Đăng nhập bằng Gmail",
-  "sign_in_with_facebook" : "Đăng nhập bằng Facebook",
-  "sign_in_with_apple" : "Đăng nhập bằng Apple"
+  "this_error_code_is_not_handled": "Mã lỗi này chưa được xử lý"
 
 }
