@@ -10,6 +10,7 @@ import 'package:boilerplate/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends BaseStateFulWidget {
@@ -32,17 +33,14 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Column(
-          children: [
-            _buildBgSection(context),
-            SizedBox(
-              height: 36.w,
-            ),
-            _buildLoginSection(context),
-          ],
-        ),
+      body: Column(
+        children: [
+          _buildBgSection(context),
+          SizedBox(
+            height: 16.w,
+          ),
+          _buildLoginSection(context),
+        ],
       ),
     );
   }
@@ -88,16 +86,20 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
               onTap: () => authCubit.signInWithGoogle(),
               backgroundColor: AppColors.green200,
               context: context,
-              prefixIcon: Assets.images.google.image(scale: 14),
+              prefixIcon: SvgPicture.asset(Assets.images.icGmail.path),
               description: S.current.sign_in_with_gmail),
           SizedBox(
             height: 16.w,
           ),
           _buildLoginItem(
               onTap: () {},
-              backgroundColor: AppColors.blue200,
+              backgroundColor: AppColors.blue200.withOpacity(0.7),
               context: context,
-              prefixIcon: Assets.images.facebook.image(scale: 16),
+              prefixIcon: SvgPicture.asset(
+                Assets.images.icFacebook.path,
+                colorFilter:
+                    const ColorFilter.mode(AppColors.blue300, BlendMode.srcIn),
+              ),
               description: S.current.sign_in_with_facebook),
           SizedBox(
             height: 16.w,
@@ -106,7 +108,7 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
               onTap: () {},
               backgroundColor: AppColors.red200.withOpacity(0.8),
               context: context,
-              prefixIcon: Assets.images.apple.image(scale: 15),
+              prefixIcon: SvgPicture.asset(Assets.images.icApple.path),
               description: S.current.sign_in_with_apple),
         ],
       ),
@@ -146,12 +148,14 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
   }
 
   Widget _buildBgSection(BuildContext context) {
-    return Stack(
-      children: [
-        Assets.images.bgLogin.image(),
-        Positioned(
-            top: 120, left: -8, child: Assets.images.rose.image(scale: 5)),
-      ],
+    return Container(
+      margin: EdgeInsets.only(top: 80.w),
+      alignment: Alignment.topCenter,
+      child: SvgPicture.asset(
+        Assets.images.loginBackground.path,
+        width: 300.w,
+        height: 300.w,
+      ),
     );
   }
 }
