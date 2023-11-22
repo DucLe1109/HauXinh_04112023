@@ -86,7 +86,7 @@ class OutBubble extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: Container(
         constraints:
-            BoxConstraints(minWidth: 70.w, maxWidth: 300.w, minHeight: 10.w),
+            BoxConstraints(minWidth: 70.w, maxWidth: 200.w, minHeight: 10.w),
         margin: EdgeInsets.only(bottom: 5.w),
         padding: message.type == MessageType.text.name
             ? EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.w)

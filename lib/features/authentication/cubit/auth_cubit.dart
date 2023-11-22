@@ -22,17 +22,11 @@ class AuthCubit extends Cubit<AuthState> {
     required AuthService authService,
   }) : super(const AuthState()) {
     _authService = authService;
-    isRememberAccount = _authService.isRememberAccount;
-    username = _authService.username;
-    password = _authService.password;
     _auth = FirebaseAuth.instance;
   }
 
   late final AuthService _authService;
 
-  late bool isRememberAccount;
-  late String username;
-  late String password;
   late final FirebaseAuth _auth;
 
   Future<void> login(String username, String password) async {
@@ -49,10 +43,6 @@ class AuthCubit extends Cubit<AuthState> {
       );
       if (userCredential.user != null) {
         setLoginSessionDuration();
-        setRememberAccount(isRememberAccount);
-        isRememberAccount
-            ? rememberUser(username, password)
-            : rememberUser('', '');
 
         emit(
           state.copyWith(
@@ -103,11 +93,6 @@ class AuthCubit extends Cubit<AuthState> {
           await _auth.signInWithCredential(credential);
       if (userCredential.user != null) {
         setLoginSessionDuration();
-        setRememberAccount(isRememberAccount);
-        isRememberAccount
-            ? rememberUser(username, password)
-            : rememberUser('', '');
-
         if (await FirebaseUtils.isExistUser() == false) {
           await FirebaseUtils.createUser();
         }
@@ -170,9 +155,6 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> logout() async {
     await FirebaseAuth.instance.signOut();
     await GoogleSignIn().signOut();
-    isRememberAccount = _authService.isRememberAccount;
-    username = _authService.username;
-    password = _authService.password;
   }
 
 //

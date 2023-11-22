@@ -42,7 +42,7 @@ class ChatScreen extends BaseStateFulWidget {
 }
 
 class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late TextEditingController _messageEditingController;
   late FocusNode _messageFocusNode;
   late List<MessageCard> listMessageView;
@@ -63,6 +63,8 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addObserver(this);
 
     _keyboardSubscription =
         KeyboardVisibilityController().onChange.listen((bool visible) {});
@@ -94,7 +96,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     _messageFocusNode.addListener(() {
       if (_messageFocusNode.hasFocus) {
         setState(() {
-          keyboardHeight = keyboardHeightWhenOn;
+          // keyboardHeight = keyboardHeightWhenOn;
           isShowEmoji = false;
         });
       }
@@ -114,7 +116,19 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     _messageFocusNode.dispose();
     _scrollController.dispose();
     _keyboardSubscription.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+
     super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    final double newKeyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
+    // setState(() {
+    //   keyboardHeight = newKeyboardHeight;
+    // });
   }
 
   @override
@@ -221,14 +235,15 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
               _buildBottomSection(context),
               AnimatedContainer(
                 onEnd: () {
-                  if (keyboardHeight == keyboardHeightWhenOn && !_messageFocusNode.hasFocus) {
+                  if (keyboardHeight == keyboardHeightWhenOn &&
+                      !_messageFocusNode.hasFocus) {
                     setState(() {
                       isShowEmoji = true;
                     });
                   }
                 },
                 curve: Curves.easeOut,
-                duration: const Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 250),
                 height: keyboardHeight,
                 width: double.infinity,
                 child: isShowEmoji
@@ -685,7 +700,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     if (isScrollable) {
       _scrollController.animateTo(
         0,
-        curve: Curves.easeInQuart,
+        curve: Curves.easeOut,
         duration: const Duration(milliseconds: 300),
       );
     }

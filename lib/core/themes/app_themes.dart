@@ -143,7 +143,7 @@ class AppThemes {
       searchBarTheme: _lightSearchBarThemeData,
       buttonTheme: _lightButtonTheme,
       colorScheme: const ColorScheme.light().copyWith(
-          primary: const Color.fromARGB(255, 232, 250, 217),
+          primary: const Color.fromARGB(255, 216, 235, 255),
           secondary: const Color.fromARGB(255, 241, 241, 241),
           background: const Color.fromARGB(255, 255, 255, 235),
           onPrimary: AppColors.blue200,

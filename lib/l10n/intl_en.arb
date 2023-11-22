@@ -92,5 +92,8 @@
   "day": "day",
   "days": "days",
   "ago": "ago",
-  "this_error_code_is_not_handled": "This error code is not handled"
+  "this_error_code_is_not_handled": "This error code is not handled",
+  "sign_in_with_gmail" : "Sign in with Gmail",
+  "sign_in_with_facebook" : "Sign in with Facebook",
+  "sign_in_with_apple" : "Sign in with Apple"
 }
