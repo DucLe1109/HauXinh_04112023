@@ -85,6 +85,7 @@ dependencies:
   firebase_crashlytics: ^3.4.4
   http: ^1.1.0
   jumping_dot: ^0.0.6
+  flutter_keyboard_visibility: ^5.4.1
 
 
 dev_dependencies:

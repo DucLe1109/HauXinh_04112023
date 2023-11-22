@@ -1,5 +1,6 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:math' show pi;
 
@@ -24,6 +25,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -47,16 +49,24 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
   late ScrollController _scrollController;
   bool isScrollable = false;
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
-  late ValueNotifier<bool> isShowEmoji;
   late AnimationController _animationController;
   late Animation<double> animation;
   List<XFile> photos = [];
   late Stream<DocumentSnapshot<Map<String, dynamic>>> chatUserStream;
   late PersonalChatCubit _cubit;
+  late StreamSubscription<bool> _keyboardSubscription;
+
+  double keyboardHeight = 0.w;
+  double keyboardHeightWhenOn = 320.w;
+  bool isShowEmoji = false;
 
   @override
   void initState() {
     super.initState();
+
+    _keyboardSubscription =
+        KeyboardVisibilityController().onChange.listen((bool visible) {});
+
     _cubit = PersonalChatCubit();
     _cubit.initData(
         chatUser: widget.chatUser, numberOfItem: numOfMessagePerPage);
@@ -78,14 +88,15 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
       }
     });
 
-    isShowEmoji = ValueNotifier(false);
     listMessageView = [];
     _messageEditingController = TextEditingController();
     _messageFocusNode = FocusNode();
     _messageFocusNode.addListener(() {
-
       if (_messageFocusNode.hasFocus) {
-        isShowEmoji.value = false;
+        setState(() {
+          keyboardHeight = keyboardHeightWhenOn;
+          isShowEmoji = false;
+        });
       }
     });
     _animationController = AnimationController(
@@ -102,14 +113,14 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     _messageEditingController.dispose();
     _messageFocusNode.dispose();
     _scrollController.dispose();
-
+    _keyboardSubscription.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+      resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -199,21 +210,29 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
           behavior: HitTestBehavior.opaque,
           onTap: () {
             Utils.hideKeyboard();
-            if (isShowEmoji.value) {
-              isShowEmoji.value = false;
-            }
+            setState(() {
+              keyboardHeight = 0;
+              isShowEmoji = false;
+            });
           },
           child: Column(
             children: [
               _buildChatSection(context),
               _buildBottomSection(context),
-              ValueListenableBuilder(
-                valueListenable: isShowEmoji,
-                builder: (context, value, child) => Visibility(
-                    visible: value,
-                    child: SizedBox(
-                      height: 300.w,
-                      child: EmojiPicker(
+              AnimatedContainer(
+                onEnd: () {
+                  if (keyboardHeight == keyboardHeightWhenOn && !_messageFocusNode.hasFocus) {
+                    setState(() {
+                      isShowEmoji = true;
+                    });
+                  }
+                },
+                curve: Curves.easeOut,
+                duration: const Duration(milliseconds: 300),
+                height: keyboardHeight,
+                width: double.infinity,
+                child: isShowEmoji
+                    ? EmojiPicker(
                         textEditingController: _messageEditingController,
                         config: Config(
                           buttonMode: ButtonMode.CUPERTINO,
@@ -224,9 +243,29 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
                                   : 0.7),
                           bgColor: const Color(0xFFF2F2F2),
                         ),
-                      ),
-                    )),
-              )
+                      )
+                    : const Text(''),
+              ),
+              // ValueListenableBuilder(
+              //   valueListenable: isShowEmoji,
+              //   builder: (context, value, child) => Visibility(
+              //       visible: value,
+              //       child: SizedBox(
+              //         height: 300.w,
+              //         child: EmojiPicker(
+              //           textEditingController: _messageEditingController,
+              //           config: Config(
+              //             buttonMode: ButtonMode.CUPERTINO,
+              //             emojiSizeMax: 22.w *
+              //                 (foundation.defaultTargetPlatform ==
+              //                         TargetPlatform.iOS
+              //                     ? 1
+              //                     : 0.7),
+              //             bgColor: const Color(0xFFF2F2F2),
+              //           ),
+              //         ),
+              //       )),
+              // )
             ],
           ),
         ),
@@ -620,7 +659,13 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
       child: InkWell(
           onTap: () {
             Utils.hideKeyboard();
-            isShowEmoji.value = !isShowEmoji.value;
+            setState(() {
+              if (keyboardHeight == keyboardHeightWhenOn) {
+                isShowEmoji = true;
+                return;
+              }
+              keyboardHeight = keyboardHeightWhenOn;
+            });
           },
           borderRadius: BorderRadius.circular(100),
           child: Padding(
@@ -640,7 +685,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     if (isScrollable) {
       _scrollController.animateTo(
         0,
-        curve: Curves.easeOut,
+        curve: Curves.easeInQuart,
         duration: const Duration(milliseconds: 300),
       );
     }
