@@ -25,7 +25,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -42,33 +41,30 @@ class ChatScreen extends BaseStateFulWidget {
 }
 
 class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
-    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+    with SingleTickerProviderStateMixin, RouteAware {
+  Color sendButtonColor =
+      const Color.fromARGB(255, 115, 96, 242).withOpacity(0.8);
+  bool isScrollable = false;
+  List<XFile> photos = [];
+  bool isShowEmoji = false;
+  double currentKeyboardHeight = 0;
+  double keyboardHeight = 301;
+  late bool canBack;
+
   late TextEditingController _messageEditingController;
   late FocusNode _messageFocusNode;
   late List<MessageCard> listMessageView;
   late ScrollController _scrollController;
-  bool isScrollable = false;
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
   late AnimationController _animationController;
   late Animation<double> animation;
-  List<XFile> photos = [];
   late Stream<DocumentSnapshot<Map<String, dynamic>>> chatUserStream;
   late PersonalChatCubit _cubit;
-  late StreamSubscription<bool> _keyboardSubscription;
-
-  double keyboardHeight = 0.w;
-  double keyboardHeightWhenOn = 320.w;
-  bool isShowEmoji = false;
 
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addObserver(this);
-
-    _keyboardSubscription =
-        KeyboardVisibilityController().onChange.listen((bool visible) {});
-
+    canBack = true;
     _cubit = PersonalChatCubit();
     _cubit.initData(
         chatUser: widget.chatUser, numberOfItem: numOfMessagePerPage);
@@ -96,8 +92,16 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     _messageFocusNode.addListener(() {
       if (_messageFocusNode.hasFocus) {
         setState(() {
-          // keyboardHeight = keyboardHeightWhenOn;
-          isShowEmoji = false;
+          if (isShowEmoji) {
+            isShowEmoji = false;
+          }
+          currentKeyboardHeight = keyboardHeight;
+        });
+      }
+
+      if (!_messageFocusNode.hasFocus && !isShowEmoji && canBack) {
+        setState(() {
+          currentKeyboardHeight = 0;
         });
       }
     });
@@ -115,21 +119,9 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     _messageEditingController.dispose();
     _messageFocusNode.dispose();
     _scrollController.dispose();
-    _keyboardSubscription.cancel();
     _cubit.stopListenMessageStream();
-    WidgetsBinding.instance.removeObserver(this);
 
     super.dispose();
-  }
-
-  @override
-  void didChangeMetrics() {
-    super.didChangeMetrics();
-    final double newKeyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-
-    // setState(() {
-    //   keyboardHeight = newKeyboardHeight;
-    // });
   }
 
   @override
@@ -150,85 +142,18 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
         ),
         leading: const AppBarLeading(),
         titleSpacing: 0,
-        title: StreamBuilder(
-          builder: (context, snapshot) {
-            ChatUser? chatUser;
-            if (snapshot.hasData) {
-              chatUser = ChatUser.fromJson(snapshot.data!.data()!);
-            }
-            return Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(100.w),
-                  child: CachedNetworkImage(
-                    imageUrl: chatUser?.avatar ?? widget.chatUser.avatar,
-                    width: 36.w,
-                    height: 36.w,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                SizedBox(
-                  width: 10.w,
-                ),
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        chatUser?.fullName ?? widget.chatUser.fullName,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w500),
-                      ),
-                      SizedBox(
-                        height: 3.w,
-                      ),
-                      Text(getCurrentStatus(chatUser),
-                          style: Theme.of(context).textTheme.bodySmall)
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 20.w,
-                ),
-              ],
-            );
-          },
-          stream: chatUserStream,
-        ),
-        actions: [
-          SizedBox(
-            width: 30.w,
-            child: IconButton(
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  ///TODO
-                },
-                icon: Icon(
-                  CupertinoIcons.search,
-                  size: 20.w,
-                )),
-          ),
-          IconButton(
-              onPressed: () {
-                ///TODO
-              },
-              icon: Icon(
-                Icons.menu,
-                size: 20.w,
-              ))
-        ],
+        title: _buildTopSection(),
+        actions: _buildTopAction(),
       ),
       body: SafeArea(
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            Utils.hideKeyboard();
             setState(() {
-              keyboardHeight = 0;
               isShowEmoji = false;
+              currentKeyboardHeight = 0;
             });
+            Utils.hideKeyboard();
           },
           child: Column(
             children: [
@@ -236,56 +161,113 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
               _buildBottomSection(context),
               AnimatedContainer(
                 onEnd: () {
-                  if (keyboardHeight == keyboardHeightWhenOn &&
-                      !_messageFocusNode.hasFocus) {
-                    setState(() {
-                      isShowEmoji = true;
-                    });
+                  if (isShowEmoji) {
+                    setState(() {});
                   }
                 },
-                curve: Curves.easeOut,
-                duration: const Duration(milliseconds: 250),
-                height: keyboardHeight,
-                width: double.infinity,
-                child: isShowEmoji
-                    ? EmojiPicker(
-                        textEditingController: _messageEditingController,
-                        config: Config(
-                          buttonMode: ButtonMode.CUPERTINO,
-                          emojiSizeMax: 22.w *
-                              (foundation.defaultTargetPlatform ==
-                                      TargetPlatform.iOS
-                                  ? 1
-                                  : 0.7),
-                          bgColor: const Color(0xFFF2F2F2),
-                        ),
-                      )
-                    : const Text(''),
-              ),
-              // ValueListenableBuilder(
-              //   valueListenable: isShowEmoji,
-              //   builder: (context, value, child) => Visibility(
-              //       visible: value,
-              //       child: SizedBox(
-              //         height: 300.w,
-              //         child: EmojiPicker(
-              //           textEditingController: _messageEditingController,
-              //           config: Config(
-              //             buttonMode: ButtonMode.CUPERTINO,
-              //             emojiSizeMax: 22.w *
-              //                 (foundation.defaultTargetPlatform ==
-              //                         TargetPlatform.iOS
-              //                     ? 1
-              //                     : 0.7),
-              //             bgColor: const Color(0xFFF2F2F2),
-              //           ),
-              //         ),
-              //       )),
-              // )
+                duration: const Duration(milliseconds: 350),
+                curve: Curves.ease,
+                height: currentKeyboardHeight,
+                child: _buildEmoji(),
+              )
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildEmoji() {
+    return Offstage(
+      offstage: !isShowEmoji,
+      child: EmojiPicker(
+        textEditingController: _messageEditingController,
+        config: Config(
+            buttonMode: ButtonMode.CUPERTINO,
+            emojiSizeMax: 23.w *
+                (foundation.defaultTargetPlatform == TargetPlatform.iOS
+                    ? 1
+                    : 0.7),
+            bgColor: Theme.of(context).primaryColor,
+            indicatorColor: sendButtonColor,
+            iconColorSelected: sendButtonColor,
+            columns: 8),
+      ),
+    );
+  }
+
+  List<Widget> _buildTopAction() {
+    return [
+      SizedBox(
+        width: 30.w,
+        child: IconButton(
+            padding: EdgeInsets.zero,
+            onPressed: () {
+              ///TODO
+            },
+            icon: Icon(
+              CupertinoIcons.search,
+              size: 20.w,
+            )),
+      ),
+      IconButton(
+          onPressed: () {
+            ///TODO
+          },
+          icon: Icon(
+            Icons.menu,
+            size: 20.w,
+          ))
+    ];
+  }
+
+  StreamBuilder<DocumentSnapshot<Map<String, dynamic>>> _buildTopSection() {
+    return StreamBuilder(
+      builder: (context, snapshot) {
+        ChatUser? chatUser;
+        if (snapshot.hasData) {
+          chatUser = ChatUser.fromJson(snapshot.data!.data()!);
+        }
+        return Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(100.w),
+              child: CachedNetworkImage(
+                imageUrl: chatUser?.avatar ?? widget.chatUser.avatar,
+                width: 36.w,
+                height: 36.w,
+                fit: BoxFit.cover,
+              ),
+            ),
+            SizedBox(
+              width: 10.w,
+            ),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    chatUser?.fullName ?? widget.chatUser.fullName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(
+                    height: 3.w,
+                  ),
+                  Text(getCurrentStatus(chatUser),
+                      style: Theme.of(context).textTheme.bodySmall)
+                ],
+              ),
+            ),
+            SizedBox(
+              width: 20.w,
+            ),
+          ],
+        );
+      },
+      stream: chatUserStream,
     );
   }
 
@@ -369,20 +351,23 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
                         relativeWidth: 1.5,
                       ));
                     case InitiateDataSuccessFully():
+                      isScrollable = _cubit.currentListMessage.isNotEmpty;
+
                       return ListenableBuilder(
                         listenable: _cubit.animatedListNotifier,
                         builder: (context, child) => AnimatedList(
                           physics: const AlwaysScrollableScrollPhysics(),
                           key: listKey,
                           itemBuilder: (context, index, animation) {
-                            return SlideTransition(
-                              position: Tween(
-                                      begin: Offset(0.w, 5.w), end: Offset.zero)
+                            return SizeTransition(
+                              sizeFactor: Tween<double>(begin: 0, end: 1)
                                   .animate(CurvedAnimation(
                                       parent: animation,
                                       curve: Curves.easeOut)),
-                              child: SizeTransition(
-                                sizeFactor: Tween<double>(begin: 0, end: 1)
+                              child: SlideTransition(
+                                position: Tween(
+                                        begin: Offset(0.w, 5.w),
+                                        end: Offset.zero)
                                     .animate(CurvedAnimation(
                                         parent: animation,
                                         curve: Curves.easeOut)),
@@ -555,7 +540,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
       elevation: 3,
       shape: const CircleBorder(),
       child: Material(
-        color: const Color.fromARGB(255, 115, 96, 242).withOpacity(0.8),
+        color: sendButtonColor,
         shape: const CircleBorder(),
         child: InkWell(
             onTap: () {
@@ -624,8 +609,10 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
             final ImagePicker picker = ImagePicker();
             final result = await picker.pickMultiImage(imageQuality: 70);
             photos.addAll(result);
+            setState(() {
+              currentKeyboardHeight = 0;
+            });
             if (photos.isNotEmpty) await _animationController.forward();
-            setState(() {});
           },
           borderRadius: BorderRadius.circular(100),
           child: Assets.icons.icImage.image(
@@ -651,8 +638,11 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
             if (photo != null) {
               photos.add(photo);
             }
+            setState(() {
+              isShowEmoji = false;
+              currentKeyboardHeight = 0;
+            });
             if (photos.isNotEmpty) await _animationController.forward();
-            setState(() {});
           },
           borderRadius: BorderRadius.circular(100),
           child: Padding(
@@ -674,14 +664,19 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
       color: Colors.transparent,
       child: InkWell(
           onTap: () {
+            canBack = false;
             Utils.hideKeyboard();
             setState(() {
-              if (keyboardHeight == keyboardHeightWhenOn) {
-                isShowEmoji = true;
-                return;
-              }
-              keyboardHeight = keyboardHeightWhenOn;
+              currentKeyboardHeight = keyboardHeight;
             });
+
+            Future.delayed(
+              const Duration(milliseconds: 150),
+              () => setState(() {
+                isShowEmoji = true;
+                canBack = true;
+              }),
+            );
           },
           borderRadius: BorderRadius.circular(100),
           child: Padding(

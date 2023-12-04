@@ -12,8 +12,10 @@ import 'package:boilerplate/features/setting/view/setting_page.dart';
 import 'package:boilerplate/features/vacation/view/vacation.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/router/navigator_service.dart';
+import 'package:boilerplate/utils/dismiss_keyboard_navigation_observer.dart';
 import 'package:boilerplate/widgets/error_page.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rest_client/rest_client.dart';
@@ -55,8 +57,14 @@ class AppRouter {
   static const String chatScreenPath = '/chatScreenPath';
 
   static GoRouter get router => _router;
+
+  static final RouteObserver<PageRoute> _routeObserver = RouteObserver<PageRoute>();
+  static final DismissKeyboardNavigationObserver _navigationObserver =
+      DismissKeyboardNavigationObserver();
+
   static final _router = GoRouter(
     navigatorKey: NavigationService.navigatorKey,
+    observers: [_routeObserver, _navigationObserver],
     routes: <GoRoute>[
       GoRoute(
         name: loginNamed,

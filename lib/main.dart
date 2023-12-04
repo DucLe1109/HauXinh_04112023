@@ -18,7 +18,8 @@ Future<void> main() async {
       };
 
       /// Enabling foreground notifications in IOS
-      await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      await FirebaseMessaging.instance
+          .setForegroundNotificationPresentationOptions(
         alert: true, // Required to display a heads up notification
         badge: true,
         sound: true,

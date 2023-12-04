@@ -74,22 +74,19 @@ class _ListChatScreenState extends State<ListChatScreen> {
               icon: const Icon(CupertinoIcons.arrow_2_circlepath))
         ],
       ),
-      body: GestureDetector(
-        onTap: Utils.hideKeyboard,
-        child: ListView(
-          children: [
-            buildStorySection(),
-            Container(
-              height: 1,
-              color: Theme.of(context)
-                  .searchBarTheme
-                  .backgroundColor
-                  ?.resolve(<MaterialState>{}),
-            ),
-            buildSearchSection(context),
-            buildChatSection(),
-          ],
-        ),
+      body: ListView(
+        children: [
+          buildStorySection(),
+          Container(
+            height: 1,
+            color: Theme.of(context)
+                .searchBarTheme
+                .backgroundColor
+                ?.resolve(<MaterialState>{}),
+          ),
+          buildSearchSection(context),
+          buildChatSection(),
+        ],
       ),
     );
   }
