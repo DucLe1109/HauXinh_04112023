@@ -3,6 +3,7 @@ import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rest_client/rest_client.dart';
@@ -134,7 +135,7 @@ class Chatting extends StatelessWidget {
                         SizedBox(
                           width: 20.w,
                         ),
-                        FirebaseUtils.user != null
+                        FirebaseAuth.instance.currentUser != null
                             ? FutureBuilder(
                                 future:
                                     FirebaseUtils.getAllUnreadMessage(chatUser),
@@ -205,5 +206,5 @@ class Chatting extends StatelessWidget {
 
   bool isNotReadMessageYet(Message? message) =>
       (message?.readAt?.isEmpty ?? false) &&
-      message?.fromId != FirebaseUtils.user?.uid;
+      message?.fromId != FirebaseAuth.instance.currentUser?.uid;
 }

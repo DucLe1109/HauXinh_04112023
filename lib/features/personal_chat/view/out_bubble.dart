@@ -14,9 +14,9 @@ import 'package:photo_view/photo_view.dart';
 
 class OutBubble extends StatelessWidget {
   final MessageModel message;
-  final bool isRounded;
+  final bool isShowTail;
 
-  const OutBubble({super.key, required this.message, this.isRounded = false});
+  const OutBubble({super.key, required this.message, this.isShowTail = false});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class OutBubble extends StatelessWidget {
       return ClipRRect(
           borderRadius: BorderRadius.only(
             topRight: Radius.circular(circularValue),
-            topLeft: isRounded
+            topLeft: isShowTail
                 ? Radius.circular(circularValue)
                 : Radius.circular(0.w),
           ),
@@ -40,7 +40,7 @@ class OutBubble extends StatelessWidget {
           ClipRRect(
               borderRadius: BorderRadius.only(
                 topRight: Radius.circular(circularValue),
-                topLeft: isRounded
+                topLeft: isShowTail
                     ? Radius.circular(circularValue)
                     : Radius.circular(0.w),
               ),
@@ -59,7 +59,7 @@ class OutBubble extends StatelessWidget {
                         .withOpacity(0.5),
                     borderRadius: BorderRadius.only(
                       topRight: Radius.circular(circularValue),
-                      topLeft: isRounded
+                      topLeft: isShowTail
                           ? Radius.circular(circularValue)
                           : Radius.circular(0.w),
                     )),
@@ -93,7 +93,7 @@ class OutBubble extends StatelessWidget {
             : EdgeInsets.fromLTRB(0.w, 0.w, 0.w, 8.w),
         decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
-            borderRadius: !isRounded
+            borderRadius: !isShowTail
                 ? BorderRadius.only(
                     topRight: Radius.circular(circularValue),
                     topLeft: Radius.circular(circularValue),

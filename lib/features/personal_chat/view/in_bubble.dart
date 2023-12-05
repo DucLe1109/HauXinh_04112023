@@ -12,13 +12,13 @@ import 'package:rest_client/rest_client.dart';
 class InBubble extends StatelessWidget {
   final MessageModel message;
   final ChatUser chatUser;
-  final bool isRounded;
+  final bool isShowTail;
 
   const InBubble({
     super.key,
     required this.chatUser,
     required this.message,
-    this.isRounded = false,
+    this.isShowTail = false,
   });
 
   @override
@@ -32,7 +32,7 @@ class InBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Visibility(
-            visible: !isRounded,
+            visible: !isShowTail,
             child: CachedNetworkImage(
               imageBuilder: (context, imageProvider) => Container(
                 width: smallAvatarSize,
@@ -53,13 +53,13 @@ class InBubble extends StatelessWidget {
             child: Container(
               constraints: BoxConstraints(maxWidth: 200.w, minHeight: 10.w),
               margin: EdgeInsets.only(
-                  bottom: 5.w, left: isRounded ? smallAvatarSize : 0.w),
+                  bottom: 5.w, left: isShowTail ? smallAvatarSize : 0.w),
               padding: message.type == MessageType.text.name
                   ? EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.w)
                   : EdgeInsets.fromLTRB(0.w, 0.w, 0.w, 8.w),
               decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.secondary,
-                  borderRadius: !isRounded
+                  borderRadius: !isShowTail
                       ? BorderRadius.only(
                           topRight: Radius.circular(circularValue),
                           bottomLeft: Radius.circular(circularValue),
@@ -124,7 +124,7 @@ class InBubble extends StatelessWidget {
                             },
                             child: ClipRRect(
                                 borderRadius: BorderRadius.only(
-                                  topLeft: isRounded
+                                  topLeft: isShowTail
                                       ? Radius.circular(circularValue)
                                       : Radius.circular(0.w),
                                   topRight: Radius.circular(circularValue),

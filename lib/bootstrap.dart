@@ -4,6 +4,7 @@ import 'package:boilerplate/features/app/view/app.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/injector/injector.dart';
 import 'package:boilerplate/services/crashlytics_service/crashlytics_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -27,7 +28,7 @@ Future<void> bootstrap({
 
     Bloc.observer = AppBlocObserver();
 
-    if (FirebaseUtils.user != null) {
+    if (FirebaseAuth.instance.currentUser != null) {
       await FirebaseUtils.getSelfInfo();
     }
     runApp(const App());

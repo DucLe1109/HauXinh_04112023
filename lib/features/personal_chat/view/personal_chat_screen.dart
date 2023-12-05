@@ -112,7 +112,6 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
       }
     }
 
-
     if (_scrollController.position.pixels > 30 &&
         fadeAnimationController.value != 1) {
       fadeAnimationController.forward();
@@ -314,84 +313,80 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
 
   Positioned _buildMainChat() {
     return Positioned.fill(
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: BlocConsumer(
-          listener: (context, state) {
-            if (state is NewMessageState) {
-              listKey.currentState?.insertItem(0);
+      child: BlocConsumer(
+        listener: (context, state) {
+          if (state is NewMessageState) {
+            listKey.currentState?.insertItem(0);
 
-              /// Delete item.
-              if (_cubit.currentListMessage.length > numOfMessagePerPage) {
-                listKey.currentState?.removeItem(
-                    _cubit.currentListMessage.length - 1,
-                    (context, animation) => Container());
-                _cubit.currentListMessage.removeLast();
-              }
+            /// Delete item.
+            if (_cubit.currentListMessage.length > numOfMessagePerPage) {
+              listKey.currentState?.removeItem(
+                  _cubit.currentListMessage.length - 1,
+                  (context, animation) => Container());
+              _cubit.currentListMessage.removeLast();
             }
-            if (state is ErrorState) {
-              showToast(
-                  toastType: ToastType.error,
-                  context: context,
-                  title: S.current.update_fail,
-                  description: (state.error as DefaultException).message);
-            }
-          },
-          bloc: _cubit,
-          listenWhen: (previous, current) =>
-              current is NewMessageState || current is ErrorState,
-          buildWhen: (previous, current) =>
-              current is InitiateData || current is InitiateDataSuccessFully,
-          builder: (context, state) {
-            switch (state) {
-              case InitiateData():
-                return Center(
-                    child: BaseLoadingDialog(
-                  startRatio: 0.8,
-                  iconHeight: 26.w,
-                  iconWidth: 26.w,
-                  radius: 28.w,
-                  relativeWidth: 1.5,
-                ));
-              case InitiateDataSuccessFully():
-                isScrollable = _cubit.currentListMessage.isNotEmpty;
+          }
+          if (state is ErrorState) {
+            showToast(
+                toastType: ToastType.error,
+                context: context,
+                title: S.current.update_fail,
+                description: (state.error as DefaultException).message);
+          }
+        },
+        bloc: _cubit,
+        listenWhen: (previous, current) =>
+            current is NewMessageState || current is ErrorState,
+        buildWhen: (previous, current) =>
+            current is InitiateData || current is InitiateDataSuccessFully,
+        builder: (context, state) {
+          switch (state) {
+            case InitiateData():
+              return Center(
+                  child: BaseLoadingDialog(
+                startRatio: 0.8,
+                iconHeight: 26.w,
+                iconWidth: 26.w,
+                radius: 28.w,
+                relativeWidth: 1.5,
+              ));
+            case InitiateDataSuccessFully():
+              isScrollable = _cubit.currentListMessage.isNotEmpty;
 
-                return ListenableBuilder(
-                  listenable: _cubit.animatedListNotifier,
-                  builder: (context, child) => AnimatedList(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    key: listKey,
-                    itemBuilder: (context, index, animation) {
-                      return SizeTransition(
-                        sizeFactor: Tween<double>(begin: 0, end: 1).animate(
-                            CurvedAnimation(
-                                parent: animation, curve: Curves.easeOut)),
-                        child: SlideTransition(
-                          position:
-                              Tween(begin: Offset(0.w, 5.w), end: Offset.zero)
-                                  .animate(CurvedAnimation(
-                                      parent: animation,
-                                      curve: Curves.easeOut)),
-                          child: MessageCard(
-                              chatUser: widget.chatUser,
-                              message: _cubit.currentListMessage[index],
-                              isRounded: isRounded(index)),
-                        ),
-                      );
-                    },
-                    initialItemCount: _cubit.currentListMessage.length,
-                    controller: _scrollController,
-                    shrinkWrap: true,
-                    padding:
-                        EdgeInsets.symmetric(vertical: 16.w, horizontal: 16.w),
-                    reverse: true,
-                  ),
-                );
-              default:
-                return Container();
-            }
-          },
-        ),
+              return ListenableBuilder(
+                listenable: _cubit.animatedListNotifier,
+                builder: (context, child) => AnimatedList(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  key: listKey,
+                  itemBuilder: (context, index, animation) {
+                    return SizeTransition(
+                      sizeFactor: Tween<double>(begin: 0, end: 1).animate(
+                          CurvedAnimation(
+                              parent: animation, curve: Curves.easeOut)),
+                      child: SlideTransition(
+                        position:
+                            Tween(begin: Offset(0.w, 5.w), end: Offset.zero)
+                                .animate(CurvedAnimation(
+                                    parent: animation, curve: Curves.easeOut)),
+                        child: MessageCard(
+                            chatUser: widget.chatUser,
+                            message: _cubit.currentListMessage[index],
+                            isShowTail: isShowTail(index)),
+                      ),
+                    );
+                  },
+                  initialItemCount: _cubit.currentListMessage.length,
+                  controller: _scrollController,
+                  shrinkWrap: true,
+                  padding:
+                      EdgeInsets.symmetric(vertical: 16.w, horizontal: 16.w),
+                  reverse: true,
+                ),
+              );
+            default:
+              return Container();
+          }
+        },
       ),
     );
   }
@@ -455,10 +450,20 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     );
   }
 
-  bool isRounded(int index) {
-    return index < _cubit.currentListMessage.length - 1 &&
-        _cubit.currentListMessage[index].fromId ==
-            _cubit.currentListMessage[index + 1].fromId;
+  bool isShowTail(int index) {
+    if ((index + 1 < _cubit.currentListMessage.length &&
+            index - 1 >= 0 &&
+            _cubit.currentListMessage[index + 1].fromId ==
+                _cubit.currentListMessage[index].fromId &&
+            _cubit.currentListMessage[index - 1].fromId !=
+                _cubit.currentListMessage[index].fromId) ||
+        index == 0) {
+      return true;
+    }
+    return false;
+    // return index < _cubit.currentListMessage.length - 1 &&
+    //     _cubit.currentListMessage[index].fromId ==
+    //         _cubit.currentListMessage[index + 1].fromId;
   }
 
   Widget _buildJumpingDot() {
@@ -602,9 +607,8 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
         child: InkWell(
             onTap: () {
               if (photos.isNotEmpty) {
-                sendImageOnlineMode();
-
                 sendImageOfflineMode();
+                sendImageOnlineMode();
 
                 photos.clear();
                 goTopOfList();

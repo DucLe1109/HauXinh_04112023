@@ -6,7 +6,9 @@ import 'package:boilerplate/features/dog_image_random/view/dog_image_random_page
 import 'package:boilerplate/features/home/view/home_page.dart';
 import 'package:boilerplate/features/information_collection/view/information_collection_screen.dart';
 import 'package:boilerplate/features/intro/intro_page.dart';
+import 'package:boilerplate/features/personal_chat/model/image_source.dart';
 import 'package:boilerplate/features/personal_chat/view/personal_chat_screen.dart';
+import 'package:boilerplate/features/personal_chat/view/zoomable_image_screen.dart';
 import 'package:boilerplate/features/setting/cubit/setting_cubit.dart';
 import 'package:boilerplate/features/setting/view/infor_utility/information_screen.dart';
 import 'package:boilerplate/features/setting/view/setting_page.dart';
@@ -57,12 +59,16 @@ class AppRouter {
   static const String chatScreen = 'chatScreen';
   static const String chatScreenPath = '/chatScreenPath';
 
+  static const String zoomableImageScreen = 'zoomableImageScreen';
+  static const String zoomableImageScreenPath = '/zoomableImageScreen';
+
   static const String infoCollectionScreen = 'infoCollectionScreen';
   static const String infoCollectionScreenPath = '/infoCollectionScreenPath';
 
   static GoRouter get router => _router;
 
-  static final RouteObserver<PageRoute> _routeObserver = RouteObserver<PageRoute>();
+  static final RouteObserver<PageRoute> _routeObserver =
+      RouteObserver<PageRoute>();
   static final DismissKeyboardNavigationObserver _navigationObserver =
       DismissKeyboardNavigationObserver();
 
@@ -122,6 +128,20 @@ class AppRouter {
         builder: (context, state) {
           final ChatUser chatUser = state.extra! as ChatUser;
           return ChatScreen(chatUser);
+        },
+      ),
+      GoRoute(
+        name: zoomableImageScreen,
+        path: zoomableImageScreenPath,
+        builder: (context, state) {
+          final ImageSource imageSource = state.extra! as ImageSource;
+          return imageSource.localLink.isNotEmpty
+              ? ZoomableImageScreen(
+                  uri: imageSource.localLink,
+                )
+              : ZoomableImageScreen(
+                  url: imageSource.remoteLink,
+                );
         },
       ),
       GoRoute(

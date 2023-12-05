@@ -88,6 +88,9 @@ dependencies:
   flutter_keyboard_visibility: ^5.4.1
   delayed_display: ^2.0.0
   flutter_animate: ^4.3.0
+  chat_bubbles: ^1.5.0
+  photox: ^0.2.0
+  dismissible_page: ^1.0.2
 
 
 dev_dependencies:

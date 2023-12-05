@@ -25,15 +25,12 @@ class FirebaseUtils {
   FirebaseUtils._();
 
   /// --------------- Get firebase instance ---------------
-  static FirebaseAuth get firebaseAuth => FirebaseAuth.instance;
 
   static FirebaseFirestore get firebaseStore => FirebaseFirestore.instance;
 
   static FirebaseStorage get firebaseStorage => FirebaseStorage.instance;
 
   static FirebaseMessaging get firebaseMessaging => FirebaseMessaging.instance;
-
-  static User? get user => firebaseAuth.currentUser;
 
   /// --------------- End get firebase instance ---------------
 
@@ -68,34 +65,34 @@ class FirebaseUtils {
     final ChatUser chatUser = ChatUser(
         about: '',
         createdAt: currentTime,
-        email: user?.email ?? '',
-        id: user?.uid ?? '',
+        email: FirebaseAuth.instance.currentUser?.email ?? '',
+        id: FirebaseAuth.instance.currentUser?.uid ?? '',
         isOnline: false,
         isHasStory: false,
         lastActive: currentTime,
-        fullName: user?.displayName ?? '',
+        fullName: FirebaseAuth.instance.currentUser?.displayName ?? '',
         pushToken: '',
-        avatar: user?.photoURL ?? '',
+        avatar: FirebaseAuth.instance.currentUser?.photoURL ?? '',
         birthday: '',
         nickName: '',
         phoneNumber: '');
     await firebaseStore
         .collection(Collections.chatUser.value)
-        .doc(user?.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .set(chatUser.toJson());
   }
 
   static void updateUserToken(String pushToken) {
     firebaseStore
         .collection(Collections.chatUser.value)
-        .doc(user?.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .update({ChatUserProperty.pushToken.value: pushToken});
   }
 
   static Future<bool> isExistUser() async {
     return (await firebaseStore
             .collection(Collections.chatUser.value)
-            .doc(user?.uid)
+            .doc(FirebaseAuth.instance.currentUser?.uid)
             .get())
         .exists;
   }
@@ -105,7 +102,7 @@ class FirebaseUtils {
   static Future<void> getSelfInfo() async {
     return firebaseStore
         .collection(Collections.chatUser.value)
-        .doc(user?.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .get()
         .then((user) async {
       if (user.exists) {
@@ -117,7 +114,7 @@ class FirebaseUtils {
   static Stream<DocumentSnapshot<Map<String, dynamic>>> getSelfInfoStream() {
     return firebaseStore
         .collection(Collections.chatUser.value)
-        .doc(user?.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .snapshots();
   }
 
@@ -129,7 +126,7 @@ class FirebaseUtils {
       required String birthday}) async {
     await firebaseStore
         .collection(Collections.chatUser.value)
-        .doc(user?.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .update(me
             .copyWith(
                 phoneNumber: phone,
@@ -143,7 +140,7 @@ class FirebaseUtils {
   static Future<void> addInformation(String nickName, String phone) async {
     await firebaseStore
         .collection(Collections.chatUser.value)
-        .doc(user?.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .update(me.copyWith(nickName: nickName, phoneNumber: phone).toJson());
   }
 
@@ -152,7 +149,9 @@ class FirebaseUtils {
     final extension = file.path.split('.')[1];
 
     /// upload image
-    final ref = firebaseStorage.ref().child('avatar/${user?.uid}.$extension');
+    final ref = firebaseStorage
+        .ref()
+        .child('avatar/${FirebaseAuth.instance.currentUser?.uid}.$extension');
     await ref
         .putFile(file, SettableMetadata(contentType: 'image/*'))
         .then((p0) {
@@ -163,15 +162,15 @@ class FirebaseUtils {
     final String avatarPath = await ref.getDownloadURL();
     await firebaseStore
         .collection(Collections.chatUser.value)
-        .doc(user?.uid)
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .update(me.copyWith(avatar: avatarPath).toJson());
   }
 
   static Future<void> updateUserStatus({required bool isOnline}) async {
-    if (user != null) {
+    if (FirebaseAuth.instance.currentUser != null) {
       await firebaseStore
           .collection(Collections.chatUser.value)
-          .doc(user!.uid)
+          .doc(FirebaseAuth.instance.currentUser?.uid)
           .update({
         ChatUserProperty.lastActive.value:
             DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now()),
@@ -194,16 +193,17 @@ class FirebaseUtils {
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
     return firebaseStore
         .collection(Collections.chatUser.value)
-        .where(ChatUserProperty.id.value, isNotEqualTo: user?.uid)
+        .where(ChatUserProperty.id.value,
+            isNotEqualTo: FirebaseAuth.instance.currentUser?.uid)
         .snapshots();
   }
 
   /// Function to generate unique ID by 2 user id
   static String getConversationID(String id) {
-    if (user != null) {
-      return user!.uid.hashCode <= id.hashCode
-          ? '${user?.uid}_$id'
-          : '${id}_${user?.uid}';
+    if (FirebaseAuth.instance.currentUser != null) {
+      return FirebaseAuth.instance.currentUser!.uid.hashCode <= id.hashCode
+          ? '${FirebaseAuth.instance.currentUser?.uid}_$id'
+          : '${id}_${FirebaseAuth.instance.currentUser?.uid}';
     }
     return '';
   }
@@ -271,7 +271,7 @@ class FirebaseUtils {
       readAt: '',
       msg: msg,
       timeStamp: messageID,
-      fromId: user?.uid,
+      fromId: FirebaseAuth.instance.currentUser?.uid,
     );
     await ref.doc(messageID).set(message.toJson()).then((value) =>
         pushNotification(

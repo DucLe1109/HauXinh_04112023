@@ -1,9 +1,11 @@
+import 'package:boilerplate/features/personal_chat/message_type.dart';
 import 'package:boilerplate/features/personal_chat/model/message_model.dart';
-import 'package:boilerplate/features/personal_chat/view/in_bubble.dart';
-import 'package:boilerplate/features/personal_chat/view/out_bubble.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:boilerplate/widgets/custom_image_bubble.dart';
+import 'package:boilerplate/widgets/custom_bubble.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rest_client/rest_client.dart';
 
 class MessageCard extends StatefulWidget {
@@ -11,12 +13,12 @@ class MessageCard extends StatefulWidget {
     super.key,
     required this.message,
     required this.chatUser,
-    this.isRounded = false,
+    this.isShowTail = false,
   });
 
   final MessageModel message;
   final ChatUser chatUser;
-  final bool isRounded;
+  final bool isShowTail;
 
   @override
   State<MessageCard> createState() => _MessageCardState();
@@ -34,7 +36,7 @@ class _MessageCardState extends State<MessageCard>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    if (FirebaseUtils.user?.uid != widget.message.fromId) {
+    if (FirebaseAuth.instance.currentUser?.uid != widget.message.fromId) {
       return _buildInBubble();
     } else {
       return _buildOutBubble();
@@ -45,17 +47,25 @@ class _MessageCardState extends State<MessageCard>
     if (widget.message.readAt?.isEmpty ?? false) {
       FirebaseUtils.readMessage(widget.message);
     }
-    return InBubble(
-      chatUser: widget.chatUser,
+    return CustomBubble(
+      imageUrl: widget.chatUser.avatar,
+      color: Theme.of(context).colorScheme.secondary,
+      tail: widget.isShowTail,
+      constraints:
+          BoxConstraints(maxWidth: 200.w, minHeight: 10.w, minWidth: 30.w),
+      isSender: false,
       message: widget.message,
-      isRounded: widget.isRounded,
     );
   }
 
   Widget _buildOutBubble() {
-    return OutBubble(
+    return CustomBubble(
       message: widget.message,
-      isRounded: widget.isRounded,
+      imageUrl: widget.chatUser.avatar,
+      color: Theme.of(context).colorScheme.primary,
+      tail: widget.isShowTail,
+      constraints:
+          BoxConstraints(maxWidth: 200.w, minHeight: 10.w, minWidth: 30.w),
     );
   }
 
