@@ -1,3 +1,5 @@
+// ignore_for_file: type_annotate_public_apis
+
 import 'package:boilerplate/configs/app_config.dart';
 import 'package:boilerplate/core/keys/app_keys.dart';
 import 'package:boilerplate/services/app_service/app_service.dart';
@@ -44,5 +46,16 @@ class AppServiceImpl implements AppService {
       key: AppKeys.localeKey,
       value: locale,
     );
+  }
+
+  @override
+  // TODO: implement keyboardHeight
+  double get keyboardHeight =>
+      _localStorageService.getDouble(key: AppKeys.keyboardHeight) ?? 0;
+
+  @override
+  Future<void> setAppProperty(
+      {required AppProperty property, required value}) async {
+    _localStorageService.setValue(key: property.value, value: value);
   }
 }

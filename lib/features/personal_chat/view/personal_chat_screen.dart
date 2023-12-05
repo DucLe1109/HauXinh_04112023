@@ -15,6 +15,8 @@ import 'package:boilerplate/features/personal_chat/view/message_card.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/assets.gen.dart';
 import 'package:boilerplate/generated/l10n.dart';
+import 'package:boilerplate/injector/injector.dart';
+import 'package:boilerplate/services/app_service/app_service.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:boilerplate/widgets/app_bar_leading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -41,14 +43,16 @@ class ChatScreen extends BaseStateFulWidget {
 }
 
 class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
-    with SingleTickerProviderStateMixin, RouteAware {
+    with SingleTickerProviderStateMixin {
   Color sendButtonColor =
       const Color.fromARGB(255, 115, 96, 242).withOpacity(0.8);
   bool isScrollable = false;
   List<XFile> photos = [];
   bool isShowEmoji = false;
   double currentKeyboardHeight = 0;
-  double keyboardHeight = 301;
+
+  late AppService _appService;
+  late double keyboardHeight;
   late bool canBack;
 
   late TextEditingController _messageEditingController;
@@ -64,6 +68,9 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
   @override
   void initState() {
     super.initState();
+    _appService = Injector.instance();
+    keyboardHeight = _appService.keyboardHeight;
+
     canBack = true;
     _cubit = PersonalChatCubit();
     _cubit.initData(
@@ -157,7 +164,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
           },
           child: Column(
             children: [
-              _buildChatSection(context),
+              _buildConversationSection(context),
               _buildBottomSection(context),
               AnimatedContainer(
                 onEnd: () {
@@ -277,123 +284,153 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
         : Utils.formatToLastStatusTime(chatUser?.lastActive);
   }
 
-  Widget _buildChatSection(BuildContext context) {
+  Widget _buildConversationSection(BuildContext context) {
     return Expanded(
       child: Stack(
         children: [
-          BlocConsumer(
-              listener: (context, state) {
-                switch (state) {
-                  case LoadMoreSuccessfully():
-                    listKey.currentState?.insertAllItems(
-                        0, state.numberOfNewMessage,
-                        duration: Duration.zero);
-                    break;
-                }
-              },
-              listenWhen: (previous, current) =>
-                  current is LoadMoreSuccessfully,
-              builder: (context, state) {
-                switch (state) {
-                  case LoadingMore():
-                    return _buildJumpingDot();
-                  case LoadMoreSuccessfully():
-                    return Container();
-                  default:
-                    return Container();
-                }
-              },
-              buildWhen: (previous, current) =>
-                  current is LoadingMore ||
-                  current is LoadMoreSuccessfully ||
-                  current is LoadMoreDone,
-              bloc: _cubit),
-          Positioned.fill(
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: BlocConsumer(
-                listener: (context, state) {
-                  if (state is NewMessageState) {
-                    listKey.currentState?.insertItem(0);
+          _buildLoadMore(),
+          _buildMainChat(),
+          _buildAutoScrollToBottom()
+        ],
+      ),
+    );
+  }
 
-                    /// Delete item.
-                    if (_cubit.currentListMessage.length >
-                        numOfMessagePerPage) {
-                      listKey.currentState?.removeItem(
-                          _cubit.currentListMessage.length - 1,
-                          (context, animation) => Container());
-                      _cubit.currentListMessage.removeLast();
-                    }
-                  }
-                  if (state is ErrorState) {
-                    showToast(
-                        toastType: ToastType.error,
-                        context: context,
-                        title: S.current.update_fail,
-                        description: (state.error as DefaultException).message);
-                  }
-                },
-                bloc: _cubit,
-                listenWhen: (previous, current) =>
-                    current is NewMessageState || current is ErrorState,
-                buildWhen: (previous, current) =>
-                    current is InitiateData ||
-                    current is InitiateDataSuccessFully,
-                builder: (context, state) {
-                  switch (state) {
-                    case InitiateData():
-                      return Center(
-                          child: BaseLoadingDialog(
-                        startRatio: 0.8,
-                        iconHeight: 26.w,
-                        iconWidth: 26.w,
-                        radius: 28.w,
-                        relativeWidth: 1.5,
-                      ));
-                    case InitiateDataSuccessFully():
-                      isScrollable = _cubit.currentListMessage.isNotEmpty;
+  Positioned _buildMainChat() {
+    return Positioned.fill(
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: BlocConsumer(
+          listener: (context, state) {
+            if (state is NewMessageState) {
+              listKey.currentState?.insertItem(0);
 
-                      return ListenableBuilder(
-                        listenable: _cubit.animatedListNotifier,
-                        builder: (context, child) => AnimatedList(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          key: listKey,
-                          itemBuilder: (context, index, animation) {
-                            return SizeTransition(
-                              sizeFactor: Tween<double>(begin: 0, end: 1)
+              /// Delete item.
+              if (_cubit.currentListMessage.length > numOfMessagePerPage) {
+                listKey.currentState?.removeItem(
+                    _cubit.currentListMessage.length - 1,
+                    (context, animation) => Container());
+                _cubit.currentListMessage.removeLast();
+              }
+            }
+            if (state is ErrorState) {
+              showToast(
+                  toastType: ToastType.error,
+                  context: context,
+                  title: S.current.update_fail,
+                  description: (state.error as DefaultException).message);
+            }
+          },
+          bloc: _cubit,
+          listenWhen: (previous, current) =>
+              current is NewMessageState || current is ErrorState,
+          buildWhen: (previous, current) =>
+              current is InitiateData || current is InitiateDataSuccessFully,
+          builder: (context, state) {
+            switch (state) {
+              case InitiateData():
+                return Center(
+                    child: BaseLoadingDialog(
+                  startRatio: 0.8,
+                  iconHeight: 26.w,
+                  iconWidth: 26.w,
+                  radius: 28.w,
+                  relativeWidth: 1.5,
+                ));
+              case InitiateDataSuccessFully():
+                isScrollable = _cubit.currentListMessage.isNotEmpty;
+
+                return ListenableBuilder(
+                  listenable: _cubit.animatedListNotifier,
+                  builder: (context, child) => AnimatedList(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    key: listKey,
+                    itemBuilder: (context, index, animation) {
+                      return SizeTransition(
+                        sizeFactor: Tween<double>(begin: 0, end: 1).animate(
+                            CurvedAnimation(
+                                parent: animation, curve: Curves.easeOut)),
+                        child: SlideTransition(
+                          position:
+                              Tween(begin: Offset(0.w, 5.w), end: Offset.zero)
                                   .animate(CurvedAnimation(
                                       parent: animation,
                                       curve: Curves.easeOut)),
-                              child: SlideTransition(
-                                position: Tween(
-                                        begin: Offset(0.w, 5.w),
-                                        end: Offset.zero)
-                                    .animate(CurvedAnimation(
-                                        parent: animation,
-                                        curve: Curves.easeOut)),
-                                child: MessageCard(
-                                    chatUser: widget.chatUser,
-                                    message: _cubit.currentListMessage[index],
-                                    isRounded: isRounded(index)),
-                              ),
-                            );
-                          },
-                          initialItemCount: _cubit.currentListMessage.length,
-                          controller: _scrollController,
-                          shrinkWrap: true,
-                          padding: EdgeInsets.symmetric(
-                              vertical: 16.w, horizontal: 16.w),
-                          reverse: true,
+                          child: MessageCard(
+                              chatUser: widget.chatUser,
+                              message: _cubit.currentListMessage[index],
+                              isRounded: isRounded(index)),
                         ),
                       );
-                    default:
-                      return Container();
-                  }
-                },
-              ),
-            ),
+                    },
+                    initialItemCount: _cubit.currentListMessage.length,
+                    controller: _scrollController,
+                    shrinkWrap: true,
+                    padding:
+                        EdgeInsets.symmetric(vertical: 16.w, horizontal: 16.w),
+                    reverse: true,
+                  ),
+                );
+              default:
+                return Container();
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  BlocConsumer<PersonalChatCubit, Object?> _buildLoadMore() {
+    return BlocConsumer(
+        listener: (context, state) {
+          switch (state) {
+            case LoadMoreSuccessfully():
+              listKey.currentState?.insertAllItems(0, state.numberOfNewMessage,
+                  duration: Duration.zero);
+              break;
+          }
+        },
+        listenWhen: (previous, current) => current is LoadMoreSuccessfully,
+        builder: (context, state) {
+          switch (state) {
+            case LoadingMore():
+              return _buildJumpingDot();
+            case LoadMoreSuccessfully():
+              return Container();
+            default:
+              return Container();
+          }
+        },
+        buildWhen: (previous, current) =>
+            current is LoadingMore ||
+            current is LoadMoreSuccessfully ||
+            current is LoadMoreDone,
+        bloc: _cubit);
+  }
+
+  Align _buildAutoScrollToBottom() {
+    return Align(
+      alignment: const Alignment(1, 0.85),
+      child: Material(
+        elevation: 2,
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12.w), bottomLeft: Radius.circular(12.w)),
+        child: InkWell(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12.w),
+              bottomLeft: Radius.circular(12.w)),
+          onTap: goTopOfList,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.w),
+            decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12.w),
+                    bottomLeft: Radius.circular(12.w))),
+            child: Assets.images.scrollDownButtonImage
+                .image(width: 22.w, height: 22.w, color: Colors.blueAccent),
           ),
-        ],
+        ),
       ),
     );
   }

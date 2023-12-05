@@ -1,4 +1,6 @@
 import 'package:boilerplate/core/global_variable.dart';
+import 'package:boilerplate/injector/injector.dart';
+import 'package:boilerplate/services/app_service/app_service.dart';
 import 'package:flutter/material.dart';
 
 class BaseTextField extends StatefulWidget {
@@ -26,6 +28,8 @@ class _BaseTextFieldState extends State<BaseTextField> {
   @override
   void initState() {
     super.initState();
+
+
     widget.controller.addListener(() {
       setState(() {});
     });
@@ -42,6 +46,14 @@ class _BaseTextFieldState extends State<BaseTextField> {
       focusNode: widget.focusNode,
       style: widget.textStyle ?? Theme.of(context).textTheme.bodyMedium,
       decoration: InputDecoration(
+          labelStyle:
+              TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
+          prefixIconColor: Theme.of(context).iconTheme.color,
+          suffixIconColor: Theme.of(context).iconTheme.color,
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+              borderSide:
+                  BorderSide(color: Theme.of(context).iconTheme.color!)),
           prefixIcon: widget.prefixIcon,
           suffixIcon: isShowTrailing(),
           label: Text(widget.label ?? ''),

@@ -8,6 +8,8 @@ import 'package:boilerplate/features/setting/cubit/setting_cubit.dart';
 import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/assets.gen.dart';
 import 'package:boilerplate/generated/l10n.dart';
+import 'package:boilerplate/injector/injector.dart';
+import 'package:boilerplate/services/app_service/app_service.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:boilerplate/widgets/app_bar_leading.dart';
 import 'package:boilerplate/widgets/base_outline_text_field.dart';
