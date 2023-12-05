@@ -1,6 +1,7 @@
 import 'package:boilerplate/features/app/bloc/app_bloc.dart';
 import 'package:boilerplate/features/authentication/login_screen.dart';
 import 'package:boilerplate/features/home/view/home_page.dart';
+import 'package:boilerplate/features/information_collection/view/information_collection_screen.dart';
 import 'package:boilerplate/features/intro/intro_page.dart';
 import 'package:boilerplate/injector/injector.dart';
 import 'package:boilerplate/services/auth_service/auth_service.dart';

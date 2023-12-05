@@ -17,6 +17,8 @@ class ChatUser with _$ChatUser {
     required String pushToken,
     required String avatar,
     required String birthday,
+    required String nickName,
+    required String phoneNumber,
   }) = _ChatUser;
 
   factory ChatUser.fromJson(Map<String, dynamic> json) =>

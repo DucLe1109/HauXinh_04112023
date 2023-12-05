@@ -95,5 +95,8 @@
   "this_error_code_is_not_handled": "This error code is not handled",
   "sign_in_with_gmail" : "Gmail",
   "sign_in_with_facebook" : "Facebook",
-  "sign_in_with_apple" : "Apple"
+  "sign_in_with_apple" : "Apple",
+  "nick_name" : "Nick name",
+  "must_be_not_empty" : "Must be not empty",
+  "next" : "Next"
 }

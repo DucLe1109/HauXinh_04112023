@@ -80,7 +80,7 @@ class Chatting extends StatelessWidget {
                       Flexible(
                         flex: 4,
                         child: Text(
-                          chatUser.fullName,
+                          chatUser.nickName,
                           style: Theme.of(context)
                               .textTheme
                               .bodyMedium

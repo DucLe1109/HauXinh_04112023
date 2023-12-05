@@ -16,10 +16,20 @@ class SettingCubit extends Cubit<SettingState> {
   SettingCubit() : super(const SettingState());
 
   Future<void> updateUserInfo(
-      String fullName, String about, String birthday, File? file) async {
+      {required String fullName,
+      required String phone,
+      required String about,
+      required String birthday,
+      required String nickName,
+      File? file}) async {
     emit(state.copyWith(status: const UILoading(), isLogout: false));
     try {
-      await FirebaseUtils.updateUserInfo(fullName, about, birthday);
+      await FirebaseUtils.updateUserInfo(
+          nickName: nickName,
+          fullName: fullName,
+          birthday: birthday,
+          about: about,
+          phone: phone);
       if (file != null) {
         await FirebaseUtils.updateAvatar(file);
       }

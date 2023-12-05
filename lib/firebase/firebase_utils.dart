@@ -76,7 +76,9 @@ class FirebaseUtils {
         fullName: user?.displayName ?? '',
         pushToken: '',
         avatar: user?.photoURL ?? '',
-        birthday: '');
+        birthday: '',
+        nickName: '',
+        phoneNumber: '');
     await firebaseStore
         .collection(Collections.chatUser.value)
         .doc(user?.uid)
@@ -120,13 +122,29 @@ class FirebaseUtils {
   }
 
   static Future<void> updateUserInfo(
-      String fullName, String about, String birthday) async {
+      {required String fullName,
+      required String about,
+      required String nickName,
+      required String phone,
+      required String birthday}) async {
     await firebaseStore
         .collection(Collections.chatUser.value)
         .doc(user?.uid)
         .update(me
-            .copyWith(about: about, birthday: birthday, fullName: fullName)
+            .copyWith(
+                phoneNumber: phone,
+                about: about,
+                birthday: birthday,
+                fullName: fullName,
+                nickName: nickName)
             .toJson());
+  }
+
+  static Future<void> addInformation(String nickName, String phone) async {
+    await firebaseStore
+        .collection(Collections.chatUser.value)
+        .doc(user?.uid)
+        .update(me.copyWith(nickName: nickName, phoneNumber: phone).toJson());
   }
 
   static Future<void> updateAvatar(File file) async {

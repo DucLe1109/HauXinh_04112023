@@ -32,6 +32,8 @@ class _InformationScreenState
   late TextEditingController _fullNameEditingController;
   late TextEditingController _aboutEditingController;
   late TextEditingController _birthdayEditingController;
+  late TextEditingController _nickNameEditingController;
+  late TextEditingController _phoneEditingController;
   late SettingCubit cubit;
   bool isUpdateSuccessfully = false;
   String? imagePath;
@@ -39,19 +41,25 @@ class _InformationScreenState
   @override
   void initState() {
     super.initState();
+    _nickNameEditingController = TextEditingController();
     _aboutEditingController = TextEditingController();
     _fullNameEditingController = TextEditingController();
     _birthdayEditingController = TextEditingController();
+    _phoneEditingController = TextEditingController();
     _aboutEditingController.text = FirebaseUtils.me.about;
+    _nickNameEditingController.text = FirebaseUtils.me.nickName;
     _fullNameEditingController.text = FirebaseUtils.me.fullName;
     _birthdayEditingController.text = FirebaseUtils.me.birthday;
+    _phoneEditingController.text = FirebaseUtils.me.phoneNumber;
     cubit = context.read<SettingCubit>();
   }
 
   @override
   void dispose() {
+    _nickNameEditingController.dispose();
     _fullNameEditingController.dispose();
     _birthdayEditingController.dispose();
+    _phoneEditingController.dispose();
     _aboutEditingController.dispose();
     super.dispose();
   }
@@ -122,11 +130,19 @@ class _InformationScreenState
                   const SizedBox(
                     height: 26,
                   ),
-                  _buildAboutField(context),
+                  _buildNickNameField(context),
+                  const SizedBox(
+                    height: 26,
+                  ),
+                  _buildPhoneField(context),
                   const SizedBox(
                     height: 26,
                   ),
                   _buildBirthdayField(context),
+                  const SizedBox(
+                    height: 26,
+                  ),
+                  _buildAboutField(context),
                   const SizedBox(
                     height: 26,
                   ),
@@ -145,14 +161,7 @@ class _InformationScreenState
       width: double.infinity,
       height: 50,
       child: FilledButton(
-        onPressed: () {
-          Utils.hideKeyboard();
-          cubit.updateUserInfo(
-              _fullNameEditingController.text,
-              _aboutEditingController.text,
-              _birthdayEditingController.text,
-              imagePath != null ? File(imagePath!) : null);
-        },
+        onPressed: onUpdateButtonClick,
         style: FilledButton.styleFrom(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(borderRadius))),
@@ -163,6 +172,17 @@ class _InformationScreenState
                 ?.copyWith(fontWeight: FontWeight.w500)),
       ),
     );
+  }
+
+  void onUpdateButtonClick() {
+    Utils.hideKeyboard();
+    cubit.updateUserInfo(
+        phone: _phoneEditingController.text,
+        fullName: _fullNameEditingController.text,
+        about: _aboutEditingController.text,
+        birthday: _birthdayEditingController.text,
+        nickName: _nickNameEditingController.text,
+        file: imagePath != null ? File(imagePath!) : null);
   }
 
   Widget _buildBirthdayField(BuildContext context) {
@@ -182,6 +202,46 @@ class _InformationScreenState
         ),
       ),
       label: S.current.birthday,
+    );
+  }
+
+  Widget _buildNickNameField(BuildContext context) {
+    return BaseTextField(
+      controller: _nickNameEditingController,
+      focusNode: FocusNode(),
+      prefixIcon: const Icon(
+        CupertinoIcons.textbox,
+        size: 20,
+      ),
+      suffixIcon: InkWell(
+        splashColor: Colors.transparent,
+        onTap: () => _nickNameEditingController.text = '',
+        child: const Icon(
+          Icons.clear,
+          size: 20,
+        ),
+      ),
+      label: S.current.nick_name,
+    );
+  }
+
+  Widget _buildPhoneField(BuildContext context) {
+    return BaseTextField(
+      controller: _phoneEditingController,
+      focusNode: FocusNode(),
+      prefixIcon: const Icon(
+        CupertinoIcons.phone,
+        size: 20,
+      ),
+      suffixIcon: InkWell(
+        splashColor: Colors.transparent,
+        onTap: () => _phoneEditingController.text = '',
+        child: const Icon(
+          Icons.clear,
+          size: 20,
+        ),
+      ),
+      label: S.current.phone_number,
     );
   }
 

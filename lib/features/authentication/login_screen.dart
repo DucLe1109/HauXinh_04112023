@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:boilerplate/animation/translation_fade_in.dart';
 import 'package:boilerplate/core/bloc_core/ui_status.dart';
 import 'package:boilerplate/core/themes/app_colors.dart';
@@ -5,6 +7,7 @@ import 'package:boilerplate/core/widget_core.dart';
 import 'package:boilerplate/features/app/bloc/app_bloc.dart';
 import 'package:boilerplate/features/authentication/cubit/auth_cubit.dart';
 import 'package:boilerplate/features/authentication/view/base_loading_dialog.dart';
+import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/generated/assets.gen.dart';
 import 'package:boilerplate/generated/l10n.dart';
 import 'package:boilerplate/injector/injector.dart';
@@ -35,47 +38,50 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: BlocListener<AuthCubit, AuthState>(
-          listener: (context, state) {
-            switch (state.status) {
-              case UILoadSuccess():
-                {
-                  hideLoading(context);
+      body: BlocListener<AuthCubit, AuthState>(
+        listener: (context, state) {
+          switch (state.status) {
+            case UILoadSuccess():
+              {
+                hideLoading(context);
+                if (FirebaseUtils.me.nickName.isNotEmpty &&
+                    FirebaseUtils.me.phoneNumber.isNotEmpty) {
                   context.pushReplacement(AppRouter.appDirectorPath);
-                  break;
+                } else {
+                  context.pushReplacement(AppRouter.infoCollectionScreenPath);
                 }
-              case UILoadFailed():
-                {
-                  hideLoading(context);
-                  showToast(
-                    toastType: ToastType.error,
-                    context: context,
-                    title: S.current.login_fail,
-                    description: (state.status as UILoadFailed).message,
-                  );
-                  break;
-                }
-              case UILoading():
-                {
-                  showLoading(
-                    context: context,
-                    loadingWidget: const BaseLoadingDialog(),
-                  );
-                  break;
-                }
-            }
-          },
-          bloc: authCubit,
-          child: Stack(
-            children: [
-              _buildBgSection(context),
-              _buildMainSection(context),
-              _buildLoginSection(),
-              _buildCopyRightSection(),
-              _buildLanguageSection(context),
-            ],
-          ),
+                break;
+              }
+            case UILoadFailed():
+              {
+                hideLoading(context);
+                showToast(
+                  toastType: ToastType.error,
+                  context: context,
+                  title: S.current.login_fail,
+                  description: (state.status as UILoadFailed).message,
+                );
+                break;
+              }
+            case UILoading():
+              {
+                showLoading(
+                  context: context,
+                  loadingWidget: const BaseLoadingDialog(),
+                );
+                break;
+              }
+          }
+        },
+        bloc: authCubit,
+        child: Stack(
+          children: [
+            _buildBgSection(context),
+            _buildMainSection(context),
+            _buildLoginSection(),
+            _buildCopyRightSection(),
+            _buildLanguageSection(context),
+          ],
         ),
       ),
     );
@@ -123,7 +129,8 @@ class _LoginScreenState extends BaseStateFulWidgetState<LoginScreen> {
 
   Widget _buildLanguageSection(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(right: 16.w, top: 16.w),
+      margin:
+          EdgeInsets.only(right: 16.w, top: Platform.isAndroid ? 16.w : 40.w),
       alignment: Alignment.topRight,
       child: TranslationFadeIn(
         translateDirection: TranslateDirection.up,

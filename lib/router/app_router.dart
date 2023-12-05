@@ -4,6 +4,7 @@ import 'package:boilerplate/features/demo/view/assets_page.dart';
 import 'package:boilerplate/features/demo/view/images_from_db_page.dart';
 import 'package:boilerplate/features/dog_image_random/view/dog_image_random_page.dart';
 import 'package:boilerplate/features/home/view/home_page.dart';
+import 'package:boilerplate/features/information_collection/view/information_collection_screen.dart';
 import 'package:boilerplate/features/intro/intro_page.dart';
 import 'package:boilerplate/features/personal_chat/view/personal_chat_screen.dart';
 import 'package:boilerplate/features/setting/cubit/setting_cubit.dart';
@@ -36,7 +37,7 @@ class AppRouter {
   static const String vacationPath = '/vacationPath';
 
   static const String homeNamed = 'home';
-  static const String homePath = '/';
+  static const String homePath = '/homePath';
 
   static const String settingNamed = 'setting';
   static const String settingPath = '/setting';
@@ -55,6 +56,9 @@ class AppRouter {
 
   static const String chatScreen = 'chatScreen';
   static const String chatScreenPath = '/chatScreenPath';
+
+  static const String infoCollectionScreen = 'infoCollectionScreen';
+  static const String infoCollectionScreenPath = '/infoCollectionScreenPath';
 
   static GoRouter get router => _router;
 
@@ -128,6 +132,11 @@ class AppRouter {
           return BlocProvider.value(
               value: settingCubit, child: const InformationScreen());
         },
+      ),
+      GoRoute(
+        name: infoCollectionScreen,
+        path: infoCollectionScreenPath,
+        builder: (context, state) => const InformationCollectionScreen(),
       ),
       GoRoute(
         name: imagesFromDbNamed,

@@ -187,6 +187,12 @@ class MockAppService extends _i1.Mock implements _i8.AppService {
       ) as bool);
 
   @override
+  double get keyboardHeight => (super.noSuchMethod(
+        Invocation.getter(#keyboardHeight),
+        returnValue: 0.0,
+      ) as double);
+
+  @override
   _i4.Future<void> setLocale({required String? locale}) => (super.noSuchMethod(
         Invocation.method(
           #setLocale,
@@ -216,6 +222,24 @@ class MockAppService extends _i1.Mock implements _i8.AppService {
           #setIsFirstUse,
           [],
           {#isFirstUse: isFirstUse},
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setAppProperty({
+    required _i8.AppProperty? property,
+    required dynamic value,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setAppProperty,
+          [],
+          {
+            #property: property,
+            #value: value,
+          },
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),

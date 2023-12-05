@@ -83,12 +83,14 @@
   "say_hello": "Hãy gửi lời chào!",
   "file": "[Tệp đính kèm]",
   "image": "[Hình ảnh]",
-  "online" : "Đang hoạt động",
-  "active" : "Hoạt động",
-  "minute" : "phút",
-  "hour" : "giờ",
-  "day" : "ngày",
+  "online": "Đang hoạt động",
+  "active": "Hoạt động",
+  "minute": "phút",
+  "hour": "giờ",
+  "day": "ngày",
   "ago": "trước",
-  "this_error_code_is_not_handled": "Mã lỗi này chưa được xử lý"
-
+  "this_error_code_is_not_handled": "Mã lỗi này chưa được xử lý",
+  "nick_name": "Biệt danh",
+  "must_be_not_empty" : "Không được để trống",
+  "next" : "Tiếp tục"
 }

@@ -1,9 +1,7 @@
 import 'dart:async';
 
-import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:d_bloc/d_bloc.dart';
-import 'package:rest_client/rest_client.dart';
 
 class ChatCubit extends DCubit {
   late Stream<QuerySnapshot<Map<String, dynamic>>> latestMessageStream;
