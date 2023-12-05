@@ -26,6 +26,7 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -43,7 +44,7 @@ class ChatScreen extends BaseStateFulWidget {
 }
 
 class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   Color sendButtonColor =
       const Color.fromARGB(255, 115, 96, 242).withOpacity(0.8);
   bool isScrollable = false;
@@ -54,7 +55,6 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
   late AppService _appService;
   late double keyboardHeight;
   late bool canBack;
-
   late TextEditingController _messageEditingController;
   late FocusNode _messageFocusNode;
   late List<MessageCard> listMessageView;
@@ -64,60 +64,76 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
   late Animation<double> animation;
   late Stream<DocumentSnapshot<Map<String, dynamic>>> chatUserStream;
   late PersonalChatCubit _cubit;
+  late Animation<double> fadeAnimation;
+  late AnimationController fadeAnimationController;
 
   @override
   void initState() {
     super.initState();
     _appService = Injector.instance();
     keyboardHeight = _appService.keyboardHeight;
-
+    fadeAnimationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: fastDuration));
+    fadeAnimation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
+        parent: fadeAnimationController, curve: Curves.easeOut));
     canBack = true;
     _cubit = PersonalChatCubit();
     _cubit.initData(
         chatUser: widget.chatUser, numberOfItem: numOfMessagePerPage);
     _scrollController = ScrollController();
 
-    _scrollController.addListener(() {
-      if (_scrollController.position.atEdge) {
-        final bool isTop = _scrollController.position.pixels == 0;
-        if (isTop) {
-          return;
-        } else {
-          /// Load more message
-          _cubit.loadMoreMessage(
-              chatUser: widget.chatUser,
-              numberOfItem: numOfMessagePerPage,
-              lastItemVisible: _cubit.currentListDocumentSnapshot.last);
-          return;
-        }
-      }
-    });
+    _scrollController.addListener(_listenConversationScroll);
 
     listMessageView = [];
     _messageEditingController = TextEditingController();
     _messageFocusNode = FocusNode();
-    _messageFocusNode.addListener(() {
-      if (_messageFocusNode.hasFocus) {
-        setState(() {
-          if (isShowEmoji) {
-            isShowEmoji = false;
-          }
-          currentKeyboardHeight = keyboardHeight;
-        });
-      }
-
-      if (!_messageFocusNode.hasFocus && !isShowEmoji && canBack) {
-        setState(() {
-          currentKeyboardHeight = 0;
-        });
-      }
-    });
+    _messageFocusNode.addListener(_listenMessageFocusNode);
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: fastDuration));
     animation =
-        CurvedAnimation(parent: _animationController, curve: Curves.easeOut);
+        CurvedAnimation(parent: _animationController, curve: Curves.ease);
 
     chatUserStream = FirebaseUtils.getUserInfo(widget.chatUser);
+  }
+
+  void _listenConversationScroll() {
+    if (_scrollController.position.atEdge) {
+      final bool isTop = _scrollController.position.pixels == 0;
+      if (isTop &&
+          fadeAnimationController.status == AnimationStatus.completed) {
+        /// Hide auto scroll to top
+        fadeAnimationController.reverse();
+      } else {
+        /// Load more message
+        _cubit.loadMoreMessage(
+            chatUser: widget.chatUser,
+            numberOfItem: numOfMessagePerPage,
+            lastItemVisible: _cubit.currentListDocumentSnapshot.last);
+      }
+    }
+
+
+    if (_scrollController.position.pixels > 30 &&
+        fadeAnimationController.value != 1) {
+      fadeAnimationController.forward();
+    }
+  }
+
+  void _listenMessageFocusNode() {
+    if (_messageFocusNode.hasFocus) {
+      setState(() {
+        if (isShowEmoji) {
+          isShowEmoji = false;
+        }
+        currentKeyboardHeight = keyboardHeight;
+      });
+    }
+
+    if (!_messageFocusNode.hasFocus && !isShowEmoji && canBack) {
+      setState(() {
+        currentKeyboardHeight = 0;
+      });
+    }
   }
 
   @override
@@ -408,27 +424,31 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
         bloc: _cubit);
   }
 
-  Align _buildAutoScrollToBottom() {
-    return Align(
-      alignment: const Alignment(1, 0.85),
-      child: Material(
-        elevation: 2,
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(12.w), bottomLeft: Radius.circular(12.w)),
-        child: InkWell(
+  Widget _buildAutoScrollToBottom() {
+    return FadeTransition(
+      opacity: fadeAnimation,
+      child: Align(
+        alignment: const Alignment(1, 0.85),
+        child: Material(
+          elevation: 2,
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(12.w),
               bottomLeft: Radius.circular(12.w)),
-          onTap: goTopOfList,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.w),
-            decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12.w),
-                    bottomLeft: Radius.circular(12.w))),
-            child: Assets.images.scrollDownButtonImage
-                .image(width: 22.w, height: 22.w, color: Colors.blueAccent),
+          child: InkWell(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12.w),
+                bottomLeft: Radius.circular(12.w)),
+            onTap: goTopOfList,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.w),
+              decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(12.w),
+                      bottomLeft: Radius.circular(12.w))),
+              child: Assets.images.scrollDownButtonImage
+                  .image(width: 22.w, height: 22.w, color: Colors.blueAccent),
+            ),
           ),
         ),
       ),
