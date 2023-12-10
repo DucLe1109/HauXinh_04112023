@@ -91,6 +91,8 @@ dependencies:
   chat_bubbles: ^1.5.0
   photox: ^0.2.0
   dismissible_page: ^1.0.2
+  widget_zoom: ^0.0.2
+  extended_image: ^8.1.1
 
 
 dev_dependencies:
