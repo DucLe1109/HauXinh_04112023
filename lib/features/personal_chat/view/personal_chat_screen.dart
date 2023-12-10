@@ -97,19 +97,35 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
   }
 
   void _listenConversationScroll() {
-    if (_scrollController.position.atEdge) {
-      final bool isTop = _scrollController.position.pixels == 0;
-      if (isTop &&
-          fadeAnimationController.status == AnimationStatus.completed) {
-        /// Hide auto scroll to top
-        fadeAnimationController.reverse();
-      } else {
-        /// Load more message
-        _cubit.loadMoreMessage(
-            chatUser: widget.chatUser,
-            numberOfItem: numOfMessagePerPage,
-            lastItemVisible: _cubit.currentListDocumentSnapshot.last);
-      }
+    // if (_scrollController.position.atEdge) {
+    //   final bool isTop = _scrollController.position.pixels == 0;
+    //   if (isTop &&
+    //       fadeAnimationController.status == AnimationStatus.completed) {
+    //     /// Hide auto scroll to top
+    //     fadeAnimationController.reverse();
+    //   } else {
+    //     /// Load more message
+    //     _cubit.loadMoreMessage(
+    //         chatUser: widget.chatUser,
+    //         numberOfItem: numOfMessagePerPage,
+    //         lastItemVisible: _cubit.currentListDocumentSnapshot.last);
+    //   }
+    // }
+
+    const double topOffset = 100; // Adjust this value as needed
+    const double bottomOffset = 100; // Adjust this value as needed
+
+    final double position = _scrollController.position.pixels;
+    final double maxScrollExtent = _scrollController.position.maxScrollExtent;
+
+    if (position <= topOffset &&
+        fadeAnimationController.status == AnimationStatus.completed) {
+      fadeAnimationController.reverse();
+    } else if (maxScrollExtent - position <= bottomOffset) {
+      _cubit.loadMoreMessage(
+          chatUser: widget.chatUser,
+          numberOfItem: numOfMessagePerPage,
+          lastItemVisible: _cubit.currentListDocumentSnapshot.last);
     }
 
     if (_scrollController.position.pixels > 30 &&
