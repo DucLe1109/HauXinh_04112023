@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:boilerplate/core/global_variable.dart';
+import 'package:boilerplate/widgets/custom_interact_viewer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
@@ -20,9 +21,10 @@ class ZoomableImageScreen extends StatefulWidget {
 
 class _ZoomableImageScreenState extends State<ZoomableImageScreen>
     with SingleTickerProviderStateMixin {
+  final GlobalKey _interactiveViewerKey = GlobalKey();
+
   late bool _canPop;
-  late double _scaleValue;
-  late TransformationController _transformationController;
+  late CustomTransformationController _transformationController;
   late AnimationController _animationController;
   Animation<Matrix4>? _animation;
 
@@ -33,8 +35,7 @@ class _ZoomableImageScreenState extends State<ZoomableImageScreen>
     super.initState();
 
     _canPop = true;
-    _scaleValue = 1;
-    _transformationController = TransformationController();
+    _transformationController = CustomTransformationController();
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: fastDuration))
       ..addListener(() {
@@ -51,53 +52,58 @@ class _ZoomableImageScreenState extends State<ZoomableImageScreen>
 
   @override
   Widget build(BuildContext context) {
-    return InteractiveViewer(
-      maxScale: 3,
-      transformationController: _transformationController,
-      onInteractionUpdate: onScaleImage,
-      child: DismissiblePage(
-        disabled: !_canPop,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        onDismissed: () => Navigator.of(context).pop(),
-        minRadius: 10.w,
-        maxRadius: 10.w,
-        direction: DismissiblePageDismissDirection.multi,
-        reverseDuration: const Duration(milliseconds: 250),
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10.w),
-              child: Hero(
-                tag: widget.url.isNotEmpty ? widget.url : widget.uri,
-                child: widget.url.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: widget.url,
-                      )
-                    : FileImage(File(widget.uri)) as Widget,
-              ),
-            ),
+    return DismissiblePage(
+      dragSensitivity: 1,
+      disabled: !_canPop,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      onDismissed: () => Navigator.of(context).pop(),
+      minRadius: 10.w,
+      maxRadius: 10.w,
+      direction: DismissiblePageDismissDirection.multi,
+      reverseDuration: const Duration(milliseconds: 250),
+      child: _buildImage(),
+    );
+  }
+
+  Center _buildImage() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10.w),
+          child: Hero(
+            tag: widget.url.isNotEmpty ? widget.url : widget.uri,
+            child: widget.url.isNotEmpty
+                ? CustomInteractiveViewer(
+                    // onDoubleTap: _handleDoubleTap,
+                    // onDoubleTapDown: (details) => _doubleTapDetails = details,
+                    transformationController: _transformationController,
+                    minScale: 1,
+                    maxScale: 3,
+                    key: _interactiveViewerKey,
+                    onInteractionEnd: onScaleImageDone,
+                    child: CachedNetworkImage(
+                      imageUrl: widget.url,
+                    ),
+                  )
+                : CustomInteractiveViewer(
+                    // onDoubleTap: _handleDoubleTap,
+                    // onDoubleTapDown: (details) => _doubleTapDetails = details,
+                    onInteractionEnd: onScaleImageDone,
+                    minScale: 1,
+                    maxScale: 3,
+                    key: _interactiveViewerKey,
+                    child: FileImage(File(widget.uri)) as Widget),
           ),
         ),
       ),
     );
   }
 
-  void onScaleImage(ScaleUpdateDetails details) {
-    if (details.scale != 1) {
-      _scaleValue = details.scale;
-    }
-    if (details.pointerCount == 1) {
-      if (_scaleValue > 1) {
-        setState(() {
-          _canPop = false;
-        });
-      } else if (_scaleValue < 1) {
-        setState(() {
-          _canPop = true;
-        });
-      }
-    }
+  void onScaleImageDone(ScaleEndDetails details) {
+    setState(() {
+      _canPop = _transformationController.value.row0.x == 1;
+    });
   }
 
   void _handleDoubleTap() {
@@ -111,14 +117,8 @@ class _ZoomableImageScreenState extends State<ZoomableImageScreen>
 
     if (_transformationController.value.isIdentity()) {
       end = zoomed;
-      setState(() {
-        _canPop = false;
-      });
     } else {
       end = Matrix4.identity();
-      setState(() {
-        _canPop = true;
-      });
     }
 
     _animation = Matrix4Tween(begin: _transformationController.value, end: end)
@@ -126,5 +126,14 @@ class _ZoomableImageScreenState extends State<ZoomableImageScreen>
             CurveTween(curve: Curves.easeOut).animate(_animationController));
 
     _animationController.forward(from: 0);
+
+    Future.delayed(
+      const Duration(milliseconds: 100),
+      () {
+        setState(() {
+          _canPop = _transformationController.value.row0.x == 1;
+        });
+      },
+    );
   }
 }
