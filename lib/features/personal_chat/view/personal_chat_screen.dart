@@ -26,7 +26,6 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -51,6 +50,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
   List<XFile> photos = [];
   bool isShowEmoji = false;
   double currentKeyboardHeight = 0;
+  double focusKeyboardHeight = 0;
 
   late AppService _appService;
   late double keyboardHeight;
@@ -94,6 +94,11 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
         CurvedAnimation(parent: _animationController, curve: Curves.ease);
 
     chatUserStream = FirebaseUtils.getUserInfo(widget.chatUser);
+
+    /// Focus to get keyboard height
+    if (keyboardHeight == 0) {
+      _messageFocusNode.requestFocus();
+    }
   }
 
   void _listenConversationScroll() {
@@ -121,12 +126,26 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
 
   void _listenMessageFocusNode() {
     if (_messageFocusNode.hasFocus) {
-      setState(() {
-        if (isShowEmoji) {
-          isShowEmoji = false;
-        }
-        currentKeyboardHeight = keyboardHeight;
-      });
+      if (keyboardHeight == 0) {
+        /// Delay to get keyboard height by Media query bottom
+        Future.delayed(
+          const Duration(milliseconds: 800),
+          () {
+            currentKeyboardHeight = focusKeyboardHeight;
+            keyboardHeight = focusKeyboardHeight;
+            _appService.setAppProperty(
+                property: AppProperty.keyboardHeight,
+                value: focusKeyboardHeight);
+          },
+        );
+      } else {
+        setState(() {
+          if (isShowEmoji) {
+            isShowEmoji = false;
+          }
+          currentKeyboardHeight = keyboardHeight;
+        });
+      }
     }
 
     if (!_messageFocusNode.hasFocus && !isShowEmoji && canBack) {
@@ -149,6 +168,9 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (focusKeyboardHeight < MediaQuery.of(context).viewInsets.bottom) {
+      focusKeyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    }
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).primaryColor,
@@ -184,13 +206,18 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
               _buildBottomSection(context),
               AnimatedContainer(
                 onEnd: () {
-                  if (isShowEmoji) {
+                  if (isShowEmoji && currentKeyboardHeight != 0) {
+                    /// Show emoji when animated height done.
                     setState(() {});
                   }
                 },
-                duration: const Duration(milliseconds: 350),
+                duration: keyboardHeight != 0
+                    ? const Duration(milliseconds: 350)
+                    : Duration.zero,
                 curve: Curves.ease,
-                height: currentKeyboardHeight,
+                height: keyboardHeight != 0
+                    ? currentKeyboardHeight
+                    : MediaQuery.of(context).viewInsets.bottom,
                 child: _buildEmoji(),
               )
             ],
@@ -462,9 +489,6 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
       return true;
     }
     return false;
-    // return index < _cubit.currentListMessage.length - 1 &&
-    //     _cubit.currentListMessage[index].fromId ==
-    //         _cubit.currentListMessage[index + 1].fromId;
   }
 
   Widget _buildJumpingDot() {
@@ -561,12 +585,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
               child: InkWell(
                   borderRadius: BorderRadius.circular(100.w),
                   onTap: () {
-                    setState(() {
-                      photos.remove(e);
-                    });
-                    if (photos.isEmpty) {
-                      _animationController.reset();
-                    }
+                    _onClearIconImageClick(e);
                   },
                   child: Padding(
                       padding: EdgeInsets.all(2.w),
@@ -579,6 +598,15 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
         )
       ],
     );
+  }
+
+  void _onClearIconImageClick(XFile e) {
+    setState(() {
+      photos.remove(e);
+    });
+    if (photos.isEmpty) {
+      _animationController.reset();
+    }
   }
 
   Widget _buildActionButton() {
@@ -606,24 +634,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
         color: sendButtonColor,
         shape: const CircleBorder(),
         child: InkWell(
-            onTap: () {
-              if (photos.isNotEmpty) {
-                sendImageOfflineMode();
-                sendImageOnlineMode();
-
-                photos.clear();
-                goTopOfList();
-                _animationController.reset();
-              }
-              if (_messageEditingController.text.isNotEmpty) {
-                FirebaseUtils.sendMessage(
-                    messageType: MessageType.text,
-                    chatUser: widget.chatUser,
-                    msg: _messageEditingController.text.trim());
-                _messageEditingController.text = '';
-                goTopOfList();
-              }
-            },
+            onTap: _onSendButtonClick,
             customBorder: const CircleBorder(),
             child: Padding(
               padding: EdgeInsets.all(9.w),
@@ -666,16 +677,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(100),
       child: InkWell(
-          onTap: () async {
-            Utils.hideKeyboard();
-            final ImagePicker picker = ImagePicker();
-            final result = await picker.pickMultiImage(imageQuality: 70);
-            photos.addAll(result);
-            setState(() {
-              currentKeyboardHeight = 0;
-            });
-            if (photos.isNotEmpty) await _animationController.forward();
-          },
+          onTap: _onImageIconClick,
           borderRadius: BorderRadius.circular(100),
           child: Assets.icons.icImage.image(
               scale: 20,
@@ -692,20 +694,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(100),
       child: InkWell(
-          onTap: () async {
-            final ImagePicker picker = ImagePicker();
-            final XFile? photo = await picker.pickImage(
-                source: ImageSource.camera, imageQuality: 70);
-
-            if (photo != null) {
-              photos.add(photo);
-            }
-            setState(() {
-              isShowEmoji = false;
-              currentKeyboardHeight = 0;
-            });
-            if (photos.isNotEmpty) await _animationController.forward();
-          },
+          onTap: _onCameraIconClick,
           borderRadius: BorderRadius.circular(100),
           child: Padding(
             padding: EdgeInsets.fromLTRB(8.w, 6.w, 8.w, 7.w),
@@ -725,21 +714,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
       borderRadius: BorderRadius.circular(100),
       color: Colors.transparent,
       child: InkWell(
-          onTap: () {
-            canBack = false;
-            Utils.hideKeyboard();
-            setState(() {
-              currentKeyboardHeight = keyboardHeight;
-            });
-
-            Future.delayed(
-              const Duration(milliseconds: 150),
-              () => setState(() {
-                isShowEmoji = true;
-                canBack = true;
-              }),
-            );
-          },
+          onTap: _onSmileyIconClick,
           borderRadius: BorderRadius.circular(100),
           child: Padding(
             padding: EdgeInsets.fromLTRB(8.w, 6.w, 8.w, 8.w),
@@ -751,6 +726,68 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
                     ?.color
                     ?.withOpacity(0.7)),
           )),
+    );
+  }
+
+  void _onSendButtonClick() {
+    if (photos.isNotEmpty) {
+      sendImageOfflineMode();
+      sendImageOnlineMode();
+
+      photos.clear();
+      goTopOfList();
+      _animationController.reset();
+    }
+    if (_messageEditingController.text.isNotEmpty) {
+      FirebaseUtils.sendMessage(
+          messageType: MessageType.text,
+          chatUser: widget.chatUser,
+          msg: _messageEditingController.text.trim());
+      _messageEditingController.text = '';
+      goTopOfList();
+    }
+  }
+
+  Future<void> _onImageIconClick() async {
+    Utils.hideKeyboard();
+    final ImagePicker picker = ImagePicker();
+    final result = await picker.pickMultiImage(imageQuality: 70);
+    photos.addAll(result);
+    setState(() {
+      isShowEmoji = false;
+      currentKeyboardHeight = 0;
+    });
+    if (photos.isNotEmpty) await _animationController.forward();
+  }
+
+  Future<void> _onCameraIconClick() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? photo =
+        await picker.pickImage(source: ImageSource.camera, imageQuality: 70);
+
+    if (photo != null) {
+      photos.add(photo);
+    }
+    setState(() {
+      isShowEmoji = false;
+      currentKeyboardHeight = 0;
+    });
+    if (photos.isNotEmpty) await _animationController.forward();
+  }
+
+  void _onSmileyIconClick() {
+    Utils.hideKeyboard();
+    setState(() {
+      currentKeyboardHeight = keyboardHeight;
+    });
+
+    canBack = false;
+    Future.delayed(
+      const Duration(milliseconds: 150),
+      () => setState(() {
+        isShowEmoji = true;
+        canBack = true;
+      }),
     );
   }
 

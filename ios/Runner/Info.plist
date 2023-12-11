@@ -44,6 +44,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>App requires access to camera for picking pictures</string>
+	<key>NSHapticFeedbackUsageDescription</key>
+	<string>We will use haptic feedback to enhance user experience.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>App requires access to the photo library for picking pictures</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

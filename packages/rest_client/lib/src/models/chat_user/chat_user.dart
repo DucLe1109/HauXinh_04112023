@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'chat_user.freezed.dart';
+
 part 'chat_user.g.dart';
 
 @Freezed()
