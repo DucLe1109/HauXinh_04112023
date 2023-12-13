@@ -102,6 +102,8 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
   }
 
   void _listenConversationScroll() {
+    isScrollable = _scrollController.position.maxScrollExtent > 0;
+
     const double topOffset = 100; // Adjust this value as needed
     const double bottomOffset = 100; // Adjust this value as needed
 
@@ -111,7 +113,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     if (position <= topOffset &&
         fadeAnimationController.status == AnimationStatus.completed) {
       fadeAnimationController.reverse();
-    } else if (maxScrollExtent - position <= bottomOffset) {
+    } else if (maxScrollExtent - position <= bottomOffset && isScrollable) {
       _cubit.loadMoreMessage(
           chatUser: widget.chatUser,
           numberOfItem: numOfMessagePerPage,
@@ -119,7 +121,8 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     }
 
     if (_scrollController.position.pixels > 30 &&
-        fadeAnimationController.value != 1) {
+        fadeAnimationController.value != 1 &&
+        isScrollable) {
       fadeAnimationController.forward();
     }
   }
@@ -233,6 +236,10 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
       child: EmojiPicker(
         textEditingController: _messageEditingController,
         config: Config(
+            noRecents: Text(
+              S.current.no_recent,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
             buttonMode: ButtonMode.CUPERTINO,
             emojiSizeMax: 23.w *
                 (foundation.defaultTargetPlatform == TargetPlatform.iOS
@@ -339,7 +346,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     );
   }
 
-  Positioned _buildMainChat() {
+  Widget _buildMainChat() {
     return Positioned.fill(
       child: BlocConsumer(
         listener: (context, state) {
@@ -370,47 +377,9 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
         builder: (context, state) {
           switch (state) {
             case InitiateData():
-              return Center(
-                  child: BaseLoadingDialog(
-                startRatio: 0.8,
-                iconHeight: 26.w,
-                iconWidth: 26.w,
-                radius: 28.w,
-                relativeWidth: 1.5,
-              ));
+              return _buildLoading();
             case InitiateDataSuccessFully():
-              isScrollable = _cubit.currentListMessage.isNotEmpty;
-
-              return ListenableBuilder(
-                listenable: _cubit.animatedListNotifier,
-                builder: (context, child) => AnimatedList(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  key: listKey,
-                  itemBuilder: (context, index, animation) {
-                    return SizeTransition(
-                      sizeFactor: Tween<double>(begin: 0, end: 1).animate(
-                          CurvedAnimation(
-                              parent: animation, curve: Curves.easeOut)),
-                      child: SlideTransition(
-                        position:
-                            Tween(begin: Offset(0.w, 5.w), end: Offset.zero)
-                                .animate(CurvedAnimation(
-                                    parent: animation, curve: Curves.easeOut)),
-                        child: MessageCard(
-                            chatUser: widget.chatUser,
-                            message: _cubit.currentListMessage[index],
-                            isShowTail: isShowTail(index)),
-                      ),
-                    );
-                  },
-                  initialItemCount: _cubit.currentListMessage.length,
-                  controller: _scrollController,
-                  shrinkWrap: true,
-                  padding:
-                      EdgeInsets.symmetric(vertical: 16.w, horizontal: 16.w),
-                  reverse: true,
-                ),
-              );
+              return _buildListBubble();
             default:
               return Container();
           }
@@ -419,7 +388,48 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
     );
   }
 
-  BlocConsumer<PersonalChatCubit, Object?> _buildLoadMore() {
+  Widget _buildLoading() {
+    return Center(
+        child: BaseLoadingDialog(
+      startRatio: 0.8,
+      iconHeight: 26.w,
+      iconWidth: 26.w,
+      radius: 28.w,
+      relativeWidth: 1.5,
+    ));
+  }
+
+  Widget _buildListBubble() {
+    return ListenableBuilder(
+      listenable: _cubit.animatedListNotifier,
+      builder: (context, child) => AnimatedList(
+        physics: const AlwaysScrollableScrollPhysics(),
+        key: listKey,
+        itemBuilder: (context, index, animation) {
+          return SizeTransition(
+            sizeFactor: Tween<double>(begin: 0, end: 1).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOut)),
+            child: SlideTransition(
+              position: Tween(begin: Offset(0.w, 5.w), end: Offset.zero)
+                  .animate(CurvedAnimation(
+                      parent: animation, curve: Curves.easeOut)),
+              child: MessageCard(
+                  chatUser: widget.chatUser,
+                  message: _cubit.currentListMessage[index],
+                  isShowTail: isShowTail(index)),
+            ),
+          );
+        },
+        initialItemCount: _cubit.currentListMessage.length,
+        controller: _scrollController,
+        shrinkWrap: true,
+        padding: EdgeInsets.symmetric(vertical: 16.w, horizontal: 16.w),
+        reverse: true,
+      ),
+    );
+  }
+
+  Widget _buildLoadMore() {
     return BlocConsumer(
         listener: (context, state) {
           switch (state) {
@@ -660,6 +670,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
       _cubit.currentListMessage.insert(
           0,
           MessageModel(
+              interaction: '',
               imageCacheUri: e.path,
               readAt: '',
               fromId: FirebaseUtils.me.id,
@@ -798,6 +809,8 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
         curve: Curves.easeOut,
         duration: const Duration(milliseconds: 300),
       );
+
+      _cubit.clearRedundantData();
     }
   }
 }

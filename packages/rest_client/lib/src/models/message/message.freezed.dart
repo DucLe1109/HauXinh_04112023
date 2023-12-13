@@ -29,6 +29,7 @@ mixin _$Message {
   String? get type => throw _privateConstructorUsedError;
   String? get timeStamp => throw _privateConstructorUsedError;
   String? get imageCacheUri => throw _privateConstructorUsedError;
+  String? get interaction => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -49,7 +50,8 @@ abstract class $MessageCopyWith<$Res> {
       String? msg,
       String? type,
       String? timeStamp,
-      String? imageCacheUri});
+      String? imageCacheUri,
+      String? interaction});
 }
 
 /// @nodoc
@@ -74,6 +76,7 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
     Object? type = freezed,
     Object? timeStamp = freezed,
     Object? imageCacheUri = freezed,
+    Object? interaction = freezed,
   }) {
     return _then(_value.copyWith(
       fromId: freezed == fromId
@@ -112,6 +115,10 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
           ? _value.imageCacheUri
           : imageCacheUri // ignore: cast_nullable_to_non_nullable
               as String?,
+      interaction: freezed == interaction
+          ? _value.interaction
+          : interaction // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -132,7 +139,8 @@ abstract class _$$MessageImplCopyWith<$Res> implements $MessageCopyWith<$Res> {
       String? msg,
       String? type,
       String? timeStamp,
-      String? imageCacheUri});
+      String? imageCacheUri,
+      String? interaction});
 }
 
 /// @nodoc
@@ -155,6 +163,7 @@ class __$$MessageImplCopyWithImpl<$Res>
     Object? type = freezed,
     Object? timeStamp = freezed,
     Object? imageCacheUri = freezed,
+    Object? interaction = freezed,
   }) {
     return _then(_$MessageImpl(
       fromId: freezed == fromId
@@ -193,6 +202,10 @@ class __$$MessageImplCopyWithImpl<$Res>
           ? _value.imageCacheUri
           : imageCacheUri // ignore: cast_nullable_to_non_nullable
               as String?,
+      interaction: freezed == interaction
+          ? _value.interaction
+          : interaction // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -209,7 +222,8 @@ class _$MessageImpl implements _Message {
       this.msg,
       this.type,
       this.timeStamp,
-      this.imageCacheUri});
+      this.imageCacheUri,
+      this.interaction});
 
   factory _$MessageImpl.fromJson(Map<String, dynamic> json) =>
       _$$MessageImplFromJson(json);
@@ -232,10 +246,12 @@ class _$MessageImpl implements _Message {
   final String? timeStamp;
   @override
   final String? imageCacheUri;
+  @override
+  final String? interaction;
 
   @override
   String toString() {
-    return 'Message(fromId: $fromId, toId: $toId, createdTime: $createdTime, updatedTime: $updatedTime, readAt: $readAt, msg: $msg, type: $type, timeStamp: $timeStamp, imageCacheUri: $imageCacheUri)';
+    return 'Message(fromId: $fromId, toId: $toId, createdTime: $createdTime, updatedTime: $updatedTime, readAt: $readAt, msg: $msg, type: $type, timeStamp: $timeStamp, imageCacheUri: $imageCacheUri, interaction: $interaction)';
   }
 
   @override
@@ -255,13 +271,15 @@ class _$MessageImpl implements _Message {
             (identical(other.timeStamp, timeStamp) ||
                 other.timeStamp == timeStamp) &&
             (identical(other.imageCacheUri, imageCacheUri) ||
-                other.imageCacheUri == imageCacheUri));
+                other.imageCacheUri == imageCacheUri) &&
+            (identical(other.interaction, interaction) ||
+                other.interaction == interaction));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, fromId, toId, createdTime,
-      updatedTime, readAt, msg, type, timeStamp, imageCacheUri);
+      updatedTime, readAt, msg, type, timeStamp, imageCacheUri, interaction);
 
   @JsonKey(ignore: true)
   @override
@@ -287,7 +305,8 @@ abstract class _Message implements Message {
       final String? msg,
       final String? type,
       final String? timeStamp,
-      final String? imageCacheUri}) = _$MessageImpl;
+      final String? imageCacheUri,
+      final String? interaction}) = _$MessageImpl;
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$MessageImpl.fromJson;
 
@@ -309,6 +328,8 @@ abstract class _Message implements Message {
   String? get timeStamp;
   @override
   String? get imageCacheUri;
+  @override
+  String? get interaction;
   @override
   @JsonKey(ignore: true)
   _$$MessageImplCopyWith<_$MessageImpl> get copyWith =>

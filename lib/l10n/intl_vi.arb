@@ -92,5 +92,6 @@
   "this_error_code_is_not_handled": "Mã lỗi này chưa được xử lý",
   "nick_name": "Biệt danh",
   "must_be_not_empty" : "Không được để trống",
-  "next" : "Tiếp tục"
+  "next" : "Tiếp tục",
+  "no_recent" : "Không tìm thấy icon gần đây"
 }

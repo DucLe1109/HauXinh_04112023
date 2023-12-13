@@ -16,6 +16,7 @@ class Message with _$Message {
     String? type,
     String? timeStamp,
     String? imageCacheUri,
+    String? interaction,
   }) = _Message;
 
   factory Message.fromJson(Map<String, dynamic> json) =>

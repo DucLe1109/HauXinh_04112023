@@ -34,6 +34,7 @@ enum MessageProperty {
   toId('toId'),
   type('type'),
   updatedTime('updatedTime'),
+  interaction('interaction'),
   msg('msg');
 
   final String value;

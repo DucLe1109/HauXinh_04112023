@@ -98,5 +98,7 @@
   "sign_in_with_apple" : "Apple",
   "nick_name" : "Nick name",
   "must_be_not_empty" : "Must be not empty",
-  "next" : "Next"
+  "next" : "Next",
+  "no_recent" : "No recent"
+
 }

@@ -16,6 +16,7 @@ MessageModel _$MessageModelFromJson(Map<String, dynamic> json) => MessageModel(
       msg: json['msg'] as String?,
       readAt: json['readAt'] as String?,
       imageCacheUri: json['imageCacheUri'] as String?,
+      interaction: json['interaction'] as String?,
     );
 
 Map<String, dynamic> _$MessageModelToJson(MessageModel instance) =>
@@ -29,4 +30,5 @@ Map<String, dynamic> _$MessageModelToJson(MessageModel instance) =>
       'type': instance.type,
       'timeStamp': instance.timeStamp,
       'imageCacheUri': instance.imageCacheUri,
+      'interaction': instance.interaction,
     };

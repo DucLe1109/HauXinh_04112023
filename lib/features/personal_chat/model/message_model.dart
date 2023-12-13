@@ -14,6 +14,7 @@ class MessageModel {
     this.msg,
     this.readAt,
     this.imageCacheUri,
+    this.interaction,
   });
 
   String? fromId;
@@ -25,8 +26,7 @@ class MessageModel {
   String? type;
   String? timeStamp;
   String? imageCacheUri;
-
-
+  String? interaction;
 
   factory MessageModel.fromJson(Map<String, dynamic> json) =>
       _$MessageModelFromJson(json);

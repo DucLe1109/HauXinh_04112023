@@ -263,6 +263,7 @@ class FirebaseUtils {
     final ref = firebaseStore.collection(
         '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/');
     final message = Message(
+      interaction: '',
       imageCacheUri: imageCacheUri,
       toId: chatUser.id,
       createdTime: now,
@@ -278,6 +279,32 @@ class FirebaseUtils {
             chatUser: chatUser,
             message: messageType == MessageType.text ? msg : S.current.image));
     return message;
+  }
+
+  static void updateMessageInteraction(
+      {required MessageModel messageModel,
+      required bool isSender,
+      String interactionType = 'heart'}) {
+    final conversationId = getConversationID(
+        isSender ? (messageModel.toId ?? '') : (messageModel.fromId ?? ''));
+    firebaseStore
+        .collection(
+            '${Collections.chats.value}/$conversationId/${Collections.messages.value}/')
+        .doc(messageModel.timeStamp)
+        .update({MessageProperty.interaction.value: interactionType});
+  }
+
+  static Stream<DocumentSnapshot<Map<String, dynamic>>> listenMessage({
+    required MessageModel messageModel,
+    required bool isSender,
+  }) {
+    final conversationId = getConversationID(
+        isSender ? (messageModel.toId ?? '') : (messageModel.fromId ?? ''));
+    return firebaseStore
+        .collection(
+            '${Collections.chats.value}/$conversationId/${Collections.messages.value}/')
+        .doc(messageModel.timeStamp)
+        .snapshots();
   }
 
   static Future<void> pushNotification(
@@ -407,8 +434,8 @@ class FirebaseUtils {
     } else if (errorCode == FirebaseFirestoreException.DEADLINE_EXCEEDED.code) {
       return S.current.error_code_deadline_exceeded;
     }
-    return S.current.this_error_code_is_not_handled;
+    return '';
   }
-
-  /// --------------- End firebase exception ---------------
 }
+
+/// --------------- End firebase exception ---------------

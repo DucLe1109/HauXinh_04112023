@@ -18,4 +18,4 @@ const String androidChannelName = 'High Importance Notifications';
 const String firebaseMessagingServerKey =
     'AAAAWxgWTs0:APA91bEzhbOBzD030s4ZHtUFdt9txe2dFpH2FwJMQiigtLRAl_uOUtdzMc7MefG0jC1Ry_Boglps3FTwSxtiN5uoHNjITw3HfJ2dOclAfhfslmxktUDyIvPhlUaYIVj2exGvbYNdvocp';
 
-const int numOfMessagePerPage = 50;
+const int numOfMessagePerPage = 20;

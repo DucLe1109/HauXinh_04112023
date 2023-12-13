@@ -25,7 +25,7 @@ class PersonalChatCubit extends DCubit {
   PersonalChatCubit() {
     currentListMessage = [];
     currentListDocumentSnapshot = [];
-    animatedListNotifier = AnimatedListNotifier(messages: currentListMessage);
+    animatedListNotifier = AnimatedListNotifier();
   }
 
   void listenMessageStream(ChatUser chatUser) {
@@ -101,7 +101,12 @@ class PersonalChatCubit extends DCubit {
             element.imageCacheUri == newMessage.imageCacheUri &&
             element.type == MessageType.temp.name)
         .firstOrNull
-        ?.type = MessageType.local.name;
+      ?..type = MessageType.local.name
+      ..timeStamp = newMessage.timeStamp
+      ..fromId = newMessage.fromId
+      ..interaction = newMessage.interaction
+      ..readAt = newMessage.readAt
+      ..toId = newMessage.toId;
 
     reloadAnimatedList();
   }
@@ -156,7 +161,7 @@ class PersonalChatCubit extends DCubit {
               message: FirebaseUtils.handleException(e.code), statusCode: -1)));
     }
 
-    animatedListNotifier = AnimatedListNotifier(messages: currentListMessage);
+    animatedListNotifier = AnimatedListNotifier();
   }
 
   Future<void> loadMoreMessage({
@@ -194,7 +199,7 @@ class PersonalChatCubit extends DCubit {
   }
 
   void reloadAnimatedList() {
-    animatedListNotifier.reloadList(newData: currentListMessage);
+    animatedListNotifier.reloadList();
   }
 
   Future<void> sendAllMessage(
@@ -216,6 +221,23 @@ class PersonalChatCubit extends DCubit {
           error: DefaultException(
               message: FirebaseUtils.handleException(exceptions.first.code),
               statusCode: -1)));
+    }
+  }
+
+  void clearRedundantData() {
+    if (currentListMessage.length > numOfMessagePerPage) {
+      final redundantDataCount =
+          currentListMessage.length - numOfMessagePerPage;
+
+      currentListMessage.removeRange(
+          currentListMessage.length - redundantDataCount,
+          currentListMessage.length);
+
+      currentListDocumentSnapshot.removeRange(
+          currentListDocumentSnapshot.length - redundantDataCount,
+          currentListDocumentSnapshot.length);
+
+      reloadAnimatedList();
     }
   }
 }

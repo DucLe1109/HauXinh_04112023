@@ -1,21 +1,21 @@
-// ignore_for_file: cascade_invocations
+// ignore_for_file: cascade_invocations, avoid_positional_boolean_parameters
 
 import 'dart:io';
 
 import 'package:boilerplate/features/authentication/view/base_loading_dialog.dart';
 import 'package:boilerplate/features/personal_chat/message_type.dart';
-import 'package:boilerplate/features/personal_chat/model/image_source.dart';
 import 'package:boilerplate/features/personal_chat/model/message_model.dart';
 import 'package:boilerplate/features/personal_chat/view/zoomable_image_screen.dart';
-import 'package:boilerplate/router/app_router.dart';
+import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:boilerplate/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dismissible_page/dismissible_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
-class CustomBubble extends StatefulWidget {
+class CustomBubble extends StatelessWidget {
   final bool isSender;
   final bool tail;
   final Color color;
@@ -36,31 +36,16 @@ class CustomBubble extends StatefulWidget {
     required this.message,
   });
 
-  @override
-  State<CustomBubble> createState() => _CustomBubbleState();
-}
-
-class _CustomBubbleState extends State<CustomBubble>
-    with AutomaticKeepAliveClientMixin {
-  late bool sent = true;
-  late bool delivered;
-  late bool seen;
-
-  final smallAvatarSize = 22.w;
-  bool stateTick = false;
-  Icon? stateIcon;
-
-  @override
-  void initState() {
-    super.initState();
-    sent = true;
-    delivered = widget.message.createdTime?.isNotEmpty ?? false;
-    seen = widget.message.readAt?.isNotEmpty ?? false;
-  }
-
   ///chat bubble builder method
   @override
   Widget build(BuildContext context) {
+    final smallAvatarSize = 22.w;
+    bool stateTick = false;
+    Icon? stateIcon;
+    const bool sent = true;
+    final bool delivered = message.createdTime?.isNotEmpty ?? false;
+    final bool seen = message.readAt?.isNotEmpty ?? false;
+
     if (sent) {
       stateTick = true;
       stateIcon = Icon(
@@ -87,51 +72,94 @@ class _CustomBubbleState extends State<CustomBubble>
     }
 
     return Align(
-      alignment: widget.isSender ? Alignment.topRight : Alignment.topLeft,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          !widget.isSender ? _buildSmallAvatar() : Container(),
-          _buildMainBubble(),
-        ],
-      ),
+        alignment: isSender ? Alignment.topRight : Alignment.topLeft,
+        child: !isSender
+            ? getBubbleForReceiver(
+                context, smallAvatarSize, stateIcon, stateTick)
+            : getBubbleForSender(
+                context, smallAvatarSize, stateIcon, stateTick));
+  }
+
+  Widget getBubbleForReceiver(BuildContext context, double smallAvatarSize,
+      Icon? stateIcon, bool stateTick) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            !isSender
+                ? _buildSmallAvatar(context, smallAvatarSize)
+                : Container(),
+            _buildMainBubble(context, smallAvatarSize, stateIcon, stateTick),
+          ],
+        ),
+        SizedBox(
+          width: 6.w,
+        ),
+        _buildInteractionWidget(context)
+      ],
     );
   }
 
-  Container _buildMainBubble() {
+  Widget getBubbleForSender(BuildContext context, double smallAvatarSize,
+      Icon? stateIcon, bool stateTick) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildInteractionWidget(context),
+        SizedBox(
+          width: 6.w,
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            !isSender
+                ? _buildSmallAvatar(context, smallAvatarSize)
+                : Container(),
+            _buildMainBubble(context, smallAvatarSize, stateIcon, stateTick),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMainBubble(BuildContext context, double smallAvatarSize,
+      Icon? stateIcon, bool stateTick) {
     return Container(
       margin: EdgeInsets.only(
-          top: 3.w, bottom: 3.w, left: !widget.tail ? smallAvatarSize : 0.w),
+          top: 3.w,
+          bottom: 3.w,
+          left: !tail ? (!isSender ? smallAvatarSize : 0.w) : 0.w),
       child: CustomPaint(
         painter: SpecialChatBubbleThree(
-            color: widget.color,
-            alignment: widget.isSender ? Alignment.topRight : Alignment.topLeft,
-            tail: widget.tail),
+            color: color,
+            alignment: isSender ? Alignment.topRight : Alignment.topLeft,
+            tail: tail),
         child: Container(
-          padding: widget.message.type == MessageType.text.name
+          padding: message.type == MessageType.text.name
               ? EdgeInsets.only(
-                  left: widget.isSender ? 14.w : 22.w,
-                  right: widget.isSender ? 22.w : 14.w,
+                  left: isSender ? 14.w : 22.w,
+                  right: isSender ? 22.w : 14.w,
                   top: 8.w,
                   bottom: 8.w)
-              : EdgeInsets.fromLTRB(widget.isSender ? 4.w : 12.w, 4.w,
-                  widget.isSender ? 12.w : 4.w, 8.w),
-          constraints: widget.constraints ??
+              : EdgeInsets.fromLTRB(
+                  isSender ? 4.w : 12.w, 4.w, isSender ? 12.w : 4.w, 8.w),
+          constraints: constraints ??
               BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * .7,
               ),
-          child: widget.message.msg!.length < 15
-              ? _buildOneLineMessage()
-              : _buildMultipleLineMessage(),
+          child: message.msg!.length < 15
+              ? _buildOneLineMessage(context, stateIcon, stateTick)
+              : _buildMultipleLineMessage(context, stateIcon, stateTick),
         ),
       ),
     );
   }
 
-  Visibility _buildSmallAvatar() {
+  Widget _buildSmallAvatar(BuildContext context, double smallAvatarSize) {
     return Visibility(
-      visible: widget.tail,
+      visible: tail,
       child: Container(
         margin: EdgeInsets.only(bottom: 3.w),
         child: CachedNetworkImage(
@@ -143,23 +171,23 @@ class _CustomBubbleState extends State<CustomBubble>
               image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
             ),
           ),
-          imageUrl: widget.imageUrl,
+          imageUrl: imageUrl,
         ),
       ),
     );
   }
 
-  Widget _buildMultipleLineMessage() {
+  Widget _buildMultipleLineMessage(
+      BuildContext context, Icon? stateIcon, bool stateTick) {
     return Column(
       children: [
-        _getDetailBubble(),
+        _getDetailBubble(context),
         SizedBox(
           height: 8.w,
         ),
         Padding(
           padding: EdgeInsets.only(
-              right: widget.isSender ? 8.w : 0.w,
-              left: widget.isSender ? 8.w : 0.w),
+              right: isSender ? 8.w : 0.w, left: isSender ? 8.w : 0.w),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -168,8 +196,7 @@ class _CustomBubbleState extends State<CustomBubble>
                   top: 1.5.w,
                 ),
                 child: Text(
-                  Utils.formatToLastMessageTime(
-                      widget.message.createdTime ?? ''),
+                  Utils.formatToLastMessageTime(message.createdTime ?? ''),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(context).colorScheme.inversePrimary,
                       fontSize: 11),
@@ -178,7 +205,7 @@ class _CustomBubbleState extends State<CustomBubble>
               SizedBox(
                 width: 6.w,
               ),
-              if (stateIcon != null && stateTick && widget.isSender)
+              if (stateIcon != null && stateTick && isSender)
                 Container(margin: EdgeInsets.only(top: 1.5.w), child: stateIcon)
               else
                 Container()
@@ -189,59 +216,59 @@ class _CustomBubbleState extends State<CustomBubble>
     );
   }
 
-  Widget _getDetailBubble() {
-    if (widget.message.type == MessageType.text.name) {
+  Widget _getDetailBubble(BuildContext context) {
+    if (message.type == MessageType.text.name) {
       return Text(
-        widget.message.msg ?? '',
-        style: widget.textStyle ?? Theme.of(context).textTheme.bodyMedium,
+        message.msg ?? '',
+        style: textStyle ?? Theme.of(context).textTheme.bodyMedium,
         textAlign: TextAlign.left,
       );
-    } else if (widget.message.type == MessageType.image.name) {
-      return _buildRemoteImage();
-    } else if (widget.message.type == MessageType.temp.name ||
-        widget.message.type == MessageType.local.name) {
-      return _buildLocalImage();
+    } else if (message.type == MessageType.image.name) {
+      return _buildRemoteImage(context);
+    } else if (message.type == MessageType.temp.name ||
+        message.type == MessageType.local.name) {
+      return _buildLocalImage(context);
     }
     return Container();
   }
 
-  GestureDetector _buildRemoteImage() {
+  Widget _buildRemoteImage(BuildContext context) {
     return GestureDetector(
       onTap: () {
         context.pushTransparentRoute(ZoomableImageScreen(
-          url: widget.message.msg ?? '',
+          url: message.msg ?? '',
         ));
       },
       child: Hero(
-        tag: widget.message.msg ?? '',
+        tag: message.msg ?? '',
         child: ClipRRect(
             borderRadius: BorderRadius.circular(12.w),
-            child: CachedNetworkImage(imageUrl: widget.message.msg ?? '')),
+            child: CachedNetworkImage(imageUrl: message.msg ?? '')),
       ),
     );
   }
 
-  Widget _buildLocalImage() {
+  Widget _buildLocalImage(BuildContext context) {
     return GestureDetector(
       onTap: () {
         context.pushTransparentRoute(ZoomableImageScreen(
-          url: widget.message.msg ?? '',
+          uri: message.msg ?? '',
         ));
       },
       child: Stack(
         alignment: Alignment.center,
         children: [
           Hero(
-            tag: widget.message.msg ?? '',
+            tag: message.msg ?? '',
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.w),
                 child: Image.file(
-                  File(widget.message.msg ?? ''),
+                  File(message.msg ?? ''),
                   fit: BoxFit.cover,
                 )),
           ),
           Visibility(
-            visible: widget.message.type != MessageType.local.name,
+            visible: message.type != MessageType.local.name,
             child: Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
@@ -255,7 +282,7 @@ class _CustomBubbleState extends State<CustomBubble>
             ),
           ),
           Visibility(
-            visible: widget.message.type != MessageType.local.name,
+            visible: message.type != MessageType.local.name,
             child: BaseLoadingDialog(
               startRatio: 0.8,
               willPopScope: true,
@@ -271,14 +298,15 @@ class _CustomBubbleState extends State<CustomBubble>
     );
   }
 
-  Row _buildOneLineMessage() {
+  Widget _buildOneLineMessage(
+      BuildContext context, Icon? stateIcon, bool stateTick) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Text(
-          widget.message.msg ?? '',
-          style: widget.textStyle,
+          message.msg ?? '',
+          style: textStyle,
           textAlign: TextAlign.left,
         ),
         SizedBox(
@@ -287,7 +315,7 @@ class _CustomBubbleState extends State<CustomBubble>
         Container(
           margin: EdgeInsets.only(top: 1.5.w),
           child: Text(
-            Utils.formatToLastMessageTime(widget.message.createdTime ?? ''),
+            Utils.formatToLastMessageTime(message.createdTime ?? ''),
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.inversePrimary,
                 fontSize: 11),
@@ -296,7 +324,7 @@ class _CustomBubbleState extends State<CustomBubble>
         SizedBox(
           width: 6.w,
         ),
-        if (stateIcon != null && stateTick && widget.isSender)
+        if (stateIcon != null && stateTick && isSender)
           Container(margin: EdgeInsets.only(top: 1.5.w), child: stateIcon)
         else
           Container()
@@ -304,9 +332,74 @@ class _CustomBubbleState extends State<CustomBubble>
     );
   }
 
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
+  Widget _buildInteractionWidget(BuildContext context) {
+    return StreamBuilder(
+      builder: (context, snapshot) {
+        MessageModel? messageModel;
+
+        if (snapshot.hasData && snapshot.data?.data() != null) {
+          messageModel = MessageModel.fromJson(snapshot.data!.data()!);
+        }
+        return GestureDetector(
+          onTap: () {
+            onInteraction(messageModel);
+          },
+          child: Material(
+            shape: const CircleBorder(),
+            elevation: 1,
+            child: Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.fromLTRB(3.w, 4.w, 3.w, 3.w),
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isSender
+                      ? Theme.of(context).colorScheme.primary.withOpacity(0.7)
+                      : Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.7)),
+              height: 20.w,
+              width: 20.w,
+              child: !isHasInteraction(messageModel)
+                  ? Icon(
+                      CupertinoIcons.suit_heart,
+                      size: 13.w,
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    )
+                  : Icon(
+                      CupertinoIcons.suit_heart_fill,
+                      size: 13.w,
+                      color: Colors.purpleAccent,
+                    ),
+            ),
+          ),
+        );
+      },
+      stream: FirebaseUtils.listenMessage(
+          isSender: isSender, messageModel: message),
+    );
+  }
+
+  bool isHasInteraction(MessageModel? messageModel) {
+    if (message.type == MessageType.temp.name) {
+      return false;
+    }
+    if (messageModel?.interaction?.isNotEmpty ?? false) {
+      return true;
+    }
+    return false;
+  }
+
+  void onInteraction(MessageModel? messageModel) {
+    HapticFeedback.mediumImpact();
+    FirebaseUtils.updateMessageInteraction(
+      interactionType: (messageModel?.interaction?.isEmpty ?? false)
+          ? InteractionType.heart.name
+          : '',
+      isSender: isSender,
+      messageModel: message,
+    );
+  }
 }
 
 ///custom painter use to create the shape of the chat bubble
