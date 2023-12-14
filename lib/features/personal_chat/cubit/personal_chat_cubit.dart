@@ -169,6 +169,8 @@ class PersonalChatCubit extends DCubit {
     required int numberOfItem,
     required DocumentSnapshot lastItemVisible,
   }) async {
+    print('x..................');
+
     if (!isLoadMoreDone) emit(LoadingMore());
     try {
       final additionalMessage = await FirebaseUtils.getMessage(
@@ -184,7 +186,6 @@ class PersonalChatCubit extends DCubit {
 
         currentListMessage.addAll(additionalMessageModel);
         currentListDocumentSnapshot.addAll(additionalMessageSnapshot);
-
         emit(LoadMoreSuccessfully(
             numberOfNewMessage: additionalMessageModel.length));
       } else {
@@ -237,7 +238,7 @@ class PersonalChatCubit extends DCubit {
           currentListDocumentSnapshot.length - redundantDataCount,
           currentListDocumentSnapshot.length);
 
-      reloadAnimatedList();
+      // reloadAnimatedList();
     }
   }
 }

@@ -114,10 +114,12 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
         fadeAnimationController.status == AnimationStatus.completed) {
       fadeAnimationController.reverse();
     } else if (maxScrollExtent - position <= bottomOffset && isScrollable) {
-      _cubit.loadMoreMessage(
-          chatUser: widget.chatUser,
-          numberOfItem: numOfMessagePerPage,
-          lastItemVisible: _cubit.currentListDocumentSnapshot.last);
+      if (!_cubit.isLoadMoreDone) {
+        _cubit.loadMoreMessage(
+            chatUser: widget.chatUser,
+            numberOfItem: numOfMessagePerPage,
+            lastItemVisible: _cubit.currentListDocumentSnapshot.last);
+      }
     }
 
     if (_scrollController.position.pixels > 30 &&
@@ -807,10 +809,18 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
       _scrollController.animateTo(
         0,
         curve: Curves.easeOut,
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: fastDuration),
       );
 
-      _cubit.clearRedundantData();
+      print('///////// : ${_cubit.currentListMessage.length}');
+
+      Future.delayed(
+        Duration(milliseconds: fastDuration + 100),
+        () {
+          _cubit.clearRedundantData();
+          print('///////// : ${_cubit.currentListMessage.length}');
+        },
+      );
     }
   }
 }

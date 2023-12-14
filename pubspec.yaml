@@ -94,6 +94,7 @@ dependencies:
   widget_zoom: ^0.0.2
   extended_image: ^8.1.1
   zoom_widget: ^2.0.1
+  swipe_to: ^1.0.5
 
 
 dev_dependencies:
