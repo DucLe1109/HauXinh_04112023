@@ -14,8 +14,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:swipe_to/swipe_to.dart';
 
-class CustomBubble extends StatelessWidget {
+class CustomBubble extends StatefulWidget {
   final bool isSender;
   final bool tail;
   final Color color;
@@ -36,15 +37,31 @@ class CustomBubble extends StatelessWidget {
     required this.message,
   });
 
+  @override
+  State<CustomBubble> createState() => _CustomBubbleState();
+}
+
+class _CustomBubbleState extends State<CustomBubble>
+    with AutomaticKeepAliveClientMixin {
+  final smallAvatarSize = 22.w;
+  late bool stateTick;
+  Icon? stateIcon;
+  bool sent = true;
+  late bool delivered;
+  late bool seen;
+
+  @override
+  void initState() {
+    super.initState();
+    stateTick = false;
+    delivered = widget.message.createdTime?.isNotEmpty ?? false;
+    seen = widget.message.readAt?.isNotEmpty ?? false;
+  }
+
   ///chat bubble builder method
   @override
   Widget build(BuildContext context) {
-    final smallAvatarSize = 22.w;
-    bool stateTick = false;
-    Icon? stateIcon;
-    const bool sent = true;
-    final bool delivered = message.createdTime?.isNotEmpty ?? false;
-    final bool seen = message.readAt?.isNotEmpty ?? false;
+    super.build(context);
 
     if (sent) {
       stateTick = true;
@@ -72,94 +89,85 @@ class CustomBubble extends StatelessWidget {
     }
 
     return Align(
-        alignment: isSender ? Alignment.topRight : Alignment.topLeft,
-        child: !isSender
-            ? getBubbleForReceiver(
-                context, smallAvatarSize, stateIcon, stateTick)
-            : getBubbleForSender(
-                context, smallAvatarSize, stateIcon, stateTick));
+        alignment: widget.isSender ? Alignment.topRight : Alignment.topLeft,
+        child:
+            !widget.isSender ? getBubbleForReceiver() : getBubbleForSender());
   }
 
-  Widget getBubbleForReceiver(BuildContext context, double smallAvatarSize,
-      Icon? stateIcon, bool stateTick) {
+  Widget getBubbleForReceiver() {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            !isSender
-                ? _buildSmallAvatar(context, smallAvatarSize)
-                : Container(),
-            _buildMainBubble(context, smallAvatarSize, stateIcon, stateTick),
+            !widget.isSender ? _buildSmallAvatar() : Container(),
+            _buildMainBubble(),
           ],
         ),
         SizedBox(
           width: 6.w,
         ),
-        _buildInteractionWidget(context)
+        _buildInteractionWidget()
       ],
     );
   }
 
-  Widget getBubbleForSender(BuildContext context, double smallAvatarSize,
-      Icon? stateIcon, bool stateTick) {
+  Widget getBubbleForSender() {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildInteractionWidget(context),
+        _buildInteractionWidget(),
         SizedBox(
           width: 6.w,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            !isSender
-                ? _buildSmallAvatar(context, smallAvatarSize)
-                : Container(),
-            _buildMainBubble(context, smallAvatarSize, stateIcon, stateTick),
+            !widget.isSender ? _buildSmallAvatar() : Container(),
+            _buildMainBubble(),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildMainBubble(BuildContext context, double smallAvatarSize,
-      Icon? stateIcon, bool stateTick) {
+  Widget _buildMainBubble() {
     return Container(
       margin: EdgeInsets.only(
           top: 3.w,
           bottom: 3.w,
-          left: !tail ? (!isSender ? smallAvatarSize : 0.w) : 0.w),
+          left:
+              !widget.tail ? (!widget.isSender ? smallAvatarSize : 0.w) : 0.w),
       child: CustomPaint(
         painter: SpecialChatBubbleThree(
-            color: color,
-            alignment: isSender ? Alignment.topRight : Alignment.topLeft,
-            tail: tail),
+            color: widget.color,
+            alignment: widget.isSender ? Alignment.topRight : Alignment.topLeft,
+            tail: widget.tail),
         child: Container(
-          padding: message.type == MessageType.text.name
+          padding: widget.message.type == MessageType.text.name
               ? EdgeInsets.only(
-                  left: isSender ? 14.w : 22.w,
-                  right: isSender ? 22.w : 14.w,
+                  left: widget.isSender ? 14.w : 22.w,
+                  right: widget.isSender ? 22.w : 14.w,
                   top: 8.w,
                   bottom: 8.w)
-              : EdgeInsets.fromLTRB(
-                  isSender ? 4.w : 12.w, 4.w, isSender ? 12.w : 4.w, 8.w),
-          constraints: constraints ??
+              : EdgeInsets.fromLTRB(widget.isSender ? 4.w : 12.w, 4.w,
+                  widget.isSender ? 12.w : 4.w, 8.w),
+          constraints: widget.constraints ??
               BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * .7,
               ),
-          child: message.msg!.length < 15
-              ? _buildOneLineMessage(context, stateIcon, stateTick)
-              : _buildMultipleLineMessage(context, stateIcon, stateTick),
+          child: widget.message.msg!.length < 15
+              ? _buildOneLineMessage()
+              : _buildMultipleLineMessage(),
         ),
       ),
     );
   }
 
-  Widget _buildSmallAvatar(BuildContext context, double smallAvatarSize) {
+  Widget _buildSmallAvatar() {
     return Visibility(
-      visible: tail,
+      visible: widget.tail,
       child: Container(
         margin: EdgeInsets.only(bottom: 3.w),
         child: CachedNetworkImage(
@@ -171,23 +179,23 @@ class CustomBubble extends StatelessWidget {
               image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
             ),
           ),
-          imageUrl: imageUrl,
+          imageUrl: widget.imageUrl,
         ),
       ),
     );
   }
 
-  Widget _buildMultipleLineMessage(
-      BuildContext context, Icon? stateIcon, bool stateTick) {
+  Widget _buildMultipleLineMessage() {
     return Column(
       children: [
-        _getDetailBubble(context),
+        _getDetailBubble(),
         SizedBox(
           height: 8.w,
         ),
         Padding(
           padding: EdgeInsets.only(
-              right: isSender ? 8.w : 0.w, left: isSender ? 8.w : 0.w),
+              right: widget.isSender ? 8.w : 0.w,
+              left: widget.isSender ? 8.w : 0.w),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -196,7 +204,8 @@ class CustomBubble extends StatelessWidget {
                   top: 1.5.w,
                 ),
                 child: Text(
-                  Utils.formatToLastMessageTime(message.createdTime ?? ''),
+                  Utils.formatToLastMessageTime(
+                      widget.message.createdTime ?? ''),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(context).colorScheme.inversePrimary,
                       fontSize: 11),
@@ -205,7 +214,7 @@ class CustomBubble extends StatelessWidget {
               SizedBox(
                 width: 6.w,
               ),
-              if (stateIcon != null && stateTick && isSender)
+              if (stateIcon != null && stateTick && widget.isSender)
                 Container(margin: EdgeInsets.only(top: 1.5.w), child: stateIcon)
               else
                 Container()
@@ -216,59 +225,59 @@ class CustomBubble extends StatelessWidget {
     );
   }
 
-  Widget _getDetailBubble(BuildContext context) {
-    if (message.type == MessageType.text.name) {
+  Widget _getDetailBubble() {
+    if (widget.message.type == MessageType.text.name) {
       return Text(
-        message.msg ?? '',
-        style: textStyle ?? Theme.of(context).textTheme.bodyMedium,
+        widget.message.msg ?? '',
+        style: widget.textStyle ?? Theme.of(context).textTheme.bodyMedium,
         textAlign: TextAlign.left,
       );
-    } else if (message.type == MessageType.image.name) {
-      return _buildRemoteImage(context);
-    } else if (message.type == MessageType.temp.name ||
-        message.type == MessageType.local.name) {
-      return _buildLocalImage(context);
+    } else if (widget.message.type == MessageType.image.name) {
+      return _buildRemoteImage();
+    } else if (widget.message.type == MessageType.temp.name ||
+        widget.message.type == MessageType.local.name) {
+      return _buildLocalImage();
     }
     return Container();
   }
 
-  Widget _buildRemoteImage(BuildContext context) {
+  Widget _buildRemoteImage() {
     return GestureDetector(
       onTap: () {
         context.pushTransparentRoute(ZoomableImageScreen(
-          url: message.msg ?? '',
+          url: widget.message.msg ?? '',
         ));
       },
       child: Hero(
-        tag: message.msg ?? '',
+        tag: widget.message.msg ?? '',
         child: ClipRRect(
             borderRadius: BorderRadius.circular(12.w),
-            child: CachedNetworkImage(imageUrl: message.msg ?? '')),
+            child: CachedNetworkImage(imageUrl: widget.message.msg ?? '')),
       ),
     );
   }
 
-  Widget _buildLocalImage(BuildContext context) {
+  Widget _buildLocalImage() {
     return GestureDetector(
       onTap: () {
         context.pushTransparentRoute(ZoomableImageScreen(
-          uri: message.msg ?? '',
+          uri: widget.message.msg ?? '',
         ));
       },
       child: Stack(
         alignment: Alignment.center,
         children: [
           Hero(
-            tag: message.msg ?? '',
+            tag: widget.message.msg ?? '',
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.w),
                 child: Image.file(
-                  File(message.msg ?? ''),
+                  File(widget.message.msg ?? ''),
                   fit: BoxFit.cover,
                 )),
           ),
           Visibility(
-            visible: message.type != MessageType.local.name,
+            visible: widget.message.type != MessageType.local.name,
             child: Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
@@ -282,7 +291,7 @@ class CustomBubble extends StatelessWidget {
             ),
           ),
           Visibility(
-            visible: message.type != MessageType.local.name,
+            visible: widget.message.type != MessageType.local.name,
             child: BaseLoadingDialog(
               startRatio: 0.8,
               willPopScope: true,
@@ -298,15 +307,14 @@ class CustomBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildOneLineMessage(
-      BuildContext context, Icon? stateIcon, bool stateTick) {
+  Widget _buildOneLineMessage() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Text(
-          message.msg ?? '',
-          style: textStyle,
+          widget.message.msg ?? '',
+          style: widget.textStyle,
           textAlign: TextAlign.left,
         ),
         SizedBox(
@@ -315,7 +323,7 @@ class CustomBubble extends StatelessWidget {
         Container(
           margin: EdgeInsets.only(top: 1.5.w),
           child: Text(
-            Utils.formatToLastMessageTime(message.createdTime ?? ''),
+            Utils.formatToLastMessageTime(widget.message.createdTime ?? ''),
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.inversePrimary,
                 fontSize: 11),
@@ -324,7 +332,7 @@ class CustomBubble extends StatelessWidget {
         SizedBox(
           width: 6.w,
         ),
-        if (stateIcon != null && stateTick && isSender)
+        if (stateIcon != null && stateTick && widget.isSender)
           Container(margin: EdgeInsets.only(top: 1.5.w), child: stateIcon)
         else
           Container()
@@ -332,74 +340,58 @@ class CustomBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildInteractionWidget(BuildContext context) {
-    return StreamBuilder(
-      builder: (context, snapshot) {
-        MessageModel? messageModel;
-
-        if (snapshot.hasData && snapshot.data?.data() != null) {
-          messageModel = MessageModel.fromJson(snapshot.data!.data()!);
-        }
-        return GestureDetector(
-          onTap: () {
-            onInteraction(messageModel);
-          },
-          child: Material(
-            shape: const CircleBorder(),
-            elevation: 1,
-            child: Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.fromLTRB(3.w, 4.w, 3.w, 3.w),
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isSender
-                      ? Theme.of(context).colorScheme.primary.withOpacity(0.7)
-                      : Theme.of(context)
-                          .colorScheme
-                          .secondary
-                          .withOpacity(0.7)),
-              height: 20.w,
-              width: 20.w,
-              child: !isHasInteraction(messageModel)
-                  ? Icon(
-                      CupertinoIcons.suit_heart,
-                      size: 13.w,
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                    )
-                  : Icon(
-                      CupertinoIcons.suit_heart_fill,
-                      size: 13.w,
-                      color: Colors.purpleAccent,
-                    ),
-            ),
-          ),
-        );
-      },
-      stream: FirebaseUtils.listenMessage(
-          isSender: isSender, messageModel: message),
+  Widget _buildInteractionWidget() {
+    return GestureDetector(
+      onTap: onInteraction,
+      child: Material(
+        shape: const CircleBorder(),
+        elevation: 1,
+        child: Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.fromLTRB(3.w, 4.w, 3.w, 3.w),
+          decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: widget.isSender
+                  ? Theme.of(context).colorScheme.primary.withOpacity(0.7)
+                  : Theme.of(context).colorScheme.secondary.withOpacity(0.7)),
+          height: 20.w,
+          width: 20.w,
+          child: !isHasInteraction()
+              ? Icon(
+                  CupertinoIcons.suit_heart,
+                  size: 13.w,
+                  color: Theme.of(context).colorScheme.inversePrimary,
+                )
+              : Icon(
+                  CupertinoIcons.suit_heart_fill,
+                  size: 13.w,
+                  color: Colors.purpleAccent,
+                ),
+        ),
+      ),
     );
   }
 
-  bool isHasInteraction(MessageModel? messageModel) {
-    if (message.type == MessageType.temp.name) {
+  bool isHasInteraction() {
+    if (widget.message.type == MessageType.temp.name) {
       return false;
     }
-    if (messageModel?.interaction?.isNotEmpty ?? false) {
-      return true;
-    }
-    return false;
+    return widget.message.interaction?.isNotEmpty ?? false;
   }
 
-  void onInteraction(MessageModel? messageModel) {
+  void onInteraction() {
     HapticFeedback.mediumImpact();
     FirebaseUtils.updateMessageInteraction(
-      interactionType: (messageModel?.interaction?.isEmpty ?? false)
+      interactionType: (widget.message.interaction?.isEmpty ?? false)
           ? InteractionType.heart.name
           : '',
-      isSender: isSender,
-      messageModel: message,
+      isSender: widget.isSender,
+      messageModel: widget.message,
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 ///custom painter use to create the shape of the chat bubble

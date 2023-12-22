@@ -241,17 +241,6 @@ class FirebaseUtils {
     }
   }
 
-  /// Function to get message of myself with specific user.
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getMessages(
-      {required ChatUser chatUser, required int numberOfMessage}) {
-    return firebaseStore
-        .collection(
-            '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
-        .orderBy(MessageProperty.timeStamp.value, descending: true)
-        .limit(numberOfMessage)
-        .snapshots();
-  }
-
   /// Function to send message to specific user.
   static Future<Message> sendMessage(
       {required ChatUser chatUser,
@@ -350,17 +339,6 @@ class FirebaseUtils {
         imageCacheUri: file.path);
   }
 
-  /// Function to get 50 (optional) newest message
-  static Future<QuerySnapshot<Map<String, dynamic>>> getNewestMessage(
-      {required ChatUser chatUser, required int amount}) async {
-    return firebaseStore
-        .collection(
-            '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
-        .orderBy(MessageProperty.timeStamp.value, descending: true)
-        .limit(amount)
-        .get();
-  }
-
   /// Function to update read message
   static Future<void> readMessage(MessageModel message) {
     final now = DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now());
@@ -373,13 +351,21 @@ class FirebaseUtils {
 
   /// Function to get latest message of specific user
   static Stream<QuerySnapshot<Map<String, dynamic>>> getLatestMessage(
-      ChatUser chatUser) {
-    return firebaseStore
-        .collection(
-            '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
-        .orderBy(MessageProperty.timeStamp.value, descending: true)
-        .limit(1)
-        .snapshots();
+      {int? limit, required ChatUser chatUser}) {
+    if (limit != null) {
+      return firebaseStore
+          .collection(
+              '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
+          .orderBy(MessageProperty.timeStamp.value, descending: true)
+          .limit(limit)
+          .snapshots();
+    } else {
+      return firebaseStore
+          .collection(
+              '${Collections.chats.value}/${getConversationID(chatUser.id)}/${Collections.messages.value}/')
+          .orderBy(MessageProperty.timeStamp.value, descending: true)
+          .snapshots();
+    }
   }
 
   /// Function to get all unread message by user

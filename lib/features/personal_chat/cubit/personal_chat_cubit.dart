@@ -10,7 +10,6 @@ import 'package:boilerplate/firebase/firebase_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:d_bloc/d_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:rest_client/rest_client.dart';
 
 class PersonalChatCubit extends DCubit {
@@ -29,7 +28,7 @@ class PersonalChatCubit extends DCubit {
   }
 
   void listenMessageStream(ChatUser chatUser) {
-    chatStream = FirebaseUtils.getLatestMessage(chatUser);
+    chatStream = FirebaseUtils.getLatestMessage(chatUser: chatUser);
     chatStreamSubscription = chatStream.listen((newData) {
       if (isFirstLoad) {
         isFirstLoad = false;
@@ -40,51 +39,52 @@ class PersonalChatCubit extends DCubit {
             newData.docs.map((e) => MessageModel.fromJson(e.data())).toList();
         final newListDocumentSnapshot = newData.docs;
 
-        /// Latest message
-        final newMessage = newListMessage.first;
-        final newDocumentSnapshot = newListDocumentSnapshot.first;
+        /// first message
+        final firstMessage = newListMessage.first;
+        final firstDocumentSnapshot = newListDocumentSnapshot.first;
 
         /// Has new message in conversation (do not execute when message type is Image)
         if (currentListMessage.isNotEmpty &&
-            newMessage.timeStamp != currentListMessage.first.timeStamp) {
+            firstMessage.timeStamp != currentListMessage.first.timeStamp) {
           /// handle when message type is Text
-          if (newMessage.type == MessageType.text.name) {
+          if (firstMessage.type == MessageType.text.name) {
             insertNewItem(
-                newDocumentSnapshot: newDocumentSnapshot,
-                newMessage: newMessage);
+                newDocumentSnapshot: firstDocumentSnapshot,
+                newMessage: firstMessage);
 
-            emit(NewMessageState(message: newMessage));
+            emit(NewMessageState(message: firstMessage));
           }
 
           /// Handle when message type is Image
-          else if (newMessage.type == MessageType.image.name) {
+          else if (firstMessage.type == MessageType.image.name) {
             /// Check if is out message
-            if (newMessage.fromId == FirebaseUtils.me.id) {
-              updateImageStatus(newMessage);
+            if (firstMessage.fromId == FirebaseUtils.me.id) {
+              updateImageStatus(firstMessage);
             }
 
             /// Check if is in message
             else {
               insertNewItem(
-                  newDocumentSnapshot: newDocumentSnapshot,
-                  newMessage: newMessage);
+                  newDocumentSnapshot: firstDocumentSnapshot,
+                  newMessage: firstMessage);
 
-              emit(NewMessageState(message: newMessage));
+              emit(NewMessageState(message: firstMessage));
             }
           }
         }
 
         /// New conversation
         else if (currentListMessage.isEmpty) {
-          currentListMessage.insert(0, newMessage);
-          currentListDocumentSnapshot.insert(0, newDocumentSnapshot);
-          emit(NewMessageState(message: newMessage));
+          currentListMessage.insert(0, firstMessage);
+          currentListDocumentSnapshot.insert(0, firstDocumentSnapshot);
+          emit(NewMessageState(message: firstMessage));
         }
 
         /// update message status
         else if (currentListMessage.isNotEmpty &&
-            newMessage.timeStamp == currentListMessage.first.timeStamp) {
-          updateReadStatus();
+            firstMessage.timeStamp == currentListMessage.first.timeStamp) {
+          updateReadStatus(newListMessage);
+          updateInteractionStatus(newListMessage);
           reloadAnimatedList();
         }
       }
@@ -130,11 +130,15 @@ class PersonalChatCubit extends DCubit {
     }
   }
 
-  void updateReadStatus() {
-    for (final e in currentListMessage) {
-      if (e.readAt?.isEmpty ?? false) {
-        e.readAt = DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now());
-      }
+  void updateReadStatus(List<MessageModel> newListMessage) {
+    for (int i = 0; i < newListMessage.length; i++) {
+      currentListMessage[i].readAt = newListMessage[i].readAt;
+    }
+  }
+
+  void updateInteractionStatus(List<MessageModel> newListMessage) {
+    for (int i = 0; i < newListMessage.length; i++) {
+      currentListMessage[i].interaction = newListMessage[i].interaction;
     }
   }
 
@@ -169,8 +173,6 @@ class PersonalChatCubit extends DCubit {
     required int numberOfItem,
     required DocumentSnapshot lastItemVisible,
   }) async {
-    print('x..................');
-
     if (!isLoadMoreDone) emit(LoadingMore());
     try {
       final additionalMessage = await FirebaseUtils.getMessage(

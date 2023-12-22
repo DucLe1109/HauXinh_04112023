@@ -114,7 +114,8 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
         fadeAnimationController.status == AnimationStatus.completed) {
       fadeAnimationController.reverse();
     } else if (maxScrollExtent - position <= bottomOffset && isScrollable) {
-      if (!_cubit.isLoadMoreDone) {
+      if (!_cubit.isLoadMoreDone &&
+          _cubit.currentListDocumentSnapshot.isNotEmpty) {
         _cubit.loadMoreMessage(
             chatUser: widget.chatUser,
             numberOfItem: numOfMessagePerPage,
@@ -134,7 +135,7 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
       if (keyboardHeight == 0) {
         /// Delay to get keyboard height by Media query bottom
         Future.delayed(
-          const Duration(milliseconds: 800),
+          const Duration(milliseconds: 1000),
           () {
             currentKeyboardHeight = focusKeyboardHeight;
             keyboardHeight = focusKeyboardHeight;
@@ -210,12 +211,12 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
               _buildConversationSection(context),
               _buildBottomSection(context),
               AnimatedContainer(
-                onEnd: () {
-                  if (isShowEmoji && currentKeyboardHeight != 0) {
-                    /// Show emoji when animated height done.
-                    setState(() {});
-                  }
-                },
+                // onEnd: () {
+                //   if (isShowEmoji && currentKeyboardHeight != 0) {
+                //     /// Show emoji when animated height done.
+                //     setState(() {});
+                //   }
+                // },
                 duration: keyboardHeight != 0
                     ? const Duration(milliseconds: 350)
                     : Duration.zero,
@@ -404,29 +405,32 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
   Widget _buildListBubble() {
     return ListenableBuilder(
       listenable: _cubit.animatedListNotifier,
-      builder: (context, child) => AnimatedList(
-        physics: const AlwaysScrollableScrollPhysics(),
-        key: listKey,
-        itemBuilder: (context, index, animation) {
-          return SizeTransition(
-            sizeFactor: Tween<double>(begin: 0, end: 1).animate(
-                CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-            child: SlideTransition(
-              position: Tween(begin: Offset(0.w, 5.w), end: Offset.zero)
-                  .animate(CurvedAnimation(
-                      parent: animation, curve: Curves.easeOut)),
-              child: MessageCard(
-                  chatUser: widget.chatUser,
-                  message: _cubit.currentListMessage[index],
-                  isShowTail: isShowTail(index)),
-            ),
-          );
-        },
-        initialItemCount: _cubit.currentListMessage.length,
-        controller: _scrollController,
-        shrinkWrap: true,
-        padding: EdgeInsets.symmetric(vertical: 16.w, horizontal: 16.w),
-        reverse: true,
+      builder: (context, child) => Align(
+        alignment: Alignment.topCenter,
+        child: AnimatedList(
+          physics: const AlwaysScrollableScrollPhysics(),
+          key: listKey,
+          itemBuilder: (context, index, animation) {
+            return SizeTransition(
+              sizeFactor: Tween<double>(begin: 0, end: 1).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeOut)),
+              child: SlideTransition(
+                position: Tween(begin: Offset(0.w, 5.w), end: Offset.zero)
+                    .animate(CurvedAnimation(
+                        parent: animation, curve: Curves.easeOut)),
+                child: MessageCard(
+                    chatUser: widget.chatUser,
+                    message: _cubit.currentListMessage[index],
+                    isShowTail: isShowTail(index)),
+              ),
+            );
+          },
+          initialItemCount: _cubit.currentListMessage.length,
+          controller: _scrollController,
+          shrinkWrap: true,
+          padding: EdgeInsets.symmetric(vertical: 16.w, horizontal: 16.w),
+          reverse: true,
+        ),
       ),
     );
   }
@@ -812,13 +816,10 @@ class _ChatScreenState extends BaseStateFulWidgetState<ChatScreen>
         duration: const Duration(milliseconds: fastDuration),
       );
 
-      print('///////// : ${_cubit.currentListMessage.length}');
-
       Future.delayed(
-        Duration(milliseconds: fastDuration + 100),
+        const Duration(milliseconds: fastDuration + 100),
         () {
           _cubit.clearRedundantData();
-          print('///////// : ${_cubit.currentListMessage.length}');
         },
       );
     }

@@ -25,7 +25,7 @@ class Chatting extends StatelessWidget {
       child: Stack(
         children: [
           StreamBuilder(
-              stream: FirebaseUtils.getLatestMessage(chatUser),
+              stream: FirebaseUtils.getLatestMessage(limit: 1, chatUser: chatUser),
               builder: (context, snapshot) {
                 Message? message;
                 if (snapshot.hasData) {
